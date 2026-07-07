@@ -1,0 +1,148 @@
+# ==============================
+# Operating System Files
+# ==============================
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+.nfs*
+
+
+# ==============================
+# Editors / IDEs
+# ==============================
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains IDEs
+.idea/
+
+# Vim
+*.swp
+*.swo
+
+
+# ==============================
+# Environment Variables / Secrets
+# ==============================
+
+.env
+.env.*
+*.secret
+*.credentials
+credentials.txt
+secrets.txt
+
+# Keys and certificates
+*.key
+*.pem
+*.crt
+
+
+# ==============================
+# Database Files
+# ==============================
+
+# PostgreSQL dumps
+*.dump
+*.backup
+*.sql.backup
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Temporary database exports
+database_exports/
+
+
+# ==============================
+# Logs
+# ==============================
+
+*.log
+logs/*.log
+
+
+# ==============================
+# Backups
+# ==============================
+
+backups/*
+!backups/README.md
+
+
+# ==============================
+# Screenshots
+# ==============================
+
+# Uncomment if you don't want screenshots tracked
+# screenshots/*
+
+
+# ==============================
+# Build / Temporary Files
+# ==============================
+
+tmp/
+temp/
+cache/
+*.tmp
+
+
+# ==============================
+# Python Projects
+# ==============================
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+
+
+# ==============================
+# Go Projects
+# ==============================
+
+bin/
+*.exe
+
+
+# ==============================
+# Rust Projects
+# ==============================
+
+target/
+
+
+# ==============================
+# Node Projects (Future)
+# ==============================
+
+node_modules/
+
+
+# ==============================
+# System Configuration Backups
+# ==============================
+
+# Prevent accidental upload of real server configs
+*.conf.bak
+*.config.bak
+
+
+# ==============================
+# Personal Notes
+# ==============================
+
+# Uncomment if you keep private notes
+# private_notes/
