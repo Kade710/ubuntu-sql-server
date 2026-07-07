@@ -1,148 +1,42 @@
-# ==============================
 # Operating System Files
-# ==============================
-
-# Windows
+.DS_Store
 Thumbs.db
 Desktop.ini
 
-# macOS
-.DS_Store
-
-# Linux
-*~
-.nfs*
-
-
-# ==============================
-# Editors / IDEs
-# ==============================
-
-# Visual Studio Code
+# Editor Files
 .vscode/
-
-# JetBrains IDEs
 .idea/
 
-# Vim
-*.swp
-*.swo
-
-
-# ==============================
 # Environment Variables / Secrets
-# ==============================
-
 .env
 .env.*
-*.secret
-*.credentials
+*.key
+*.pem
 credentials.txt
 secrets.txt
 
-# Keys and certificates
-*.key
-*.pem
-*.crt
-
-
-# ==============================
-# Database Files
-# ==============================
-
-# PostgreSQL dumps
+# Database Backups
 *.dump
 *.backup
 *.sql.backup
 
-# Database files
-*.sqlite
-*.sqlite3
-*.db
-
-# Temporary database exports
-database_exports/
-
-
-# ==============================
 # Logs
-# ==============================
-
 *.log
-logs/*.log
 
-
-# ==============================
-# Backups
-# ==============================
-
-backups/*
-!backups/README.md
-
-
-# ==============================
-# Screenshots
-# ==============================
-
-# Uncomment if you don't want screenshots tracked
-# screenshots/*
-
-
-# ==============================
-# Build / Temporary Files
-# ==============================
-
-tmp/
-temp/
-cache/
+# Temporary Files
 *.tmp
+temp/
+tmp/
 
-
-# ==============================
-# Python Projects
-# ==============================
-
+# Python (Future)
 __pycache__/
-*.py[cod]
-*.egg-info/
-venv/
 .venv/
 
-
-# ==============================
-# Go Projects
-# ==============================
-
+# Go (Future)
 bin/
-*.exe
 
-
-# ==============================
-# Rust Projects
-# ==============================
-
+# Rust (Future)
 target/
 
-
-# ==============================
-# Node Projects (Future)
-# ==============================
-
+# Node (Future)
 node_modules/
-
-
-# ==============================
-# System Configuration Backups
-# ==============================
-
-# Prevent accidental upload of real server configs
-*.conf.bak
-*.config.bak
-
-
-# ==============================
-# Personal Notes
-# ==============================
-
-# Uncomment if you keep private notes
-# private_notes/
