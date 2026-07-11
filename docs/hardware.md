@@ -67,3 +67,62 @@ Vulnerabilities:
   Tsx async abort:           Not affected
   Vmscape:                   Mitigation; IBPB before exit to userspace
 
+ram
+              total        used        free      shared  buff/cache   available
+Mem:            15Gi       2.0Gi        10Gi        26Mi       3.7Gi        13Gi
+Swap:          4.0Gi          0B       4.0Gi
+
+
+storage
+
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+loop0    7:0    0 245.1M  1 loop /snap/firefox/6565
+loop1    7:1    0  11.1M  1 loop /snap/firmware-updater/167
+loop2    7:2    0   516M  1 loop /snap/gnome-42-2204/202
+loop3    7:3    0     4K  1 loop /snap/bare/5
+loop4    7:4    0  73.9M  1 loop /snap/core22/2045
+loop5    7:5    0  91.7M  1 loop /snap/gtk-common-themes/1535
+loop6    7:6    0  10.8M  1 loop /snap/snap-store/1270
+loop7    7:7    0  49.3M  1 loop /snap/snapd/24792
+loop8    7:8    0   576K  1 loop /snap/snapd-desktop-integration/315
+loop9    7:9    0  63.8M  1 loop /snap/core20/2866
+loop10   7:10   0 450.6M  1 loop /snap/code/249
+sda      8:0    0   1.8T  0 disk 
+├─sda1   8:1    0     1G  0 part /boot/efi
+└─sda2   8:2    0   1.8T  0 part /
+
+
+lspci
+
+00:00.0 Host bridge: Intel Corporation 4th Gen Core Processor DRAM Controller (rev 06)
+00:01.0 PCI bridge: Intel Corporation Xeon E3-1200 v3/4th Gen Core Processor PCI Express x16 Controller (rev 06)
+00:14.0 USB controller: Intel Corporation 9 Series Chipset Family USB xHCI Controller
+00:16.0 Communication controller: Intel Corporation 9 Series Chipset Family ME Interface #1
+00:1a.0 USB controller: Intel Corporation 9 Series Chipset Family USB EHCI Controller #2
+00:1b.0 Audio device: Intel Corporation 9 Series Chipset Family HD Audio Controller
+00:1c.0 PCI bridge: Intel Corporation 9 Series Chipset Family PCI Express Root Port 1 (rev d0)
+00:1c.3 PCI bridge: Intel Corporation 9 Series Chipset Family PCI Express Root Port 4 (rev d0)
+00:1d.0 USB controller: Intel Corporation 9 Series Chipset Family USB EHCI Controller #1
+00:1f.0 ISA bridge: Intel Corporation Z97 Chipset LPC Controller
+00:1f.2 SATA controller: Intel Corporation 9 Series Chipset Family SATA Controller [AHCI Mode]
+00:1f.3 SMBus: Intel Corporation 9 Series Chipset Family SMBus Controller
+01:00.0 VGA compatible controller: NVIDIA Corporation GM107 [GeForce GTX 750] (rev a2)
+01:00.1 Audio device: NVIDIA Corporation GM107 High Definition Audio Controller [GeForce 940MX] (rev a1)
+03:00.0 Ethernet controller: Qualcomm Atheros Killer E220x Gigabit Ethernet Controller (rev 13)
+
+
+full system info
+
+Static hostname: U-Server
+       Icon name: computer-desktop
+         Chassis: desktop 🖥️
+      Machine ID: abfbf9290b114cd4a5eb269a416ec0d5
+         Boot ID: 7d1f9638fcf6424f94ae7face3ff6ca5
+Operating System: Ubuntu 24.04.4 LTS              
+          Kernel: Linux 6.17.0-35-generic
+    Architecture: x86-64
+ Hardware Vendor: MSI
+  Hardware Model: MS-7917
+Firmware Version: V1.8
+   Firmware Date: Thu 2014-11-06
+    Firmware Age: 11y 8month 4d      
