@@ -1,31 +1,27 @@
-# SSH Setup
+# SSH Setup Documentation
 
-## Purpose
+## SSH Overview
 
-SSH allows remote administration of the Ubuntu server without requiring a dedicated keyboard, mouse, or monitor.
-
-## Server
-
-Hostname:
+Server:
 - U-Server
 
-Operating System:
-- Ubuntu 24.04.4 LTS
+Purpose:
 
-## Connection
+SSH (Secure Shell) was configured to allow remote administration of the Ubuntu system without requiring a dedicated keyboard, mouse, and monitor.
 
-Protocol:
-- SSH
+Benefits:
 
-IP Address:
-- 192.168.1.100
+- Remote terminal access
+- Headless server operation
+- Easier administration from another computer
+- Development through remote tools
 
-User:
-- jonathon
 
-## Verification
+# SSH Installation
 
-Successful remote commands:
+The SSH service was installed on Ubuntu.
+
+Installation command:
 
 ```bash
-hostname
+sudo apt install openssh-server

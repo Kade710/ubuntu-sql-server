@@ -17,11 +17,21 @@ Architecture:
 Hardware Vendor:
 - MSI
 
-Motherboard:
-- MSI MS-7917
-- Intel Z97 Chipset
-- Firmware Version: V1.8
 
+# Motherboard
+
+Model:
+- MSI Z97 GAMING 5 (MS-7917)
+
+Chipset:
+- Intel Z97
+
+Version:
+- 1.0
+
+Firmware:
+- Version: V1.8
+- Release Date: 2014-11-06
 
 # Processor
 
@@ -55,19 +65,28 @@ Virtualization:
 # Memory
 
 Installed RAM:
-- 16 GiB
+- 16 GiB DDR3
 
-Available RAM:
-- 13 GiB
+Configuration:
+- 2 x 8GB DIMMs
+- Dual Channel
 
-Swap:
-- 4 GiB
+Memory Speed:
+- 1600 MT/s
+
+Modules:
+- G.Skill F3-12800CL10-8GBXL
+
+Maximum Supported:
+- 32 GB
+- 4 DIMM slots
 
 
 # Storage
 
 Primary Storage:
-- Capacity: 1.8 TB
+- Advertised Capacity: 2 TB
+- Linux Detected Capacity: 1.8 TB
 
 Partition Layout:
 
