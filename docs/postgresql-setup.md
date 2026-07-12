@@ -155,7 +155,7 @@ Speed:
 
 # Maintenance Logs Table
 
-The maintenance_logs table records administrative changes and configuration events performed on the server.
+The maintenance_logs table records administrative changes and system maintenance performed on the server.
 
 Table Relationship:
 
@@ -163,12 +163,13 @@ server_inventory:
 - Identifies the server
 
 maintenance_logs:
-- Stores configuration history and administrative actions
+- Stores configuration history and maintenance actions
+
 
 Current Maintenance Records:
 
 1. PostgreSQL Installation
-- Installed PostgreSQL 16.14 on Ubuntu 24.04.4 LTS
+- Installed PostgreSQL 16.14
 - Verified database service operation
 
 2. Database Configuration
@@ -179,6 +180,10 @@ Current Maintenance Records:
 3. SSH Configuration
 - Configured remote administration access
 - Verified access through Windows PowerShell and Visual Studio Code
+
+4. System Update
+- Updated Ubuntu packages
+- Verified PostgreSQL services remained operational
 
 ## Future Database Expansion
 
