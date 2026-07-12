@@ -17,7 +17,7 @@ pg_dump -U "$USER" -d "$DATABASE" -F c -f "$BACKUP_FILE"
 
 if [ $? -eq 0 ]; then
     echo "Backup completed successfully."
-    echo "Backup location: $Backup_FILE"
+    echo "Backup location: $BACKUP_FILE"
 else
     echo "Backup failed."
     exit 1
