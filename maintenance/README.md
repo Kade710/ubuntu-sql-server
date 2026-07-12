@@ -1,26 +1,8 @@
-
----
-
-# 4. `maintenance/README.md`
-
-**Purpose:**  
-Explain what this folder contains.
-
-This answers:
-
-> "Why does this folder exist?"
-
-Example:
-
-```markdown
 # Maintenance Documentation
-
 
 This directory contains operational documentation for U-Server.
 
-
 ## Files
-
 
 ### health_checks.md
 
@@ -31,7 +13,6 @@ Contains:
 - Network information
 - PostgreSQL service status
 
-
 ### maintenance_log.md
 
 Contains:
@@ -41,7 +22,6 @@ Contains:
 - Database changes
 - Automation updates
 
-
 ### update_schedule.md
 
 Contains:
@@ -49,9 +29,23 @@ Contains:
 - Planned maintenance intervals
 - Routine administration tasks
 
-
 ## Related Automation Scripts
 
-
 Located:
+scripts/
 
+Available:
+
+backup_database.sh
+restore_database.sh
+system_update.sh
+install_dependencies.sh
+
+## Purpose
+
+The maintenance directory provides documentation for:
+
+- System administration
+- Database administration
+- Server monitoring
+- Operational tracking
