@@ -23,3 +23,12 @@ Backup location:
 
 ```text
 ~/postgres-backups/
+
+
+# PostgreSQL Backup Documentation
+
+## Backup Command
+
+```bash
+pg_dump -U jonathon_admin -d ubuntu_sql_server -F c -f ~/postgres-backups/ubuntu_sql_server_backup.dump
+
