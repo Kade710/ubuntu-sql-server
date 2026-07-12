@@ -31,4 +31,16 @@ Backup location:
 
 ```bash
 pg_dump -U jonathon_admin -d ubuntu_sql_server -F c -f ~/postgres-backups/ubuntu_sql_server_backup.dump
+```
 
+# Recovery Testing
+
+## Restore Test Environment
+
+A temporary database was created to verify backup recovery.
+
+Test Database:
+
+```text
+ubuntu_sql_server_test
+```
