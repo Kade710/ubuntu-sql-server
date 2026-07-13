@@ -30,3 +30,4 @@ echo "Checking PostgreSQL service..."
 systemctl status postgresql@16-main --no-pager
 
 echo "System maintenance check completed."
+>>>>>>> 7b3d2cd (Complete database documentation and automation scripts)

@@ -34,3 +34,4 @@ else
     echo "Restore failed."
     exit 1
 fi
+>>>>>>> 7b3d2cd (Complete database documentation and automation scripts)
