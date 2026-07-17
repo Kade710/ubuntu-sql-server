@@ -28,15 +28,18 @@ secrets.txt
 temp/
 tmp/
 
-# Python (Future)
+# Python
 __pycache__/
+*.pyc
 .venv/
+venv/
+applications/python_client/venv/
 
-# Go (Future)
+# Go
 bin/
 
-# Rust (Future)
+# Rust
 target/
 
-# Node (Future)
-node_modules
+# Node
+node_modules/
