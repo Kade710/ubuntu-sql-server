@@ -39,5 +39,4 @@ bin/
 target/
 
 # Node (Future)
-node_modules/
-
+node_modules
