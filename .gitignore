@@ -41,5 +41,3 @@ target/
 # Node (Future)
 node_modules/
 
-# Python virtual environments
-applications/python_client/venv/
