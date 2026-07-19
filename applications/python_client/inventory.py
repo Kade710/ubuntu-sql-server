@@ -15,7 +15,7 @@ def get_servers():
             id,
             hostname,
             ip_address,
-            oopertaing_system,
+            opertaing_system,
             cpu,
             ram_gb,
             storage_gb,
