@@ -4,7 +4,7 @@
 # =====================================================
 
 from inventory import get_servers
-
+from hardware import get_hardware
 
 def main():
 
