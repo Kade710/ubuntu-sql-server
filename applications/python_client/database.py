@@ -33,7 +33,7 @@ def execute_query(query, params=None):
         with connection.cursor() as cursor:
             cursor.execute(query, params)
 
-            return cursor.fetchall
+            return cursor.fetchall()
         
     finally:
         connection.close()
