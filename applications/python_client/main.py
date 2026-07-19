@@ -24,5 +24,20 @@ def main():
         print(f"GPU: {server[7]}")
         print(f"Motherboard: {server[8]}")
 
+from hardware import get_hardware
+
+def main():
+
+    print()
+    print("Hardware Components")
+    print("  ")
+
+    hardware = get_hardware(server[0])
+
+    for component in hardware:
+        print(f"{component[0]}: {component[1]} {component[2]}")
+        print(f"Specs: {component[3]}")
+        print()
+
 if __name__ == "__main__":
     main()
