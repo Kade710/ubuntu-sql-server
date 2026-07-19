@@ -1,36 +1,28 @@
 # =====================================================
 # Ubuntu SQL Server
-# Python Client Test
+# Python Administrative Client 
 # =====================================================
 
-from database import get_connection
+from inventory import get_servers
 
 
 def main():
 
-    connection = get_connection()
+    print("Ubuntu SQL Server Management Console")
+    print(" ")
 
-    print("Connected to PostgreSQL successfully!")
-
-    connection.close()
-
-    servers = execute_query("""
-        SELECT
-            hostname,
-            ip_addess,
-            operating_system,
-            cpu,
-            ram_gb,
-            storage_gb,
-            gpu
-        FROM server_managment.server_inventory;
-    """)
-
-    print("\nServer Inventory:")
+    server = get_servers()
 
     for server in servers:
-        print(server)
-
-
+        print()
+        print(f"Hostname: {server[1]}")
+        print(f"IP Adress: {server[2]}")
+        print(f"OS: {server[3]}")
+        print(f"CPU: {server[4]}")
+        print(f"RAM: {server[5]}")
+        print(f"Storage: {server[6]}")
+        print(f"GPU: {server[7]}")
+        print(f"Motherboard: {server[8]}")
+        
 if __name__ == "__main__":
     main()
