@@ -21,3 +21,19 @@ def get_connection():
     )
 
     return connection
+
+def execute_query(query, params=None):
+    """
+    Executes a SELECT query and returns results.
+    """
+
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+
+            return cursor.fetchall
+        
+    finally:
+        connection.close()
