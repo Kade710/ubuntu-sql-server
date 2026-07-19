@@ -11,10 +11,10 @@ def main():
     print("Ubuntu SQL Server Management Console")
     print(" ")
 
-    server = get_servers()
+    servers = get_servers()
 
     for server in servers:
-        print()
+        print(server)
         print(f"Hostname: {server[1]}")
         print(f"IP Adress: {server[2]}")
         print(f"OS: {server[3]}")
@@ -23,6 +23,6 @@ def main():
         print(f"Storage: {server[6]}")
         print(f"GPU: {server[7]}")
         print(f"Motherboard: {server[8]}")
-        
+
 if __name__ == "__main__":
     main()
