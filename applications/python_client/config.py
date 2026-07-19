@@ -13,5 +13,5 @@ DATABASE_CONFIG = {
     "database": os.getenv("DB_NAME"),
     "user": os.getenv("DB_USER"),
     "password": os.getenv("DB_PASSORD"),
-    "port": int(os.getenv("DB_PORT, 5432"))
+    "port": int(os.getenv("DB_PORT", 5432))
 }
