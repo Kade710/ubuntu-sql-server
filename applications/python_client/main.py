@@ -5,6 +5,7 @@
 
 from inventory import get_servers
 from hardware import get_hardware
+from network import get_network_interfaces
 
 def main():
 
@@ -34,6 +35,19 @@ def main():
         for component in hardware:
             print(f"{component[0]}: {component[1]} {component[2]}")
             print(f"Specs: {component[3]}")
+            print()
+
+        print("Network Interfaces")
+        print ("  ")
+
+        interfaces = get_network_interfaces(server[0])
+
+        for interface in interfaces:
+            print(f"Interface: {interface[0]}")
+            print(f"IP Address: {interface[1]}")
+            print(f"MAC Address: {interface[2]}")
+            print(f"Type: {interface[3]}")
+            print(f"Speed: {interface[4]} Mbps")
             print()
 
 if __name__ == "__main__":
