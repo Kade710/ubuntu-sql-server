@@ -15,7 +15,7 @@ def get_maintenance_logs(server_id=1):
             action,
             performed_by,
             created_at
-        FROM server_management.maintenace_logs
+        FROM server_management.maintenance_logs
         WHERE server_iid = %s
         ORDER BY created_at DESC;
     """
