@@ -18,7 +18,7 @@ def main():
     for server in servers:
         print(server)
         print(f"Hostname: {server[1]}")
-        print(f"IP Adress: {server[2]}")
+        print(f"IP Address: {server[2]}")
         print(f"OS: {server[3]}")
         print(f"CPU: {server[4]}")
         print(f"RAM: {server[5]}")
