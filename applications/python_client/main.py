@@ -6,6 +6,7 @@
 from inventory import get_servers
 from hardware import get_hardware
 from network import get_network_interfaces
+from maintenance import get_maintenance_logs
 
 def main():
 
