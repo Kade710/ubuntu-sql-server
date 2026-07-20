@@ -48,7 +48,7 @@ def display_hardware():
 
     servers = get_servers()
 
-    for server in servers
+    for server in servers:
 
         print("-" * 60)
         print(f"Hardware Components for {server[1]}")
