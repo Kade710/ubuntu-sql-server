@@ -126,7 +126,7 @@ def main():
             print("\nReport generation coming soon.\n")
 
         elif choice == "0":
-            print("\nGoodbye!\n")
+            print("\nSee ya later!\n")
             break
 
         else:
