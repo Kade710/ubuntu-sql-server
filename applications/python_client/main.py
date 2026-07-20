@@ -67,7 +67,7 @@ def display_network():
 
     servers = get_servers()
 
-    for server in servers():
+    for server in servers:
 
         print("-" * 60)
         print(f"Network Interfaces for {server[1]}")
