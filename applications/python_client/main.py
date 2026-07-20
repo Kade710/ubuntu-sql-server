@@ -50,5 +50,17 @@ def main():
             print(f"Speed: {interface[4]} Mbps")
             print()
 
+        print()
+        print("Maintenance Logs")
+        print("  ")
+
+        logs = get_maintenance_logs(server[0])
+
+        for log in logs:
+            print(f"Action: {log[0]}")
+            print(f"Performed By: {log[1]}")
+            print(f"Date: {log[2]}")
+            print()
+
 if __name__ == "__main__":
     main()
