@@ -124,7 +124,7 @@ def main():
             display_maintenance()
 
         elif choice == "5":
-            print()
+            generate_reports()
 
         elif choice == "0":
             print("\nSee ya later!\n")
