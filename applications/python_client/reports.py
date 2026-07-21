@@ -15,13 +15,13 @@ def generate_reports():
 
     servers = get_servers()
 
-    filename + f"server_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    filename = f"server_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
     with open(filename, "w") as report:
 
-        reports.write("=" * 60 "\n")
-        reports.write("Ubuntu SQL Server Report\n")
-        reports.write("=" * 60 "\n\n")
+        report.write("=" * 60 + "\n")
+        report.write("Ubuntu SQL Server Report\n")
+        report.write("=" * 60 + "\n\n")
 
         for server in servers:
 
