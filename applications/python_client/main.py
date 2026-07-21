@@ -7,6 +7,7 @@ from inventory import get_servers
 from hardware import get_hardware
 from network import get_network_interfaces
 from maintenance import get_maintenance_logs
+from reports import generate_reports
 
 def menu():
     """Displays the main menu."""
@@ -123,7 +124,7 @@ def main():
             display_maintenance()
 
         elif choice == "5":
-            print("\nReport generation coming soon.\n")
+            print()
 
         elif choice == "0":
             print("\nSee ya later!\n")
