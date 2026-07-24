@@ -50,4 +50,11 @@ func showSystemInfo() {
 
     fmt.Println("OperatingSystem:", system.OperatingSystem())
     fmt.Println("Architecture:", system.Architecture())
+
+    memoryGB, err := system.TotalMemoryGB()
+    if err != nil {
+        fmt.Println("Memory:", err)
+    } else {
+        fmt.Printf("Total Memory: %.2f GB\n", memoryGB)
+    }
 }
