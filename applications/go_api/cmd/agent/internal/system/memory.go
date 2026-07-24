@@ -1,35 +1,44 @@
 package system
 
 import (
-    "bufio"
-    "os"
-    "strconv"
-    "strings"
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func TotalMemoryGB() (float64, error) {
-    file, err := os.Open("/proc/meminfo")
-    if err != nil {
-        return 0, err
-    }
-    defer file.Close()
+	file, err := os.Open("/proc/meminfo")
+	if err != nil {
+		return 0, err
+	}
+	defer file.Close()
 
-    scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(file)
 
-    for scanner.Scan () {
-        line := scanner.Text()
+	for scanner.Scan() {
+		line := scanner.Text()
 
-        if stringsHasPrefix(line, "MemTotal:") {
-            fields := string.Fields(line)
+		if strings.HasPrefix(line, "MemTotal:") {
+			fields := strings.Fields(line)
 
-            totalKB, err := strconv.ParseFloat(fields[1], 64)
-            if err != nil {
-                return 0, err
-            }
+			if len(fields) < 2 {
+				return 0, fmt.Errorf("invalid MemTotal entry")
+			}
 
-            return
-        }
-    }
+			totalKB, err := strconv.ParseFloat(fields[1], 64)
+			if err != nil {
+				return 0, err
+			}
 
-    return 0, scanner.Err()
+			return totalKB / 1024 / 1024, nil
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return 0, err
+	}
+
+	return 0, fmt.Errorf("MemTotal not found")
 }
