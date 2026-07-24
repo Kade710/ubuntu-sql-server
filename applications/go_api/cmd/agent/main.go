@@ -1,14 +1,44 @@
 package main
 
 import (
+    "bufio"
     "fmt"
+    "os"
+    "strings"
+
     "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
 )
 
 func main() {
-    fmt.Println("---------------------------")
-    fmt.Println(" Ubuntu SQL Server Go Agent")
-    fmt.Println("---------------------------")
+    reader := bufio.NewReader(os.Stdin)
+
+    for {
+        fmt.Println("---------------------------")
+        fmt.Println(" Ubuntu SQL Server Go Agent")
+        fmt.Println("---------------------------")
+        fmt.Println("1. Show System Information")
+        fmt.Println("0. exit")
+        fmt.Println("\nSelect an option")
+
+        choice, _ := reader.ReadString('\n')
+        choice = strings.TrimSpace(choice)
+
+        switch choice{
+
+        case "1":
+            showSystemInfo()
+
+        case "0":
+            fmt.Println("\nSee Ya!")
+            return
+
+        default:
+            fmt.Println("\nTry Again!")
+        }
+    }
+}
+
+func showSystemInfo() {
     fmt.Println()
 
     hostname, err := system.Hostname()
@@ -20,7 +50,4 @@ func main() {
 
     fmt.Println("OperatingSystem:", system.OperatingSystem())
     fmt.Println("Architecture:", system.Architecture())
-    fmt.Println()
-    fmt.Println("Status : Placeholder")
-    fmt.Println("Version: 0.1.0")
 }
