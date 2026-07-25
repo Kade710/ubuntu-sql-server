@@ -72,7 +72,7 @@ func showSystemInfo() {
 
 func showDatabaseConfig() {
 	fmt.Println("\nDatabase Configuration")
-	fmt.Println("----------------------")
+	fmt.Println("---")
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -85,25 +85,4 @@ func showDatabaseConfig() {
 	fmt.Println("Database name:", cfg.DBName)
 	fmt.Println("Database user:", cfg.DBUser)
 	fmt.Println("Database password: configured")
-}
-
-func testDatabaseConnection() {
-	fmt.Println()
-	fmt.Println("Database Connection Test")
-	fmt.Println("---")
-
-	cfg, err := config.Load()
-	if err != nil {
-		fmt.Println("Configuration error:", err)
-		return
-	}
-
-	db, err := database.Connect(cfg)
-	if err != nil {
-		fmt.Println("Connection failed:", err)
-		return
-	}
-	defer db.Close()
-
-	fmt.Println("PostgreSQL connection successful")
 }
