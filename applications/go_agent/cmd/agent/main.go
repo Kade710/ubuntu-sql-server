@@ -18,6 +18,7 @@ func main() {
 		fmt.Println(" Ubuntu SQL Server Go Agent")
 		fmt.Println("---------------------------")
 		fmt.Println("1. Show System Information")
+		fmt.Println("2. Show Database Configuration")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -28,6 +29,9 @@ func main() {
 
 		case "1":
 			showSystemInfo()
+
+		case "2":
+			showDatabaseConfig()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
