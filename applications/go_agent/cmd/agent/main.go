@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
 )
 
@@ -19,6 +20,7 @@ func main() {
 		fmt.Println("---------------------------")
 		fmt.Println("1. Show System Information")
 		fmt.Println("2. Show Database Configuration")
+		fmt.Println("3. Test Database Connection")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -32,6 +34,9 @@ func main() {
 
 		case "2":
 			showDatabaseConfig()
+
+		case "3":
+			testDatabaseConnection()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -80,4 +85,25 @@ func showDatabaseConfig() {
 	fmt.Println("Database name:", cfg.DBName)
 	fmt.Println("Database user:", cfg.DBUser)
 	fmt.Println("Database password: configured")
+}
+
+func testDatabaseConnection() {
+	fmt.Println()
+	fmt.Println("Database Connection Test")
+	fmt.Println("---")
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println("Configuration error:", err)
+		return
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		fmt.Println("Connection failed:", err)
+		return
+	}
+	defer db.Close()
+
+	fmt.Println("PostgreSQL connection successful")
 }
