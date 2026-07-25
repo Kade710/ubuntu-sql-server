@@ -43,3 +43,4 @@ target/
 
 # Node
 node_modules/
+server_report_*.txt
