@@ -86,3 +86,23 @@ func showDatabaseConfig() {
 	fmt.Println("Database user:", cfg.DBUser)
 	fmt.Println("Database password: configured")
 }
+
+func testDatabaseConnection() {
+	fmt.Println("\nDatabase Connection Test")
+	fmt.Println("---")
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println("Connection Failed:", err)
+		return
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		fmt.Println("Connection Failed:", err)
+		return
+	}
+	defer db.Close()
+
+	fmt.Println("PostgreSQl connection successful.")
+}
