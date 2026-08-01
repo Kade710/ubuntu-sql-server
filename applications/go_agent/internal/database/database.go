@@ -45,7 +45,11 @@ func Connect(cfg config.Config) (*sql.DB, error) {
 // RegisterServer inserts a new server or updates the existing hostname record.
 func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 	const query = `
+<<<<<<< Updated upstream
 		INSERT INTO server_management.server_inventory (
+=======
+		INSERT INTO server_management.server_inventorry (
+>>>>>>> Stashed changes
 			hostname,
 			ip_address,
 			operating_system,

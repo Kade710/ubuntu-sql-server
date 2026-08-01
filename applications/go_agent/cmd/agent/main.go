@@ -8,8 +8,8 @@ import (
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
-	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
 )
 
 func main() {
