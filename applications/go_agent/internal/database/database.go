@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -43,8 +44,8 @@ func Connect(cfg config.Config) (*sql.DB, error) {
 
 // RegisterServer inserts a new server or updates the existing hostname record.
 func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
-	const query  = `
-		INSERT INTO server_management.server_inventorry (
+	const query = `
+		INSERT INTO server_management.server_inventory (
 			hostname,
 			ip_address,
 			operating_system,
@@ -53,8 +54,9 @@ func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 		VALUES ($1, $2, $3, $4)
 		ON CONFLICT (hostname)
 		DO UPDATE SET
-			ip_address = EXCLUDED.operating.system,
-			ram_gb = EXCLUDED.ramgb
+			ip_address = EXCLUDED.ip_address,
+			operating_system = EXCLUDED.operating_system,
+			ram_gb = EXCLUDED.ram_gb
 		RETURNING id
 	`
 
@@ -69,7 +71,7 @@ func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 	).Scan(&serverID)
 
 	if err != nil {
-		return 0, fmt.Errorf("register server %w", err)
+		return 0, fmt.Errorf("register server: %w", err)
 	}
 
 	return serverID, nil

@@ -12,29 +12,29 @@ import (
 
 // Server contains the inventory collected by the Go agent.
 type Server struct {
-	Hostname		string
-	IPAdress		string
+	Hostname        string
+	IPAddress       string
 	OperatingSystem string
-	RAMGB			int
+	RAMGB           int
 }
 
 // Collect gathers basic inventory information from the server.
 func Collect() (Server, error) {
-	hostnamae, err := system.Hostname()
+	hostname, err := system.Hostname()
 	if err != nil {
 		return Server{}, err
 	}
 
 	memoryGB, err := system.TotalMemoryGB()
-	if err != nil{
+	if err != nil {
 		return Server{}, err
 	}
 
 	return Server{
-		Hostname:		 hostname,
-		IPAddress:		 primaryIPv4(),
+		Hostname:        hostname,
+		IPAddress:       primaryIPv4(),
 		OperatingSystem: prettyOperatingSystem(),
-		RAMGB:			 int(memoryGB + 0.5)
+		RAMGB:           int(memoryGB + 0.5),
 	}, nil
 }
 
@@ -66,8 +66,9 @@ func primaryIPv4() string {
 	}
 
 	var fallback string
+
 	for _, iface := range interfaces {
-		if iface.Flags&net.Flagup == 0 || iface.Flags&net.FlagLoopback != 0 {
+		if iface.Flags&net.FlagUp == 0 || iface.Flags&net.FlagLoopback != 0 {
 			continue
 		}
 
@@ -87,7 +88,7 @@ func primaryIPv4() string {
 			}
 
 			ip = ip.To4()
-			if ip == nil || ip.IsLooback() {
+			if ip == nil || ip.IsLoopback() {
 				continue
 			}
 
