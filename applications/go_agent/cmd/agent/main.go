@@ -9,6 +9,7 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 )
 
 func main() {
@@ -21,6 +22,7 @@ func main() {
 		fmt.Println("1. Show System Information")
 		fmt.Println("2. Show Database Configuration")
 		fmt.Println("3. Test Database Connection")
+		fmt.Println("4. Register Server Inventory")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -37,6 +39,9 @@ func main() {
 
 		case "3":
 			testDatabaseConnection()
+
+		case "4":
+			registerServerInventory()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -105,4 +110,41 @@ func testDatabaseConnection() {
 	defer db.Close()
 
 	fmt.Println("PostgreSQl connection successful.")
+}
+
+func registerServerInventory() {
+	fmt.Println("\nRegister Server Inventory")
+	fmt.Println("---")
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println("Configuation error:", err)
+		return
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		fmt.Println("Inventory collection failed:", err)
+		return
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		fmt.Println("Connection failed:", err)
+		return
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		fmt.Println("Database update failed:", err)
+		return
+	}
+
+	fmt.Println("Server inventory updated successfully.")
+	fmt.Println("Server ID:", serverID)
+	fmt.Println("Hostname:", serverInfo.Hostname)
+	fmt.Println("IP Address:", serverInfo.IPAddress)
+	fmt.Println("Operating System:", serverInfo.OperatingSystem)
+	fmt.Println("RAM:", serverInfo.RAMGB, "GB")
 }

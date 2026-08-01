@@ -40,3 +40,37 @@ func Connect(cfg config.Config) (*sql.DB, error) {
 
 	return db, nil
 }
+
+// RegisterServer inserts a new server or updates the existing hostname record.
+func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
+	const query  = `
+		INSERT INTO server_management.server_inventorry (
+			hostname,
+			ip_address,
+			operating_system,
+			ram_gb
+		)
+		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (hostname)
+		DO UPDATE SET
+			ip_address = EXCLUDED.operating.system,
+			ram_gb = EXCLUDED.ramgb
+		RETURNING id
+	`
+
+	var serverID int
+
+	err := db.QueryRow(
+		query,
+		server.Hostname,
+		server.IPAddress,
+		server.OperatingSystem,
+		server.RAMGB,
+	).Scan(&serverID)
+
+	if err != nil {
+		return 0, fmt.Errorf("register server %w", err)
+	}
+
+	return serverID, nil
+}
