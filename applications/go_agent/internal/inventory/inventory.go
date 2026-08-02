@@ -18,9 +18,9 @@ type Server struct {
 	OperatingSystem string
 	RAMGB           int
 
-	CPU			string
-	StorageGB	int
-	GPU			string
+	CPU         string
+	StorageGB   int
+	GPU         string
 	Motherboard string
 }
 
@@ -44,9 +44,9 @@ func Collect() (Server, error) {
 		OperatingSystem: prettyOperatingSystem(),
 		RAMGB:           int(memoryGB + 0.5),
 
-		CPU:		 hw.CPU,
-		StorageGB:	 hw.StorageGB,
-		GPU:		 hw.GPU,
+		CPU:         hw.CPU,
+		StorageGB:   hw.StorageGB,
+		GPU:         hw.GPU,
 		Motherboard: hw.Motherboard,
 	}, nil
 }

@@ -1,6 +1,5 @@
 package hardware
 
-
 import (
 	"bufio"
 	"fmt"
