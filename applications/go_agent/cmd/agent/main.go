@@ -147,4 +147,8 @@ func registerServerInventory() {
 	fmt.Println("IP Address:", serverInfo.IPAddress)
 	fmt.Println("Operating System:", serverInfo.OperatingSystem)
 	fmt.Println("RAM:", serverInfo.RAMGB, "GB")
+	fmt.Println("CPU:", serverInfo.CPU)
+	fmt.Println("Storage:", serverInfo.StorageGB, "GB")
+	fmt.Println("GPU:", serverInfo.GPU)
+	fmt.Println("Motherboard:", serverInfo.Motherboard)
 }
