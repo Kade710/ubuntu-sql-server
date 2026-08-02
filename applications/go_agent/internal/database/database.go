@@ -45,21 +45,26 @@ func Connect(cfg config.Config) (*sql.DB, error) {
 // RegisterServer inserts a new server or updates the existing hostname record.
 func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 	const query = `
-	    INSERT INTO server_management.server_inventory (
+		INSERT INTO server_management.server_inventory (
 			hostname,
 			ip_address,
 			operating_system,
+			cpu,
 			ram_gb,
 			storage_gb,
 			gpu,
 			motherboard
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		ON CONFLICT (hostname)
 		DO UPDATE SET
 			ip_address = EXCLUDED.ip_address,
 			operating_system = EXCLUDED.operating_system,
-			ram_gb = EXCLUDED.ram_gb
+			cpu = EXCLUDED.cpu,
+			ram_gb = EXCLUDED.ram_gb,
+			storage_gb = EXCLUDED.storage_gb,
+			gpu = EXCLUDED.gpu,
+			motherboard = EXCLUDED.motherboard
 		RETURNING id
 	`
 
