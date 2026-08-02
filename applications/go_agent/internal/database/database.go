@@ -11,6 +11,8 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 	_ "github.com/jackc/pgx/v5/stdlib"
+
+	agentnetwork "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 )
 
 // Connect opens and verifies a PostgreSQL database connection.
@@ -87,4 +89,56 @@ func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 	}
 
 	return serverID, nil
+}
+
+// UpsertNetworkInterfaces inserts or updates network interface records.
+func UpsertNetworkInterfaces(
+	db *sql.DB,
+	serverID int,
+	interfaces []agentnetwork.Interface,
+) error {
+	const query = `
+		INSERT INTO server_management.network_interfaces (
+			server_id,
+			interface_name,
+			mac_address,
+			ip_address,
+			network_type,
+			speed_mbps
+		)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		ON CONFLICT (server_id, interface_name)
+		DO UPDATE SET
+			mac_address = EXCLUDED.mac_address,
+			ip_address = EXCLUDED.ip_address,
+			network_type = ECLUDED.network_type,
+			speed_mbps = EXCLUDED.speed_mbps
+	`
+
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("begin network transaction: %w", err)
+	}
+
+	defer tx.Rollback()
+
+	for _, iface := range interfaces {
+		_, err := tx.Exec(
+			query,
+			serverID,
+			iface.Name,
+			iface.MACAddress,
+			iface.IPAddress,
+			iface.NetworkType,
+			iface.SpeedMbps,
+		)
+		if err != nil {
+			return fmt.Errorf("commit network transaction: %w", err)
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit network transaction: %w", err)
+	}
+
+	return nil
 }
