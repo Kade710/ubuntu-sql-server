@@ -11,23 +11,23 @@ import (
 
 // Info contains hardware details collected from the server.
 type Info struct {
-	CPU			string
-	StorageGB	int
-	GPU			string
+	CPU         string
+	StorageGB   int
+	GPU         string
 	Motherboard string
 }
 
-// Collect gathers hardware information ffrom the local Linux server.
+// Collect gathers hardware information from the local Linux server.
 func Collect() Info {
-	return Info {
-		CPU:		 CPUModel(),
-		StorageDB:	 TotalStorageGB(),
-		GPU:		 GPUModel(),
+	return Info{
+		CPU:         CPUModel(),
+		StorageGB:   TotalStorageGB(),
+		GPU:         GPUModel(),
 		Motherboard: MotherboardModel(),
 	}
 }
 
-//CPUModel reads the first CPU model name from /proc/cpuinfo.
+// CPUModel reads the first CPU model name from /proc/cpuinfo.
 func CPUModel() string {
 	file, err := os.Open("/proc/cpuinfo")
 	if err != nil {
@@ -51,9 +51,9 @@ func CPUModel() string {
 	return ""
 }
 
-//TotalStorageGB sums the size of physical disks reported by lsblk.
+// TotalStorageGB sums the size of physical disks reported by lsblk.
 func TotalStorageGB() int {
-	output,err := exec.Command(
+	output, err := exec.Command(
 		"lsblk",
 		"-b",
 		"-d",
@@ -88,7 +88,7 @@ func TotalStorageGB() int {
 	return int((totalBytes + bytesPerGB/2) / bytesPerGB)
 }
 
-//GPUModel returns the first VGA or 3D controller found by lspci
+// GPUModel returns the first VGA or 3D controller found by lspci.
 func GPUModel() string {
 	output, err := exec.Command("lspci").Output()
 	if err != nil {
@@ -105,31 +105,31 @@ func GPUModel() string {
 			parts := strings.SplitN(line, ": ", 2)
 			if len(parts) == 2 {
 				return strings.TrimSpace(parts[1])
-			}	
+			}
 
 			return strings.TrimSpace(line)
 		}
 	}
- 
+
 	return ""
 }
 
-//MotherboardModel reads motherboard information from DMI fiiles.
+// MotherboardModel reads motherboard information from Linux DMI files.
 func MotherboardModel() string {
 	vendor := readTrimmedFile("/sys/devices/virtual/dmi/id/board_vendor")
 	name := readTrimmedFile("/sys/devices/virtual/dmi/id/board_name")
 
 	switch {
 	case vendor != "" && name != "":
-		return fmt.Sprintd("%s %s", vendor, name)
-	case name != "",
+		return fmt.Sprintf("%s %s", vendor, name)
+	case name != "":
 		return name
 	default:
 		return vendor
 	}
 }
 
-func readTrimFile(path string) string {
+func readTrimmedFile(path string) string {
 	value, err := os.ReadFile(path)
 	if err != nil {
 		return ""
