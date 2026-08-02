@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/hardware"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
 )
 
@@ -16,6 +17,11 @@ type Server struct {
 	IPAddress       string
 	OperatingSystem string
 	RAMGB           int
+
+	CPU			string
+	StorageGB	int
+	GPU			string
+	Motherboard string
 }
 
 // Collect gathers basic inventory information from the server.
@@ -30,11 +36,18 @@ func Collect() (Server, error) {
 		return Server{}, err
 	}
 
+	hw := hardware.Collect()
+
 	return Server{
 		Hostname:        hostname,
 		IPAddress:       primaryIPv4(),
 		OperatingSystem: prettyOperatingSystem(),
 		RAMGB:           int(memoryGB + 0.5),
+
+		CPU:		 hw.CPU,
+		StorageGB:	 hw.StorageGB,
+		GPU:		 hw.GPU,
+		Motherboard: hw.Motherboard,
 	}, nil
 }
 

@@ -49,7 +49,10 @@ func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 			hostname,
 			ip_address,
 			operating_system,
-			ram_gb
+			ram_gb,
+			storage_gb,
+			gpu,
+			motherboard
 		)
 		VALUES ($1, $2, $3, $4)
 		ON CONFLICT (hostname)
@@ -67,7 +70,11 @@ func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 		server.Hostname,
 		server.IPAddress,
 		server.OperatingSystem,
+		server.CPU,
 		server.RAMGB,
+		server.StorageGB,
+		server.GPU,
+		server.Motherboard,
 	).Scan(&serverID)
 
 	if err != nil {
