@@ -54,7 +54,7 @@ func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 			gpu,
 			motherboard
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT (hostname)
 		DO UPDATE SET
 			ip_address = EXCLUDED.ip_address,
