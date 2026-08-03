@@ -111,7 +111,7 @@ func UpsertNetworkInterfaces(
 		DO UPDATE SET
 			mac_address = EXCLUDED.mac_address,
 			ip_address = EXCLUDED.ip_address,
-			network_type = ECLUDED.network_type,
+			network_type = EXCLUDED.network_type,
 			speed_mbps = EXCLUDED.speed_mbps
 	`
 
