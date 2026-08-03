@@ -32,7 +32,6 @@ func main() {
 		choice = strings.TrimSpace(choice)
 
 		switch choice {
-
 		case "1":
 			showSystemInfo()
 
@@ -46,7 +45,7 @@ func main() {
 			registerServerInventory()
 
 		case "5":
-			registerNetworkInterface()
+			registerNetworkInterfaces()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -69,7 +68,7 @@ func showSystemInfo() {
 		fmt.Println("Hostname:", hostname)
 	}
 
-	fmt.Println("OperatingSystem:", system.OperatingSystem())
+	fmt.Println("Operating System:", system.OperatingSystem())
 	fmt.Println("Architecture:", system.Architecture())
 
 	memoryGB, err := system.TotalMemoryGB()
@@ -103,18 +102,18 @@ func testDatabaseConnection() {
 
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println("Connection Failed:", err)
+		fmt.Println("Connection failed:", err)
 		return
 	}
 
 	db, err := database.Connect(cfg)
 	if err != nil {
-		fmt.Println("Connection Failed:", err)
+		fmt.Println("Connection failed:", err)
 		return
 	}
 	defer db.Close()
 
-	fmt.Println("PostgreSQl connection successful.")
+	fmt.Println("PostgreSQL connection successful.")
 }
 
 func registerServerInventory() {
@@ -123,7 +122,7 @@ func registerServerInventory() {
 
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println("Configuation error:", err)
+		fmt.Println("Configuration error:", err)
 		return
 	}
 
@@ -164,7 +163,7 @@ func registerNetworkInterfaces() {
 
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Prntln("Configuration error:", err)
+		fmt.Println("Configuration error:", err)
 		return
 	}
 
@@ -176,11 +175,11 @@ func registerNetworkInterfaces() {
 
 	interfaces, err := network.Collect()
 	if err != nil {
-		fmt.Println("network connection failed:", err)
+		fmt.Println("Network collection failed:", err)
 		return
 	}
 
-	db, err := database.Connect()
+	db, err := database.Connect(cfg)
 	if err != nil {
 		fmt.Println("Connection failed:", err)
 		return
@@ -193,7 +192,7 @@ func registerNetworkInterfaces() {
 		return
 	}
 
-	if err := database.UpsertNetworkInterfaces(db, serverID, interfaces); err !=nil {
+	if err := database.UpsertNetworkInterfaces(db, serverID, interfaces); err != nil {
 		fmt.Println("Network update failed:", err)
 		return
 	}
@@ -202,9 +201,9 @@ func registerNetworkInterfaces() {
 
 	for _, iface := range interfaces {
 		fmt.Println()
-		fmt.Println("Interfaces:", iface.Name)
+		fmt.Println("Interface:", iface.Name)
 		fmt.Println("MAC Address:", iface.MACAddress)
-		fmt.Println("Ip Address:", iface.IPAddress)
+		fmt.Println("IP Address:", iface.IPAddress)
 		fmt.Println("Network Type:", iface.NetworkType)
 		fmt.Println("Speed:", iface.SpeedMbps, "Mbps")
 	}
