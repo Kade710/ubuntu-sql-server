@@ -9,6 +9,7 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
 )
 
@@ -23,6 +24,7 @@ func main() {
 		fmt.Println("2. Show Database Configuration")
 		fmt.Println("3. Test Database Connection")
 		fmt.Println("4. Register Server Inventory")
+		fmt.Println("5. Register Network Interfaces")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -42,6 +44,9 @@ func main() {
 
 		case "4":
 			registerServerInventory()
+
+		case "5":
+			registerNetworkInterface()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -151,4 +156,56 @@ func registerServerInventory() {
 	fmt.Println("Storage:", serverInfo.StorageGB, "GB")
 	fmt.Println("GPU:", serverInfo.GPU)
 	fmt.Println("Motherboard:", serverInfo.Motherboard)
+}
+
+func registerNetworkInterfaces() {
+	fmt.Println("\nRegister Network Interfaces")
+	fmt.Println("---")
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Prntln("Configuration error:", err)
+		return
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		fmt.Println("Inventory collection failed:", err)
+		return
+	}
+
+	interfaces, err := network.Collect()
+	if err != nil {
+		fmt.Println("network connection failed:", err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		fmt.Println("Connection failed:", err)
+		return
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		fmt.Println("Server registration failed:", err)
+		return
+	}
+
+	if err := database.UpsertNetworkInterfaces(db, serverID, interfaces); err !=nil {
+		fmt.Println("Network update failed:", err)
+		return
+	}
+
+	fmt.Println("Network interfaces updated successfully.")
+
+	for _, iface := range interfaces {
+		fmt.Println()
+		fmt.Println("Interfaces:", iface.Name)
+		fmt.Println("MAC Address:", iface.MACAddress)
+		fmt.Println("Ip Address:", iface.IPAddress)
+		fmt.Println("Network Type:", iface.NetworkType)
+		fmt.Println("Speed:", iface.SpeedMbps, "Mbps")
+	}
 }
