@@ -11,21 +11,21 @@ import (
 
 // Interface contains network information collected from Linux.
 type Interface struct {
-	Name		string
-	MACAddress	string
-	IPAddress	string
+	Name        string
+	MACAddress  string
+	IPAddress   string
 	NetworkType string
-	SpeedMbps	int
+	SpeedMbps   int
 }
 
-//Collect gathers active network interfaces with IPv4 addresses.
+// Collect gathers active network interfaces with IPv4 addresses.
 func Collect() ([]Interface, error) {
 	systemInterfaces, err := net.Interfaces()
 	if err != nil {
-		return nill, fmt.Errorf("list network interfaces: %w", err)
+		return nil, fmt.Errorf("list network interfaces: %w", err)
 	}
 
-	var collected {}Interface
+	var collected []Interface
 
 	for _, iface := range systemInterfaces {
 		if iface.Flags&net.FlagUp == 0 || iface.Flags&net.FlagLoopback != 0 {
@@ -38,18 +38,18 @@ func Collect() ([]Interface, error) {
 		}
 
 		collected = append(collected, Interface{
-			Name:		 iface.Name,
-			MACAddress:	 iface.HardwareAddr.String(),
-			IPAddress:	 ipAddress,
+			Name:        iface.Name,
+			MACAddress:  iface.HardwareAddr.String(),
+			IPAddress:   ipAddress,
 			NetworkType: interfaceType(iface.Name),
-			SpeedMbps:	 interfaceSpeed(iface.Name),
+			SpeedMbps:   interfaceSpeed(iface.Name),
 		})
 	}
 
 	return collected, nil
 }
 
-func ipv4Address (iface net.Interface) string {
+func ipv4Address(iface net.Interface) string {
 	addresses, err := iface.Addrs()
 	if err != nil {
 		return ""
@@ -85,10 +85,15 @@ func interfaceType(name string) string {
 }
 
 func interfaceSpeed(name string) int {
-	speedPath := filePath.Join("/sys/class/net", name, "speed")
+	speedPath := filepath.Join("/sys/class/net", name, "speed")
 
 	value, err := os.ReadFile(speedPath)
 	if err != nil {
+		return 0
+	}
+
+	speed, err := strconv.Atoi(strings.TrimSpace(string(value)))
+	if err != nil || speed < 0 {
 		return 0
 	}
 
