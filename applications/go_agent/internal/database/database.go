@@ -13,6 +13,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
 	agentnetwork "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 )
 
@@ -175,4 +176,45 @@ func AddMaintenanceLog(
 	}
 
 	return logID, nil
+}
+
+func UpsertOperatingSystem(
+	db *sql.DB,
+	serverID int,
+	info osinfo.Info,
+) (int, error) {
+	const query = `
+		INSERT INTO server_management.operating_systems (
+			server_id,
+			distribution,
+			version,
+			kernel,
+			architecture
+		)
+		VALUES ($1, $2, $3, $4, $5)
+		ON CONFLICT (server_id)
+		DO UPDATE SET
+			distribution = EXCLUDED.distribution,
+			version = EXCLUDED.version,
+			kernel = EXCLUDED.kernel,
+			architecture = EXCLUDED.architecture
+		RETURNING id
+	`
+
+	var osID int
+
+	err := db.QueryRow(
+		query,
+		serverID,
+		info.Distribution,
+		info.Version,
+		info.Kernel,
+		info.Architecture,
+	).Scan(&osID)
+
+	if err != nil {
+		return 0, fmt.Errorf("upsert operating system: %w", err)
+	}
+
+	return osID, nil
 }

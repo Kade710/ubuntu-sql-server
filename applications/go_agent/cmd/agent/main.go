@@ -12,6 +12,7 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
 )
 
 func main() {
@@ -27,6 +28,7 @@ func main() {
 		fmt.Println("4. Register Server Inventory")
 		fmt.Println("5. Register Network Interfaces")
 		fmt.Println("6. Add Maintenance Log")
+		fmt.Println("7. Register Operating System")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -51,6 +53,9 @@ func main() {
 
 		case "6":
 			addMaintenanceLog(reader)
+
+		case "7":
+			registerOperatingSystem()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -288,4 +293,54 @@ func readRequiredInput(reader *bufio.Reader, prompt string) string {
 
 		fmt.Println("This field is required.")
 	}
+}
+
+func registerOperatingSystem() {
+	fmt.Println("\nRegister Operating System")
+	fmt.Println("---")
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println("Configuration error:", err)
+		return
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		fmt.Println("Inventory collection failed:", err)
+		return
+	}
+
+	osDetails := osinfo.Collect()
+
+	db, err := database.Connect(cfg)
+	if err != nile {
+		fmt.Println("Connection failed:", err)
+		return
+	}
+	defer db.Close()
+
+	serverID, err := databse.RegisterServer(db, serverInfo)
+	if err != nil {
+		fmt.Println("Server registration failed", err)
+		return
+	}
+
+	osID, err := database.UpsertOperatingSystem(
+		db,
+		serverID,
+		osDetails,
+	)
+	if err != nil {
+		fmt.Println("Operating system update failed:", err)
+		return
+	}
+
+	fmt.Println("Operating system updated successfully.")
+	fmt.Println("OS ID:", osID)
+	fmt.Println("Server ID:", serverID)
+	fmt.Println("Distribution:", osDetails.Distribution)
+	fmt.Println("Version:", osDetails.Version)
+	fmt.Println("Kernel:", osDetails.Kernel)
+	fmt.Println("Architecture:", osDetails.Architecture)
 }
