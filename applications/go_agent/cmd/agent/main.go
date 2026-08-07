@@ -314,13 +314,13 @@ func registerOperatingSystem() {
 	osDetails := osinfo.Collect()
 
 	db, err := database.Connect(cfg)
-	if err != nile {
+	if err != nil {
 		fmt.Println("Connection failed:", err)
 		return
 	}
 	defer db.Close()
 
-	serverID, err := databse.RegisterServer(db, serverInfo)
+	serverID, err := database.RegisterServer(db, serverInfo)
 	if err != nil {
 		fmt.Println("Server registration failed", err)
 		return
