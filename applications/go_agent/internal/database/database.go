@@ -13,8 +13,8 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
-	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
 	agentnetwork "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
 )
 
 // Connect opens and verifies a PostgreSQL database connection.
