@@ -50,7 +50,7 @@ func main() {
 			registerNetworkInterfaces()
 
 		case "6":
-			registerMaintenanceLog(reader)
+			addMaintenanceLog(reader)
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -262,13 +262,13 @@ func addMaintenanceLog(reader *bufio.Reader) {
 	fmt.Println()
 	fmt.Println("Maintenance log saved successfully.")
 	fmt.Println("Log ID:", logID)
-	fmt.Println("ServerID:", serverID)
+	fmt.Println("Server ID:", serverID)
 	fmt.Println("Action:", logEntry.Action)
 	fmt.Println("Description:", logEntry.Description)
 	fmt.Println("Performed by:", logEntry.PerformedBy)
 }
 
-func readInput(reader *bufio.Reader, promote string) string {
+func readInput(reader *bufio.Reader, prompt string) string {
 	fmt.Print(prompt)
 
 	value, err := reader.ReadString('\n')
