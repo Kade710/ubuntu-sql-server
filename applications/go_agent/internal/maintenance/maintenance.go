@@ -5,5 +5,5 @@ type Log struct {
 
 	Action      string
 	Description string
-	Perfomance  string
+	PerformedBy  string
 }
