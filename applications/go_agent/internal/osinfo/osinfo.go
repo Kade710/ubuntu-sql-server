@@ -65,7 +65,7 @@ func kernelVersion() string {
     var uname syscall.Utsname
 
     if err := syscall.Uname(&uname); err != nil {
-        returnn ""
+        return ""
     }
 
     return "Linux " + charsToString(uname.Release[:])
