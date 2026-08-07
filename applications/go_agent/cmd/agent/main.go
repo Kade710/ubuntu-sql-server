@@ -243,7 +243,7 @@ func addMaintenanceLog(reader *bufio.Reader) {
 
 	serverID, err := database.RegisterServer(db, serverInfo)
 	if err != nil {
-		fmt.Print("Server registration failed:", err)
+		fmt.Println("Server registration failed:", err)
 		return
 	}
 
@@ -253,7 +253,7 @@ func addMaintenanceLog(reader *bufio.Reader) {
 		PerformedBy: performedBy,
 	}
 
-	logID, err := database.addMaintenanceLog(db, serverID, logEntry)
+	logID, err := database.AddMaintenanceLog(db, serverID, logEntry)
 	if err != nil {
 		fmt.Println("Maintenance log failed:", err)
 		return
@@ -269,7 +269,7 @@ func addMaintenanceLog(reader *bufio.Reader) {
 }
 
 func readInput(reader *bufio.Reader, promote string) string {
-	fmt.Println(prompt)
+	fmt.Print(prompt)
 
 	value, err := reader.ReadString('\n')
 	if err != nil {
