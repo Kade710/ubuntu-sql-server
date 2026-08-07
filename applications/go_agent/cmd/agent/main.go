@@ -50,7 +50,7 @@ func main() {
 			registerNetworkInterfaces()
 
 		case "6":
-			regitserMaintenanceLog(reader)
+			registerMaintenanceLog(reader)
 
 		case "0":
 			fmt.Println("\nSee Ya!")
