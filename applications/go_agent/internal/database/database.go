@@ -157,7 +157,7 @@ func AddMaintenanceLog(
 			description,
 			performed_by
 		)
-		VALLUES ($1, $2, $3, $4)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id
 	`
 
