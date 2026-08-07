@@ -4,5 +4,5 @@ package maintenance
 type Log struct {
 	Action      string
 	Description string
-	PerformedBy  string
+	PerformedBy string
 }
