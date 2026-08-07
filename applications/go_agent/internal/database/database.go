@@ -13,6 +13,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 
 	agentnetwork "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
+				 "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 )
 
 // Connect opens and verifies a PostgreSQL database connection.
@@ -141,4 +142,37 @@ func UpsertNetworkInterfaces(
 	}
 
 	return nil
+}
+
+// AddMaintenanceLog saves a maintenance entry and returns its database ID.
+func AddMaintenanceLog(
+	db *sql.DB,
+	serverID int,
+	logEntry maintenance.Log,
+) (int, error) {
+	const query = `
+		INSERT INTO server_management.maintenance_logs (
+			server_id,
+			action,
+			description,
+			performed_by
+		)
+		VALLUES ($1, $2, $3, $4)
+		RETURNING id
+	`
+
+	var logID int
+	err := db.QueryRow(
+		query,
+		serverID,
+		logEntry.Action,
+		logEntry.Description,
+		logEntry.PerformedBy,
+	).Scan(&logID)
+
+	if err != nil {
+		return 0, fmt.Errorf("add mainenance log: %w", err)
+	}
+
+	return logID, nil
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 )
 
 func main() {
@@ -25,6 +26,7 @@ func main() {
 		fmt.Println("3. Test Database Connection")
 		fmt.Println("4. Register Server Inventory")
 		fmt.Println("5. Register Network Interfaces")
+		fmt.Println("6. Add Maintenance Log")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -46,6 +48,9 @@ func main() {
 
 		case "5":
 			registerNetworkInterfaces()
+
+		case "6":
+			regitserMaintenanceLog(reader)
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -206,5 +211,81 @@ func registerNetworkInterfaces() {
 		fmt.Println("IP Address:", iface.IPAddress)
 		fmt.Println("Network Type:", iface.NetworkType)
 		fmt.Println("Speed:", iface.SpeedMbps, "Mbps")
+	}
+}
+
+func addMaintenanceLog(reader *bufio.Reader) {
+	fmt.Println("\nAdd Maintenance Log")
+	fmt.Println("---")
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println("Configuration error:", err)
+		return
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		fmt.Println("Inventory collection failed:", err)
+		return
+	}
+
+	action := readRequiredInput(reader, "Action: ")
+	description := readInput(reader, "Description: ")
+	performedBy := readInput(reader, "Performed by: ")
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		fmt.Println("Connection failed:", err)
+		return
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		fmt.Print("Server registration failed:", err)
+		return
+	}
+
+	logEntry := maintenance.Log{
+		Action:			action,
+		Description: 	description,
+		PerformedBy:	performedBy,
+	}
+
+	logID, err := database.AddMaintenanceLog(db, serverID, logEntry)
+	if err != nil {
+		fmt.Println("Maintenance log failed:", err)
+		return
+	}
+
+	fmt.Println()
+	fmt.println("Maintenance log saved successfully.")
+	fmt.println("Log ID:", logID)
+	fmt.println("ServerID:", serverID)
+	fmt.println("Action:", logEntry.Action)
+	fmt.println("Description:", logEntry.Description)
+	fmt.println("Performed by:", logEntry.PerformedBy)
+}
+
+func readInput(reader *bufio.Reader, promote string) string {
+	fmt.Println(prompt)
+
+	value, err := reader.ReadString('\n')
+	if err != nil {
+		return ""
+	}
+
+	return strings.TrimSpace(value)
+}
+
+func readRequiredInput(reader *bufio.Reader, prompt string) string {
+	for {
+		value := readInput(reader, prompt)
+		if value != "" {
+			return value
+		}
+		
+		fmt.Println("This field is required.")
 	}
 }
