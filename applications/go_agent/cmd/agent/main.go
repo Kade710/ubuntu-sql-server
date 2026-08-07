@@ -9,9 +9,9 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
-	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 )
 
 func main() {
@@ -248,9 +248,9 @@ func addMaintenanceLog(reader *bufio.Reader) {
 	}
 
 	logEntry := maintenance.Log{
-		Action:			action,
-		Description: 	description,
-		PerformedBy:	performedBy,
+		Action:      action,
+		Description: description,
+		PerformedBy: performedBy,
 	}
 
 	logID, err := database.AddMaintenanceLog(db, serverID, logEntry)
@@ -285,7 +285,7 @@ func readRequiredInput(reader *bufio.Reader, prompt string) string {
 		if value != "" {
 			return value
 		}
-		
+
 		fmt.Println("This field is required.")
 	}
 }

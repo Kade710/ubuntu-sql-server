@@ -12,8 +12,8 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 	_ "github.com/jackc/pgx/v5/stdlib"
 
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 	agentnetwork "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
-				 "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 )
 
 // Connect opens and verifies a PostgreSQL database connection.
