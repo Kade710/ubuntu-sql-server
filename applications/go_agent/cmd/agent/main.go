@@ -253,19 +253,19 @@ func addMaintenanceLog(reader *bufio.Reader) {
 		PerformedBy: performedBy,
 	}
 
-	logID, err := database.AddMaintenanceLog(db, serverID, logEntry)
+	logID, err := database.addMaintenanceLog(db, serverID, logEntry)
 	if err != nil {
 		fmt.Println("Maintenance log failed:", err)
 		return
 	}
 
 	fmt.Println()
-	fmt.println("Maintenance log saved successfully.")
-	fmt.println("Log ID:", logID)
-	fmt.println("ServerID:", serverID)
-	fmt.println("Action:", logEntry.Action)
-	fmt.println("Description:", logEntry.Description)
-	fmt.println("Performed by:", logEntry.PerformedBy)
+	fmt.Println("Maintenance log saved successfully.")
+	fmt.Println("Log ID:", logID)
+	fmt.Println("ServerID:", serverID)
+	fmt.Println("Action:", logEntry.Action)
+	fmt.Println("Description:", logEntry.Description)
+	fmt.Println("Performed by:", logEntry.PerformedBy)
 }
 
 func readInput(reader *bufio.Reader, promote string) string {
