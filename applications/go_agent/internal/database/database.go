@@ -272,3 +272,41 @@ func UpsertHardwareComponents(
 
 	return nil
 }
+
+// AddHealthCheck saves a server health snapshot aand returns its database ID.
+func AddHealthCheck(
+	db *sql.DB,
+	serverID int,
+	status health.Status,
+) (int, error) {
+	const query = `
+		INSER INTO server_management.health_checks (
+			server_id,
+			load_average,
+			memory_percent,
+			disk_percent,
+			uptime_hours,
+			overall_status
+		)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING id
+	`
+
+	var healthCheckID int
+
+	err := db.QueryRow(
+		query,
+		serverID,
+		status.Load1,
+		status.MemoryPercent,
+		status.DiskPercent,
+		status.UptimeHours,
+		status.Overall,
+	).Scan(&healthCheckID)
+
+	if err != nil {
+		return 0, fmt.Errorf("add health check: %w", err)
+	}
+
+	return healthCheckID, nil
+}
