@@ -8,8 +8,8 @@ import (
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
-	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/hardware"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
@@ -387,7 +387,7 @@ func registerHardwareComponents() {
 	)
 
 	if err := database.UpsertHardwareComponents(
-		db, 
+		db,
 		serverID,
 		components,
 	); err != nil {
