@@ -424,7 +424,7 @@ func registerHardwareComponents() {
 }
 
 func showSystemHealth() {
-	fmt.println("\nSystem Health")
+	fmt.Println("\nSystem Health")
 	fmt.Println("---")
 
 	status, err := health.Collect()
