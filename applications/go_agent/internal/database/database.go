@@ -273,14 +273,14 @@ func UpsertHardwareComponents(
 	return nil
 }
 
-// AddHealthCheck saves a server health snapshot aand returns its database ID.
+// AddHealthCheck saves a server health snapshot and returns its database ID.
 func AddHealthCheck(
 	db *sql.DB,
 	serverID int,
 	status health.Status,
 ) (int, error) {
 	const query = `
-		INSER INTO server_management.health_checks (
+		INSERT INTO server_management.health_checks (
 			server_id,
 			load_average,
 			memory_percent,
