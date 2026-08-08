@@ -26,7 +26,7 @@ func Components(info Info, ramGB int) []Component {
     }
 }
 
-fnc cpuComponent(cpu string) Component {
+func cpuComponent(cpu string) Component {
     component := Component{
         Type:           "CPU",
         Model:          cpu,
