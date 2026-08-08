@@ -10,13 +10,14 @@ import (
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/hardware"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/health"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
-	_ "github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 	agentnetwork "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
-)
+
+	_ "github.com/jackc/pgx/v5/stdlib")
 
 // Connect opens and verifies a PostgreSQL database connection.
 func Connect(cfg config.Config) (*sql.DB, error) {
