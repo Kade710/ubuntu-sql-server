@@ -9,7 +9,11 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/hardware"
+<<<<<<< HEAD
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
+=======
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/health"
+>>>>>>> d86962f (i added health.go and updated to main.go)
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
@@ -31,6 +35,7 @@ func main() {
 		fmt.Println("6. Add Maintenance Log")
 		fmt.Println("7. Register Operating System")
 		fmt.Println("8. Register Hardware Components")
+		fmt.Println("9. Show System Health")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -61,6 +66,9 @@ func main() {
 
 		case "8":
 			registerHardwareComponents()
+
+		case "9":
+			showSystemHealth()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -414,3 +422,21 @@ func registerHardwareComponents() {
 		}
 	}
 }
+
+func showSystemHealth() {
+	fmt.println("\nSystem Health")
+	fmt.Println("---")
+
+	status, err := health.Collect()
+	if err != nil {
+		fmt.Println("Health collection faled:", err)
+		return
+	}
+
+	fmt.Println("1-Mintue Load Average: %.2f\n", status.Load1)
+	fmt.Println("Memory Usage: %.2f%%\n", status.MemoryPercent)
+	fmt.Println("Disk Usage: %.2f%%\n", status.DiskPercent)
+	fmt.Println("Uptime: %.2f hours\n", status.UptimeHours)
+	fmt.Println("Overall Status:", status.Overall)
+}
+
