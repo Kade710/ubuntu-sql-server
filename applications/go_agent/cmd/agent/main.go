@@ -518,10 +518,10 @@ func viewRecentHealthChecks(){
 	for _, record := range records {
 		fmt.Println()
 		fmt.Println("Health Check ID:", record.ID)
-		fmt.Println("Load Average: %.2f\n", record.LoadAverage)
-		fmt.Println("Memory Percent: %.2f%%\n", record.MemoryPercent)
-		fmt.Println("Disk Percent: %.2f%%\n", record.DiskPercent)
-		fmt.Println("Uptime Hours: %.2f hours\n", record.UptimeHours)
+		fmt.Printf("Load Average: %.2f\n", record.LoadAverage)
+		fmt.Printf("Memory Percent: %.2f%%\n", record.MemoryPercent)
+		fmt.Printf("Disk Percent: %.2f%%\n", record.DiskPercent)
+		fmt.Printf("Uptime Hours: %.2f hours\n", record.UptimeHours)
 		fmt.Println("Overall Status:", record.OverallStatus)
 		fmt.Println("Created At:", record.CreatedAt)
 	}
