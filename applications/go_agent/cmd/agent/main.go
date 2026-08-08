@@ -9,6 +9,7 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/hardware"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
@@ -29,6 +30,7 @@ func main() {
 		fmt.Println("5. Register Network Interfaces")
 		fmt.Println("6. Add Maintenance Log")
 		fmt.Println("7. Register Operating System")
+		fmt.Println("8. Register Hardware Components")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -56,6 +58,9 @@ func main() {
 
 		case "7":
 			registerOperatingSystem()
+
+		case "8":
+			registerHardwareComponents()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -343,4 +348,69 @@ func registerOperatingSystem() {
 	fmt.Println("Version:", osDetails.Version)
 	fmt.Println("Kernel:", osDetails.Kernel)
 	fmt.Println("Architecture:", osDetails.Architecture)
+}
+
+func registerHardwareComponents() {
+	fmt.Println("\nRegister Hardware Components")
+	fmt.Println("---")
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println("Configuration error:", err)
+		return
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		fmt.Println("Inventory collection failed:", err)
+		return
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		fmt.Println("Connection failed:", err)
+		return
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		fmt.Println("Server registration failed:", err)
+		return
+	}
+
+	hardwareInfo := hardware.Collect()
+
+	components := hardware.Components(
+		hardwareInfo,
+		serverInfo.RAMGB,
+	)
+
+	if err := database.UpsertHardwareComponents(
+		db, 
+		serverID,
+		components,
+	); err != nil {
+		fmt.Println("Hardware update failed:", err)
+		return
+	}
+
+	fmt.Println("Hardware conponents updated successfully.")
+
+	for _, component := range components {
+		fmt.Println()
+		fmt.Println("Component:", component.Type)
+
+		if component.Manufacturer != "" {
+			fmt.Println("Manufacturer:", component.Manufacturer)
+		}
+
+		if component.Model != "" {
+			fmt.Println("Model:", component.Model)
+		}
+
+		if component.Specification != "" {
+			fmt.Println("Specification:", component.Specification)
+		}
+	}
 }

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/hardware"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 	_ "github.com/jackc/pgx/v5/stdlib"
 
@@ -217,4 +218,57 @@ func UpsertOperatingSystem(
 	}
 
 	return osID, nil
+}
+
+// UpsertHardwareComponents inserts or updates hardware component records.
+func UpsertHardwareComponents(
+	db *sql.DB,
+	serverID int,
+	components []hardware.Component,
+) error {
+	const query = `
+		INSERT INTO server_management.hardware_components (
+			server_id,
+			component_type,
+			manufacturer,
+			model,
+			specification
+		)
+		VALUES ($1, $2, NULLIF($3, ''), NULLIF($4, ''), NULLIF($5, ''))
+		ON CONFLICT (server_id, component_type)
+		DO UPDATE SET
+			manufacturer = COALESCE(EXCLUDED.manufacturer, hardware_components.manufacturer),
+			model = COALESCE(EXCLUDED.model, hardware_components.model),
+			specification = COALESCE(EXCLUDED.specification, hardware_components.specification)
+	`
+
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("begin hardware transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	for _, component := range components {
+		_, err := tx.Exec(
+			query,
+			serverID,
+			component.Type,
+			component.Manufacturer,
+			component.Model,
+			component.Specification,
+		)
+		if err != nil {
+			return fmt.Errorf(
+				"save hardware component %s: %w",
+				component.Type,
+				err,
+			)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit hardware transaction: %w", err)
+	}
+
+	return nil
 }
