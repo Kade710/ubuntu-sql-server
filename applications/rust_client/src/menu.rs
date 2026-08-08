@@ -19,5 +19,11 @@ pub fn show_menu() -> String {
         .flush()
         .expect("Failed to flush stout");
 
+    let mut choice = String::new();
+
+    io::stdin()
+        .read_line(&mut choice)
+        .expect("Failed to read input");
+
     choice.trim().to_string()
 }
