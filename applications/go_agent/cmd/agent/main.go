@@ -468,5 +468,5 @@ func showSystemHealth() {
 	}
 
 	fmt.Println("Health check saved successfully.")
-	fmt.Println("Health check ID:" healthCheckID)
+	fmt.Println("Health check ID:", healthCheckID)
 }
