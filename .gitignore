@@ -44,3 +44,17 @@ target/
 # Node
 node_modules/
 server_report_*.txt
+
+applications/web_dashboard/.venv/
+applications/web_dashboard/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Django
+applications/web_dashboard/.venv/
+applications/web_dashboard/.env
+applications/web_dashboard/staticfiles/
+applications/web_dashboard/media/
