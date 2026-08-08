@@ -17,7 +17,8 @@ import (
 	agentnetwork "github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
 
-	_ "github.com/jackc/pgx/v5/stdlib")
+	_ "github.com/jackc/pgx/v5/stdlib"
+)
 
 // Connect opens and verifies a PostgreSQL database connection.
 func Connect(cfg config.Config) (*sql.DB, error) {
