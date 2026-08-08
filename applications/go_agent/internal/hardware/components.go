@@ -6,12 +6,12 @@ import (
 )
 
 // Component represents a hardware component stored in PostgreSQL.
-type Component struct [
+type Component struct {
     Type            string
     Manufacturer    string
     Model           string
     Specification   string
-]
+}
 
 // Components convert collected hardware information into database records.
 func Components(info Info, ramGB int) []Component {
