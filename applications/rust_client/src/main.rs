@@ -17,7 +17,7 @@ fn main() {
             "6" => commands::maintenance::show_maintenance(),
 
             "0" => {
-                printfn!("\nSee ya!");
+                println!("\nSee ya!");
                 break;
             }
 

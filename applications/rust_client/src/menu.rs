@@ -15,7 +15,7 @@ pub fn show_menu() -> String {
     println!("0. Exit");
     println!("\nSelect an option: ");
 
-    io::stout()
+    io::stdout()
         .flush()
         .expect("Failed to flush stout");
 
