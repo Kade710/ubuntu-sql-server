@@ -312,3 +312,67 @@ func AddHealthCheck(
 
 	return healthCheckID, nil
 }
+
+type HealthCheckRecord struct {
+	ID				int
+	LoadAverage		float64
+	MemoryPercent	float64
+	DiskPercent		float64
+	UptimeHours		float64
+	OverallStatus	string
+	CreatedAt		string
+}
+
+func GetRecentHealthChecks(
+	db *sql.DB,
+	serverID int,
+	limit int,
+) ([]HealthCheckRecord, error) {
+	const query = `
+		SELECT
+			id,
+			load_average,
+			memory_percent,
+			disk_percent,
+			uptime_hours,
+			overall_status,
+			created_at
+		FROM server_management.health_checks
+		WHERE server_id = $1
+		ORDER BY created_at DESC
+		LIMIT $2
+	`
+
+	rows, err := db.Query(query, serverID, limit)
+	if err != nil {
+		return nil, fmt.Errorf("get recent health checks: %w", err)
+	}
+	defer rows.Close()
+
+	var records []HealthCheckRecord
+
+	for rows.Next() {
+		var record HealthCheckRecord
+
+		err := rows.Scan(
+			&record.ID,
+			&record.LoadAverage,
+			&record.MemoryPercent,
+			&record.DiskPercent,
+			&record.UptimeHours,
+			&record.OverallStatus,
+			&record.CreatedAt,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("scan health checks: %w", err)
+		}
+
+		records = append(records, record)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("read health checks: %w", err)
+	}
+
+	return records, nil
+}
