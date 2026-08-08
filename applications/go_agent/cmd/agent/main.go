@@ -9,11 +9,8 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/hardware"
-<<<<<<< HEAD
-	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
-=======
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/health"
->>>>>>> d86962f (i added health.go and updated to main.go)
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/inventory"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/maintenance"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
@@ -439,4 +436,3 @@ func showSystemHealth() {
 	fmt.Printf("Uptime: %.2f hours\n", status.UptimeHours)
 	fmt.Println("Overall Status:", status.Overall)
 }
-
