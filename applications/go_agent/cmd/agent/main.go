@@ -504,7 +504,7 @@ func viewRecentHealthChecks(){
 		return
 	}
 
-	healthCheckID, err := database.GetRecentHealthChecks(db, serverID, 5)
+	records, err := database.GetRecentHealthChecks(db, serverID, 5)
 	if err != nil {
 		fmt.Println("Health history failed:", err)
 		return
