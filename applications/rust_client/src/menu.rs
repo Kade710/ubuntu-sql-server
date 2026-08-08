@@ -15,9 +15,7 @@ pub fn show_menu() -> String {
     println!("0. Exit");
     println!("\nSelect an option: ");
 
-    io::stdout()
-        .flush()
-        .expect("Failed to flush stout");
+    io::stdout().flush().expect("Failed to flush stout");
 
     let mut choice = String::new();
 
