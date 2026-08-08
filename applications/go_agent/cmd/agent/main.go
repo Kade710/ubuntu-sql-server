@@ -395,7 +395,7 @@ func registerHardwareComponents() {
 		return
 	}
 
-	fmt.Println("Hardware conponents updated successfully.")
+	fmt.Println("Hardware components updated successfully.")
 
 	for _, component := range components {
 		fmt.Println()
