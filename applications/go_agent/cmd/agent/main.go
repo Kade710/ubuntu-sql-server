@@ -475,7 +475,7 @@ func showSystemHealth() {
 	fmt.Println("Health check ID:", healthCheckID)
 }
 
-func viewRecentHealthChecks(){
+func viewRecentHealthChecks() {
 	fmt.Printf("\nRecent Health Checks")
 	fmt.Print("---")
 

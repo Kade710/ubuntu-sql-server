@@ -314,13 +314,13 @@ func AddHealthCheck(
 }
 
 type HealthCheckRecord struct {
-	ID				int
-	LoadAverage		float64
-	MemoryPercent	float64
-	DiskPercent		float64
-	UptimeHours		float64
-	OverallStatus	string
-	CreatedAt		string
+	ID            int
+	LoadAverage   float64
+	MemoryPercent float64
+	DiskPercent   float64
+	UptimeHours   float64
+	OverallStatus string
+	CreatedAt     string
 }
 
 func GetRecentHealthChecks(
