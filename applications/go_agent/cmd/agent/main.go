@@ -433,10 +433,10 @@ func showSystemHealth() {
 		return
 	}
 
-	fmt.Println("1-Mintue Load Average: %.2f\n", status.Load1)
-	fmt.Println("Memory Usage: %.2f%%\n", status.MemoryPercent)
-	fmt.Println("Disk Usage: %.2f%%\n", status.DiskPercent)
-	fmt.Println("Uptime: %.2f hours\n", status.UptimeHours)
+	fmt.Printf("1-Minute Load Average: %.2f\n", status.Load1)
+	fmt.Printf("Memory Usage: %.2f%%\n", status.MemoryPercent)
+	fmt.Printf("Disk Usage: %.2f%%\n", status.DiskPercent)
+	fmt.Printf("Uptime: %.2f hours\n", status.UptimeHours)
 	fmt.Println("Overall Status:", status.Overall)
 }
 
