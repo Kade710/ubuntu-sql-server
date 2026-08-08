@@ -448,7 +448,7 @@ func showSystemHealth() {
 		return
 	}
 
-	db, err := database.Connect()
+	db, err := database.Connect(cfg)
 	if err != nil {
 		fmt.Println("Health reading not saved:", err)
 		return
