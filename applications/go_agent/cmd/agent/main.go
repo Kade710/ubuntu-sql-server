@@ -435,4 +435,38 @@ func showSystemHealth() {
 	fmt.Printf("Disk Usage: %.2f%%\n", status.DiskPercent)
 	fmt.Printf("Uptime: %.2f hours\n", status.UptimeHours)
 	fmt.Println("Overall Status:", status.Overall)
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println("Health reading not saved:", err)
+		return
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		fmt.Println("Health reading not saved:", err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		fmt.Println("Health reading not saved:", err)
+		return
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		fmt.Println("Health reading not saved:", err)
+		return
+	}
+
+	healthCheckID, err := database.AddHealthCheck(db, serverID, status)
+	if err != nil {
+		fmt.Println("Health reading not saved:", err)
+		return
+	}
+
+	fmt.Println("Health check saved successfully.")
+	fmt.Println("Health check ID:" healthCheckID)
 }
