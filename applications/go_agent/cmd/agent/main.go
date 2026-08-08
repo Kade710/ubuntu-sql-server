@@ -33,6 +33,7 @@ func main() {
 		fmt.Println("7. Register Operating System")
 		fmt.Println("8. Register Hardware Components")
 		fmt.Println("9. Show System Health")
+		fmt.Println("10. View Recent Health Checks")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -66,6 +67,9 @@ func main() {
 
 		case "9":
 			showSystemHealth()
+
+		case "10":
+			viewRecentHealthChecks()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -469,4 +473,56 @@ func showSystemHealth() {
 
 	fmt.Println("Health check saved successfully.")
 	fmt.Println("Health check ID:", healthCheckID)
+}
+
+func viewRecentHealthChecks(){
+	fmt.Printf("\nRecent Health Checks")
+	fmt.Print("---")
+
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println("Configuration Error:", err)
+		return
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		fmt.Println("Inventory collection failed:", err)
+		return
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		fmt.Println("Connection failed:", err)
+		return
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		fmt.Println("Server registration failed:", err)
+		return
+	}
+
+	healthCheckID, err := database.GetRecentHealthChecks(db, serverID, 5)
+	if err != nil {
+		fmt.Println("Health history failed:", err)
+		return
+	}
+
+	if len(records) == 0 {
+		fmt.Println("No helth check found.")
+		return
+	}
+
+	for _, record := range records {
+		fmt.Println()
+		fmt.Println("Health Check ID:", record.ID)
+		fmt.Println("Load Average: %.2f\n", record.LoadAverage)
+		fmt.Println("Memory Percent: %.2f%%\n", record.MemoryPercent)
+		fmt.Println("Disk Percent: %.2f%%\n", record.DiskPercent)
+		fmt.Println("Uptime Hours: %.2f hours\n", record.UptimeHours)
+		fmt.Println("Overall Status:", record.OverallStatus)
+		fmt.Println("Created At:", record.CreatedAt)
+	}
 }
