@@ -15,7 +15,7 @@ type Component struct {
 
 // Components convert collected hardware information into database records.
 func Components(info Info, ramGB int) []Component {
-    return []Coomponent{
+    return []Component{
         cpuComponent(info.CPU),
         {
             Type:           "RAM",
@@ -39,7 +39,7 @@ func cpuComponent(cpu string) Component {
     case strings.Contains(lower, "intel"):
         component.Manufacturer = "Intel"
     case strings.Contains(lower, "amd"):
-        components.Manufacturer = "AMD"
+        component.Manufacturer = "AMD"
     }
 
     return component
@@ -55,12 +55,12 @@ func gpuComponent(gpu string) Component {
     lower := strings.ToLower(gpu)
 
     switch {
-    case strings.contains(lower, "nvidia"):
+    case strings.Contains(lower, "nvidia"):
         component.Manufacturer = "NVIDIA"
     case strings.Contains(lower, "intel"):
         component.Manufacturer = "Intel"
     case strings.Contains(lower, "amd"):
-        components.Manufacturer = "AMD"
+        component.Manufacturer = "AMD"
     }
 
     return component
