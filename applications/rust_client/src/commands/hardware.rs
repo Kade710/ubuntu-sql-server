@@ -6,7 +6,7 @@ use crate::database;
 
 pub fn show_hardware() {
     println!("Hardware components");
-    println!("---")
+    println!("---");
 
     println!("Enter Server ID: ");
     io::stdout()
