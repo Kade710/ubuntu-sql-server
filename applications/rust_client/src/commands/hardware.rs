@@ -9,9 +9,7 @@ pub fn show_hardware() {
     println!("---");
 
     println!("Enter Server ID: ");
-    io::stdout()
-        .flush()
-        .expect("Failed to flush stdout");
+    io::stdout().flush().expect("Failed to flush stdout");
 
     let mut input = String::new();
 
@@ -54,7 +52,7 @@ pub fn show_hardware() {
         WHERE server_id = $1
         ORDER BY id
         ",
-        &[&server_id]
+        &[&server_id],
     ) {
         Ok(rows) => rows,
         Err(error) => {
