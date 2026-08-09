@@ -80,9 +80,7 @@ pub fn show_server_details() {
     println!("---");
 
     println!("Enter Server ID: ");
-    io::stdout()
-        .flush()
-        .expect("Failed to flush stdout");
+    io::stdout().flush().expect("Failed to flush stdout");
 
     let mut input = String::new();
 
