@@ -10,9 +10,7 @@ pub fn show_network() {
     println!("------------------");
 
     print!("Enter Server ID: ");
-    io::stdout()
-        .flush()
-        .expect("Failed to flush stdout");
+    io::stdout().flush().expect("Failed to flush stdout");
 
     let mut input = String::new();
 
@@ -66,10 +64,7 @@ pub fn show_network() {
     };
 
     if rows.is_empty() {
-        println!(
-            "No network interfaces found for Server ID {}.",
-            server_id
-        );
+        println!("No network interfaces found for Server ID {}.", server_id);
         return;
     }
 
