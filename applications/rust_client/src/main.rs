@@ -10,7 +10,7 @@ fn main() {
 
         match choice.as_str() {
             "1" => commands::servers::show_servers(),
-            "2" => println!("Server details cooming soon"),
+            "2" => commands::servers::show_server_details(),
             "3" => commands::hardware::show_hardware(),
             "4" => commands::network::show_network(),
             "5" => commands::health::show_health(),
