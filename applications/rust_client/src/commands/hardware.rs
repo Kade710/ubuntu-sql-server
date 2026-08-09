@@ -30,7 +30,7 @@ pub fn show_hardware() {
     let config = match DatabaseConfig::load() {
         Ok(config) => config,
         Err(error) => {
-            println!("Configuration error:", error);
+            println!("Configuration error: {}", error);
             return;
         }
     };
@@ -38,7 +38,7 @@ pub fn show_hardware() {
     let mut client = match database::connect(&config) {
         Ok(client) => client,
         Err(error) => {
-            println!("Database connection failed:", error)
+            println!("Database connection failed: {}", error);
         }
     };
 
