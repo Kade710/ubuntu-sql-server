@@ -6,10 +6,10 @@ use crate::config::DatabaseConfig;
 use crate::database;
 
 pub fn show_network() {
-    println!("\nNetwork Interfaces")
-    println!("---");
+    println!("\nNetwork Interfaces");
+    println!("------------------");
 
-    println!("Enter Server ID: ");
+    print!("Enter Server ID: ");
     io::stdout()
         .flush()
         .expect("Failed to flush stdout");
@@ -49,6 +49,7 @@ pub fn show_network() {
         SELECT
             interface_name,
             mac_address,
+            ip_address,
             network_type,
             speed_mbps
         FROM server_management.network_interfaces
@@ -59,19 +60,25 @@ pub fn show_network() {
     ) {
         Ok(rows) => rows,
         Err(error) => {
-            println!(
-                "No network interfaces found for Server ID {}.",
-                server_id
-            );
+            println!("Database query failed: {}", error);
             return;
         }
+    };
 
-        for row in rows {
-            let interface_name: String = row.get("interface_name");
-            let mac_address: Option<String> = row.get("mac_address");
-            let ip_address: Option<String> = row.get("ip_address");
-            let network_type: Option<String> = row.get("network_type");
-            let speed_mbps: Option<i32> = row.get("speed_mbps");
+    if rows.is_empty() {
+        println!(
+            "No network interfaces found for Server ID {}.",
+            server_id
+        );
+        return;
+    }
+
+    for row in rows {
+        let interface_name: String = row.get("interface_name");
+        let mac_address: Option<String> = row.get("mac_address");
+        let ip_address: Option<String> = row.get("ip_address");
+        let network_type: Option<String> = row.get("network_type");
+        let speed_mbps: Option<i32> = row.get("speed_mbps");
 
         println!();
         println!("Interface: {}", interface_name);
