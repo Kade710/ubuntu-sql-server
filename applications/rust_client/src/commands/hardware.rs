@@ -39,6 +39,7 @@ pub fn show_hardware() {
         Ok(client) => client,
         Err(error) => {
             println!("Database connection failed: {}", error);
+            return;
         }
     };
 
