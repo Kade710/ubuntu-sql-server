@@ -98,11 +98,11 @@ pub fn show_server_details() {
         }
     };
 
-    let config + match DatabaseConfig::load() {
+    let config = match DatabaseConfig::load() {
         Ok(config) => config,
         Err(error) => {
             println!("Configuration error: {}", error);
-            return:
+            return;
         }
     };
 
