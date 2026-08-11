@@ -84,7 +84,7 @@ pub fn show_health() {
         println!("Health Check ID: {}", id);
 
         match load_average {
-            Some(value) => println!("Load Average: {:.2}%", value),
+            Some(value) => println!("Load Average: {:.2}", value),
             None => println!("Load Average: Not available"),
         }
 
@@ -94,7 +94,7 @@ pub fn show_health() {
         }
 
         match disk_percent {
-            Some(value) => println!("Disk Usage: {:.2} hours", value),
+            Some(value) => println!("Disk Usage: {:.2}% ", value),
             None => println!("Uptime: Not available"),
         }
 
