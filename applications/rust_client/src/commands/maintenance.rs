@@ -9,8 +9,10 @@ pub fn show_maintenance() {
     println!("Maintenance Logs");
     println!("---");
 
-    print!("Enter Server ID");
-    io::stdout().flush().expect("Failed to flush stdout");
+    print!("Enter Server ID: ");
+    io::stdout()
+        .flush()
+        .expect("Failed to flush stdout");
 
     let mut input = String::new();
 
