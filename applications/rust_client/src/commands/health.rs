@@ -108,6 +108,6 @@ pub fn show_health() {
             overall_status.as_deref().unwrap_or("Not available")
         );
 
-        println!("Created_at: {:?}", created_at)
+        println!("Created At: {:?}", created_at)
     }
 }
