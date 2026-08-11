@@ -54,7 +54,7 @@ pub fn show_maintenance() {
             created_at
         FROM server_management.maintenance_logs
         WHERE server_id = $1
-        ORDER BY by created_at DESC
+        ORDER BY created_at DESC
         LIMIT 10
         ",
         &[&server_id],
