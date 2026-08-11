@@ -10,9 +10,7 @@ pub fn show_maintenance() {
     println!("---");
 
     print!("Enter Server ID");
-    io::stdout()
-        .flush()
-        .expect("Failed to flush stdout");
+    io::stdout().flush().expect("Failed to flush stdout");
 
     let mut input = String::new();
 
@@ -33,7 +31,7 @@ pub fn show_maintenance() {
         Err(error) => {
             println!("Configuration error: {}", error);
             return;
-        }        
+        }
     };
 
     let mut client = match database::connect(&config) {
