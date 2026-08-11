@@ -46,10 +46,10 @@ pub fn show_health() {
         "
         SELECT
             id,
-            load_average,
-            memory_percent,
-            disk_percent,
-            uptime_hours,
+            load_average::DOUBLE PRECISION AS load_average,
+            memory_percent::DOUBLE PRECISION AS memory_percent,
+            disk_percent::DOUBLE PRECISION AS disk_percent,
+            uptime_hours::DOUBLE PRECISION AS uptime_hours,
             overall_status,
             created_at
         FROM server_management.health_checks
