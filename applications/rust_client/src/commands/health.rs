@@ -104,7 +104,7 @@ pub fn show_health() {
         }
 
         println!(
-            "status: {}",
+            "Status: {}",
             overall_status.as_deref().unwrap_or("Not available")
         );
 
