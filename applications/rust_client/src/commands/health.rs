@@ -79,7 +79,7 @@ pub fn show_health() {
         let memory_percent: Option<f64> = row.get("memory_percent");
         let disk_percent: Option<f64> = row.get("disk_percent");
         let uptime_hours: Option<f64> = row.get("uptime_hours");
-        let overall_status: Option<Sring> = rwo.get("overall_status");
+        let overall_status: Option<String> = row.get("overall_status");
         let created_at: std::time::SystemTime = row.get("created_at");
 
         println!();
@@ -96,7 +96,7 @@ pub fn show_health() {
         }
 
         match disk_percent {
-            Some(value) => println!("Disk Usage: {:,2} hours", value),
+            Some(value) => println!("Disk Usage: {:.2} hours", value),
             None => println!("Uptime: Not available"),
         }
 
