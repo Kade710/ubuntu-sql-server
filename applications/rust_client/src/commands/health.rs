@@ -98,6 +98,11 @@ pub fn show_health() {
             None => println!("Uptime: Not available"),
         }
 
+        match uptime_hours {
+            Some(value) => println!("Uptime: {:.2} hours", value),
+            None => println!("Uptime: Not available"),
+        }
+
         println!(
             "status: {}",
             overall_status.as_deref().unwrap_or("Not available")
