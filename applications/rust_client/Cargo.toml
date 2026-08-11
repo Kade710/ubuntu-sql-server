@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 postgres = "0.19"
+chrono = "0.4"
