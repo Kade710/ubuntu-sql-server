@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +26,11 @@ SECRET_KEY = 'django-insecure-*ikrj=*_8i%q5v670o_mmgr0ql9z00+eri$gzv%5&*vguhz*in
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '192.168.1.100'
+    'localhost'
+    '127.0.0.1'
+]
 
 
 # Application definition
@@ -75,7 +80,7 @@ WSGI_APPLICATION = 'web_dashboard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.progrsql',
         'NAME': os.environ.get('DB_NAME', 'ubuntu_sql_server'),
         'USER': os.environ.get('DB_USER', 'jonathon_admin'),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
