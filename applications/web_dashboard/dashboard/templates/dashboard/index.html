@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=""UTF-8>
+    <title>Ubuntu SQL Server Dashboard</title>
+</head>
+
+<body>
+    <h1>Ubuntu SQL Server Dashboard</h1>
+
+    <h2>Registered Servers</h2>
+    {% if servers %}
+        {% for server in servers%}
+            <hr>
+
+            <h3>{{ server.hostname }}</h3>
+
+            <p>Server ID: {{ server.id }}</p>
+            <p>IP Address: {{ server.ip_address }}</p>
+            <p>Operating System: {{ server.operating_system }}</p>
+            <p>CPU: {{ server.cpu }}</p>
+            <p>Storage: {{ server.storage_gb }}</p>
+            <p>GPU: {{ server.gpu }}</p>
+            <p>Motherboard: {{ server.motherboard }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No registered servers found.</p>
+    {% endif %}
+</body>
+</html>
