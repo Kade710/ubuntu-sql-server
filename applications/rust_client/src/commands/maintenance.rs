@@ -77,8 +77,8 @@ pub fn show_maintenance() {
         println!("Maintenance Log ID: {}", id);
         println!("Action: {}", action);
         println!(
-            "Desciption: {}",
-            desciption.as_deref().unwrap_or("Not available")
+            "Description: {}",
+            description.as_deref().unwrap_or("Not available")
         );
         println!(
             "Performed By: {}",
