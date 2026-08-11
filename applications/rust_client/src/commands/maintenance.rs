@@ -7,7 +7,7 @@ use crate::database;
 
 pub fn show_maintenance() {
     println!("Maintenance Logs");
-    println!("---")
+    println!("---");
 
     print!("Enter Server ID");
     io::stdout()
@@ -56,7 +56,7 @@ pub fn show_maintenance() {
         WHERE server_id = $1
         ORDER BY by created_at DESC
         LIMIT 10
-        ".
+        ",
         &[&server_id],
     ) {
         Ok(rows) => rows,
