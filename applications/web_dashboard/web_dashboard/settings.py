@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'web_dashboard.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.progresql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'ubuntu_sql_server'),
         'USER': os.environ.get('DB_USER', 'jonathon_admin'),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
