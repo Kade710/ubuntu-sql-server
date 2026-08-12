@@ -13,7 +13,11 @@
         {% for server in servers%}
             <hr>
 
-            <h3>{{ server.hostname }}</h3>
+            <h3>
+                <a href="{% url 'server_detail' server,id %}">
+                    {{ server.hostname }}
+                </a>
+            </h3>
 
             <p>Server ID: {{ server.id }}</p>
             <p>IP Address: {{ server.ip_address }}</p>
