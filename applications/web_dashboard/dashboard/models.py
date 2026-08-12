@@ -17,3 +17,18 @@ class Server(models.Model):
 
     def __str__(self):
         return self.hostname
+
+class HardwareComponent(models.Model):
+    id = models.IntegerField(primary_key=True)
+    server_id = models.IntegerField()
+    component_type = models.CharField(max_length=50)
+    manufacturer = models.CharField(max_length=100, null=True, blank=True)
+    model = models.CharField(max_length=100, null=True, blank=True)
+    specification = models.TextField(null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'server_management"."hardware_components'
+
+    def __str__(self):
+        return f"{self.component_type} - {self.model}"
