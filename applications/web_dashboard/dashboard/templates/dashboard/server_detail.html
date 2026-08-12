@@ -17,14 +17,14 @@
 
 <h2>Hardware Components</h2>
 
-{& if hardware &}
-    {& for component in hardware &}
+{% if hardware %}
+    {% for component in hardware %}
         <h3>{{ component.component_type }}</h3>
 
         <p>Manufacturer: {{ component.manufacturer }}</p>
         <p>Model: {{ component.model }}</p>
         <p>Specification: {{ component.specification }}</p>
-    {& endfor &}
-{& else &}
+    {% endfor %}
+{% else %}
     <p>No hardware components found.</p>
-{& endif &}
+{% endif %}
