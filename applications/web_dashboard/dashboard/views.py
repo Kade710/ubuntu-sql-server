@@ -9,4 +9,4 @@ def index(request):
         "servers": servers,
     }
 
-    return render(request, "dashbaord/index.html", context)
+    return render(request, "dashboard/index.html", context)
