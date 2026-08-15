@@ -45,3 +45,22 @@
 {% else %}
     <p>No network interfaces found.</p>
 {% endif %}
+
+<hr>
+
+<h2>Health History</h2>
+
+{% if health_checks %}
+    {% for check in health_checks %}
+        <h3>Health Check {{ check.id }}</h3>
+
+        <p>Load Average: {{ check.load_average }}</p>
+        <p>Memory Usage: {{ check.memory_percent }}%</p>
+        <p>Disk Usage: {{ check.disk_percent }}%</p>
+        <p>Uptime: {{ check.uptime_hours }} hours</p>
+        <p>Status: {{ check.overall_status }}</p>
+        <p>Created At: {{ check.created_at }}</p>
+    {% endfor %}
+{% else %}
+    <p>No health history found.</p>
+{% endif %}

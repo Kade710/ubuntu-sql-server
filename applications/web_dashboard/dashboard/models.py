@@ -48,3 +48,17 @@ class NetworkInterface(models.Model):
 
     def __str__(self):
         return self.interface_name
+
+class HealthCheck(models.Model):
+    id = models.IntegerField(primary_key=True)
+    server_id = models.IntegerField()
+    load_average = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    memory_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    disk_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    uptime_hours = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    overall_status = models.CharField(max_length=20, null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        managed =False
+        db_table = 'server_management"."health_checks'
