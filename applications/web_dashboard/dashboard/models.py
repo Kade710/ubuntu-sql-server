@@ -28,7 +28,7 @@ class HardwareComponent(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'server_management"."network_interfaces'
+        db_table = 'server_management"."hardware_components'
 
     def __str__(self):
         return f"{self.component_type} - {self.model}"
@@ -43,7 +43,8 @@ class NetworkInterface(models.Model):
     speed_mbps = models.IntegerField(null=True, blank=True)
 
     class Meta:
-        managed = Falsedb_table = 'server_manager"."network_interfaces'
+        managed = False
+        db_table = 'server_manager"."network_interfaces'
 
     def __str__(self):
         return self.interface_name
