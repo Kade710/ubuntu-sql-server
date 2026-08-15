@@ -28,3 +28,20 @@
 {% else %}
     <p>No hardware components found.</p>
 {% endif %}
+
+<hr>
+
+<h2>Network Interfaces</h2>
+
+{% if network %}
+    {% for interface in network %}
+        <h3>{{ interface.interface_name }}</h3>
+
+        <p>MAC Address: {{ interface.mac_address }}</p>
+        <p>IP Address: {{ interface.ip_address }}</p>
+        <p>Network Type: {{ interface.network_type }}</p>
+        <p>Speed: {{interface.speed_mbps }} Mbps</p>
+    {% endfor %}
+{% else %}
+    <p>No network interfaces found.</p>
+{% endif %}

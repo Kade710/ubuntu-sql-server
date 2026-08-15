@@ -32,3 +32,18 @@ class HardwareComponent(models.Model):
 
     def __str__(self):
         return f"{self.component_type} - {self.model}"
+
+class NetworkInterface(models.Model):
+    id = models.IntegerField(primary_key=True)
+    server_id = models.IntegerField()
+    interface_name = models.CharField(max_length=100)
+    mac_address = models.CharField(max_length=100, null=True, blank=True)
+    ip_address = models.CharField(max_length=100, null=True, blank=True)
+    network_type = models.CharField(max_length=50, null=True, blank=True)
+    speed_mbps = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        managed = Falsedb_table = 'server_manager"."network_interfaces'
+
+    def __str__(self):
+        return self.interface_name

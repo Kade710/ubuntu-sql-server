@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 
-from .models import HardwareComponent, Server
+from .models import HardwareComponent, NetworkInterface, Server
 
 def index(request):
     servers = Server.objects.all().order_by("id")
@@ -18,9 +18,14 @@ def server_detail(request, server_id):
         server_id=server_id
     ).order_by("id")
 
+    network = NetworkInterface.objects.filter(
+        server_id=server_id
+    ).order_by("id")
+
     context = {
         "server": server,
         "hardware": hardware,
+        "network": network,
     }
 
     return render(request, "dashboard/server_detail.html", context)
