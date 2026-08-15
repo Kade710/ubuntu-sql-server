@@ -28,7 +28,7 @@ class HardwareComponent(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'server_management"."hardware_components'
+        db_table = 'server_management"."network_interfaces'
 
     def __str__(self):
         return f"{self.component_type} - {self.model}"
