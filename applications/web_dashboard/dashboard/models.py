@@ -44,7 +44,7 @@ class NetworkInterface(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'server_manager"."network_interfaces'
+        db_table = 'server_management"."network_interfaces'
 
     def __str__(self):
         return self.interface_name
