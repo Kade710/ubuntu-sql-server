@@ -35,7 +35,7 @@ def server_detail(request, server_id):
         "hardware": hardware,
         "network": network,
         "health_checks": health_checks,
-        "maintenance_log": maintenance_log
+        "maintenance_log": maintenance_log,
     }
 
     return render(request, "dashboard/server_detail.html", context)
