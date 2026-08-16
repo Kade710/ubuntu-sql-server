@@ -62,3 +62,15 @@ class HealthCheck(models.Model):
     class Meta:
         managed =False
         db_table = 'server_management"."health_checks'
+
+class MaintenanceLog(models.Model):
+    id = models.IntegerField(primary_key=True)
+    server_id = models.IntegerField()
+    action = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    performed_by = models.CharField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'server_management"."maintenance_logs'
