@@ -1,82 +1,97 @@
-<h1>{{ server.hostname }}</h1>
+{% extends "dashboard/base.html" %}
 
-<p>Server ID: {{ server.id }}</p>
-<p>IP Address: {{ server.ip_address }}</p>
-<p>Operating System: {{ server.operating_system }}</p>
-<p>CPU: {{ server.cpu }}</p>
-<p>RAM: {{ server.ram_gb }} GB</p>
-<p>Storage: {{ server.storage_gb }} GB</p>
-<p>GPU: {{ server.gpu }}</p>
-<p>Motherboard: {{ server.motherboard }}</p>
+{% block title %}
+{{ server.hostname }} | Ubuntu SQL Server Dashboard
+{% endblock %}
 
+{% block content %}
+
+<div class="card">
+<h2>{{ server.hostname }}</h2>
+
+    <p>Server ID: {{ server.id }}</p>
+    <p>IP Address: {{ server.ip_address }}</p>
+    <p>Operating System: {{ server.operating_system }}</p>
+    <p>CPU: {{ server.cpu }}</p>
+    <p>RAM: {{ server.ram_gb }} GB</p>
+    <p>Storage: {{ server.storage_gb }} GB</p>
+    <p>GPU: {{ server.gpu }}</p>
+    <p>Motherboard: {{ server.motherboard }}</p>
+</div>
 <p>
     <a href="/">Back to Servers</a>
 </p>
 
 <hr>
 
-<h2>Hardware Components</h2>
+<div class="card"></div>
+    <h2>Hardware Components</h2>
 
-{% if hardware %}
-    {% for component in hardware %}
-        <h3>{{ component.component_type }}</h3>
+    {% if hardware %}
+        {% for component in hardware %}
+            <h3>{{ component.component_type }}</h3>
 
-        <p>Manufacturer: {{ component.manufacturer }}</p>
-        <p>Model: {{ component.model }}</p>
-        <p>Specification: {{ component.specification }}</p>
-    {% endfor %}
-{% else %}
-    <p>No hardware components found.</p>
-{% endif %}
-
+            <p>Manufacturer: {{ component.manufacturer }}</p>
+            <p>Model: {{ component.model }}</p>
+            <p>Specification: {{ component.specification }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No hardware components found.</p>
+    {% endif %}
+</div>
 <hr>
 
-<h2>Network Interfaces</h2>
+<div class="card">
+    <h2>Network Interfaces</h2>
 
-{% if network %}
-    {% for interface in network %}
-        <h3>{{ interface.interface_name }}</h3>
+    {% if network %}
+        {% for interface in network %}
+            <h3>{{ interface.interface_name }}</h3>
 
-        <p>MAC Address: {{ interface.mac_address }}</p>
-        <p>IP Address: {{ interface.ip_address }}</p>
-        <p>Network Type: {{ interface.network_type }}</p>
-        <p>Speed: {{interface.speed_mbps }} Mbps</p>
-    {% endfor %}
-{% else %}
-    <p>No network interfaces found.</p>
-{% endif %}
-
+            <p>MAC Address: {{ interface.mac_address }}</p>
+            <p>IP Address: {{ interface.ip_address }}</p>
+            <p>Network Type: {{ interface.network_type }}</p>
+            <p>Speed: {{interface.speed_mbps }} Mbps</p>
+        {% endfor %}
+    {% else %}
+        <p>No network interfaces found.</p>
+    {% endif %}
+</div>
 <hr>
 
-<h2>Health History</h2>
+<div class="card">
+    <h2>Health History</h2>
 
-{% if health_checks %}
-    {% for check in health_checks %}
-        <h3>Health Check {{ check.id }}</h3>
+    {% if health_checks %}
+        {% for check in health_checks %}
+            <h3>Health Check {{ check.id }}</h3>
 
-        <p>Load Average: {{ check.load_average }}</p>
-        <p>Memory Usage: {{ check.memory_percent }}%</p>
-        <p>Disk Usage: {{ check.disk_percent }}%</p>
-        <p>Uptime: {{ check.uptime_hours }} hours</p>
-        <p>Status: {{ check.overall_status }}</p>
-        <p>Created At: {{ check.created_at }}</p>
-    {% endfor %}
-{% else %}
-    <p>No health history found.</p>
-{% endif %}
-
+            <p>Load Average: {{ check.load_average }}</p>
+            <p>Memory Usage: {{ check.memory_percent }}%</p>
+            <p>Disk Usage: {{ check.disk_percent }}%</p>
+            <p>Uptime: {{ check.uptime_hours }} hours</p>
+            <p>Status: {{ check.overall_status }}</p>
+            <p>Created At: {{ check.created_at }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No health history found.</p>
+    {% endif %}
+</div>
 <hr>
 
-<h2>Maintenance Logs</h2>
+<div class="card">
+    <h2>Maintenance Logs</h2>
 
-{% if maintenance_logs %}
-    {% for log in maintenance_logs %}
-        <h3>{{ log.action }}</h3>
+    {% if maintenance_logs %}
+        {% for log in maintenance_logs %}
+            <h3>{{ log.action }}</h3>
 
-        <p>Description: {{ log.description }}</p>
-        <p>Performed By: {{ log.performed_by }}</p>
-        <p>Created At: {{ log.created_at }}</p>
-    {% endfor %}
-{% else %}
-    <p>No maintenance logs found.</p>
-{% endif %}
+            <p>Description: {{ log.description }}</p>
+            <p>Performed By: {{ log.performed_by }}</p>
+            <p>Created At: {{ log.created_at }}</p>
+        {% endfor %}
+    {% else %}
+        <p>No maintenance logs found.</p>
+    {% endif %}
+</div>
+{% endblock %}

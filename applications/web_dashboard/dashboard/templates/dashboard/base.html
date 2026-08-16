@@ -1,1 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta> charset="FUT-8">
+    <title>{% block title %}Ubuntu SQL Server Dashboard{% endblock %}</title>
 
+    <link rel="stylesheet" href="{% static 'dashboard/style.css' %}">
+</head>
+
+<body>
+    <header>
+        <h1>Ubuntu SQL Server Dashboard</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
