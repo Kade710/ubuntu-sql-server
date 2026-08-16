@@ -1,35 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset=""UTF-8>
-    <title>Ubuntu SQL Server Dashboard</title>
-</head>
+{% extends "dashboard/base.html" %}
 
-<body>
-    <h1>Ubuntu SQL Server Dashboard</h1>
+{% block title %}
+Servers | Ubuntu SQL Server Dashboard
+{% endblock %}
 
-    <h2>Registered Servers</h2>
-    {% if servers %}
-        {% for server in servers%}
-            <hr>
+{% block content %}
 
-            <h3>
+<h2>Registered Servers</h2>
+
+{% if servers %}
+    {% for server in servers %}
+        <div class="card">
+
+            <h2>
                 <a href="{% url 'server_detail' server.id %}">
                     {{ server.hostname }}
                 </a>
-            </h3>
+            </h2>
 
-            <p>Server ID: {{ server.id }}</p>
-            <p>IP Address: {{ server.ip_address }}</p>
-            <p>Operating System: {{ server.operating_system }}</p>
-            <p>CPU: {{ server.cpu }}</p>
-            <p>Storage: {{ server.storage_gb }}</p>
-            <p>RAM: {{ server.ram_gb }} GB</p>
-            <p>GPU: {{ server.gpu }}</p>
-            <p>Motherboard: {{ server.motherboard }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No registered servers found.</p>
-    {% endif %}
-</body>
-</html>
+            <p><strong>Server ID:</strong> {{ server.id }}</p>
+            <p><strong>IP Address:</strong> {{ server.ip_address }}</p>
+            <p><strong>Operating System</strong> {{server.operating_system }}</p>
+            <p><strong>CPU:</strong> {{ server.cpu }}</p>
+            <p><strong>Storage:</strong> {{ server.storage_gb }} GB</p>
+            <p><strong>RAM:</strong> {{ server.ram_gb }} GB</p>
+            <p><storng>GPU:</storng> {{ server.gpu }}</p>
+            <p><strong>Motherboard:</strong> {{ server.motherboard }}</p>
+
+            <p>
+                <a href="{% url 'server_details' server.id %}">
+                    View Server Details
+                </a>
+            </p>
+
+        </div>
+    {% endfor %}
+{% else %}
+        <div class="card">
+            <p>No registered servers found.</p>
+        </div>
+{% endif %}
+
+{% endblock %}
