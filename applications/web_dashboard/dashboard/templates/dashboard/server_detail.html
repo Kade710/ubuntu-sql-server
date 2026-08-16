@@ -7,6 +7,14 @@
 {% block content %}
 
 <div class="card">
+    <a href="#overview">Overview</a> |
+    <a href="#hardware">Hardware</a> |
+    <a href="#network">Network</a> |
+    <a href="#health">Health</a> |
+    <a href="#maintenance">Maintenance</a> |
+</div>
+
+<div class="card" id="overview">
 <h2>{{ server.hostname }}</h2>
 
     <p>Server ID: {{ server.id }}</p>
@@ -24,7 +32,7 @@
 
 <hr>
 
-<div class="card"></div>
+<div class="card" id="hardware">
     <h2>Hardware Components</h2>
 
     {% if hardware %}
@@ -41,7 +49,7 @@
 </div>
 <hr>
 
-<div class="card">
+<div class="card" id="network">
     <h2>Network Interfaces</h2>
 
     {% if network %}
@@ -59,7 +67,7 @@
 </div>
 <hr>
 
-<div class="card">
+<div class="card" id="history">
     <h2>Health History</h2>
 
     {% if health_checks %}
@@ -79,7 +87,7 @@
 </div>
 <hr>
 
-<div class="card">
+<div class="card" id="maintenance">
     <h2>Maintenance Logs</h2>
 
     {% if maintenance_logs %}
