@@ -5,6 +5,20 @@ from .models import HardwareComponent, HealthCheck, MaintenanceLog, NetworkInter
 def index(request):
     servers = Server.objects.all().order_by("id")
 
+    server_data = []
+
+    for server in servers:
+        latest_health = HealthCheck.objects.filter(
+            server_id=server.id
+        ).order_by("-created_at").first()
+
+        server_data.append(
+            {
+                "server": server,
+                "latest_health": latest_health,
+            }
+        )
+
     context = {
         "servers": servers,
     }

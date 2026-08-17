@@ -8,27 +8,39 @@ Servers | Ubuntu SQL Server Dashboard
 
 <h2>Registered Servers</h2>
 
-{% if servers %}
-    {% for server in servers %}
+{% if server_data %}
+    {% for item in server_data %}
         <div class="card">
 
             <h2>
-                <a href="{% url 'server_detail' server.id %}">
-                    {{ server.hostname }}
+                <a href="{% url 'server_detail' item.server.id %}">
+                    {{ item.server.hostname }}
                 </a>
             </h2>
 
-            <p><strong>Server ID:</strong> {{ server.id }}</p>
-            <p><strong>IP Address:</strong> {{ server.ip_address }}</p>
-            <p><strong>Operating System</strong> {{server.operating_system }}</p>
-            <p><strong>CPU:</strong> {{ server.cpu }}</p>
-            <p><strong>Storage:</strong> {{ server.storage_gb }} GB</p>
-            <p><strong>RAM:</strong> {{ server.ram_gb }} GB</p>
-            <p><storng>GPU:</storng> {{ server.gpu }}</p>
-            <p><strong>Motherboard:</strong> {{ server.motherboard }}</p>
+            {% if item.latest_health %}
+                <p>
+                    <strong>Statuus:</strong>
+                    {{ item.latest_health.overall_staus }}
+                </p>
+            {% else %}
+                <p>
+                    <strong>Status:</strong>
+                    No health data
+                </p>
+            {% endif %}
+
+            <p><strong>Server ID:</strong> {{ item.server.id }}</p>
+            <p><strong>IP Address:</strong> {{ item.server.ip_address }}</p>
+            <p><strong>Operating System</strong> {{ item.server.operating_system }}</p>
+            <p><strong>CPU:</strong> {{ item.server.cpu }}</p>
+            <p><strong>Storage:</strong> {{ item.server.storage_gb }} GB</p>
+            <p><strong>RAM:</strong> {{ item.server.ram_gb }} GB</p>
+            <p><strong>GPU:</storng> {{ item.server.gpu }}</p>
+            <p><strong>Motherboard:</strong> {{ item.server.motherboard }}</p>
 
             <p>
-                <a href="{% url 'server_detail' server.id %}">
+                <a href="{% url 'server_detail' item.server.id %}">
                     View Server Details
                 </a>
             </p>
