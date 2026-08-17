@@ -26,6 +26,7 @@ main {
 
 .status-healthy {
     font-weight: bold;
+    color: green;
 }
 
 hr {
