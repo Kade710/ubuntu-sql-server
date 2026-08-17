@@ -18,6 +18,10 @@ import (
 )
 
 func main() {
+		if len(os.Args) > 1 && os.Args[1] == "--refresh" {
+			refreshServerData()
+			return
+		}
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
