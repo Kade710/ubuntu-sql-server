@@ -20,7 +20,7 @@ def index(request):
         )
 
     context = {
-        "servers": servers,
+        "server_data": server_data,
     }
 
     return render(request, "dashboard/index.html", context)
