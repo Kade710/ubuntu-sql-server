@@ -109,13 +109,28 @@
     <h2>Maintenance Logs</h2>
 
     {% if maintenance_logs %}
-        {% for log in maintenance_logs %}
-            <h3>{{ log.action }}</h3>
+        <table>
+            <thread>
+                <tr>
+                    <th>Action</th>
+                    <th>Description</th>
+                    <th>Performed By</th>
+                    <th>Created</th>
+                </tr>
+            </thread>
 
-            <p>Description: {{ log.description }}</p>
-            <p>Performed By: {{ log.performed_by }}</p>
-            <p>Created At: {{ log.created_at }}</p>
-        {% endfor %}
+            <tbody>
+                {% for log in maintenance_logs %}
+                    <tr>
+                        <td>{{ log.action }}</td>
+                        <td>{{ log.description }}</td>
+                        <td>{{ log.performed_by }}</td>
+                        <td>{{ log.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
     {% else %}
         <p>No maintenance logs found.</p>
     {% endif %}
