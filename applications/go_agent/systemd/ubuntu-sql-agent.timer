@@ -1,10 +1,10 @@
 [Unit]
-Description=Run Ubuntu SQL Server Go Agent periodically
+Description=Run Ubuntu SQL Server Go Agent every 15 minutes
 Requires=ubuntu-sql-agent.service
 
 [Timer]
 OnBootSec=2min
-OnUnitActiveSec=15min
+OnCalendar=*:0/15
 Persistent=true
 Unit=ubuntu-sql-agent.service
 
