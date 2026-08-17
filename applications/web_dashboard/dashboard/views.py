@@ -38,7 +38,7 @@ def server_detail(request, server_id):
 
     health_checks = HealthCheck.objects.filter(
         server_id=server_id
-    ).order_by("created_at")[:10]
+    ).order_by("-created_at")[:10]
 
     maintenance_logs = MaintenanceLog.objects.filter(
         server_id=server_id
