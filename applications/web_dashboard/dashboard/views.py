@@ -40,6 +40,20 @@ def server_detail(request, server_id):
         server_id=server_id
     ).order_by("-created_at")[:10]
 
+    health_chart = list(
+        reversed(
+            [
+                {
+                    "created_at": check.created_at.strftime("%m/%d %H:%M"),
+                    "load_average": float(check.load_average or 0),
+                    "memory_percent": float(check.memory_percent or 0),
+                    "disk_percent": float(check.disk_percent or 0),
+                }
+                for check in health_checks
+            ]
+        )
+    )
+
     maintenance_logs = MaintenanceLog.objects.filter(
         server_id=server_id
     ).order_by("-created_at")[:10]
@@ -48,6 +62,7 @@ def server_detail(request, server_id):
         "server": server,
         "hardware": hardware,
         "network": network,
+        "health_chart": health_chart,
         "health_checks": health_checks,
         "maintenance_logs": maintenance_logs,
     }

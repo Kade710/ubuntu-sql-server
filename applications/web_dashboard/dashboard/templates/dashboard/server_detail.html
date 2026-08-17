@@ -73,6 +73,58 @@
 <div class="card" id="health">
     <h2>Health History</h2>
 
+    <div class="health-chart">
+        <canvas id="healthChart"></canvas>
+    </div>
+
+    {{ health_chart|json_script:"health-chart-data" }}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const healthData = JSON.parse(
+            document.getElementById("health-chart-data").textContent
+        );
+
+        const labels = healthData.map(item => item.created_at);
+        const loadData = healthData.map(item => item.load_average);
+        const memoryData = healthData.map(item => item.memory_percent);
+        const diskData = healthData.map(item => item.disk_percent);
+
+        const healthChart = document.getElementById("healthChart");
+
+        new Chart(healthChart, {
+            type: "line",
+
+            data: {
+                labels: labels,
+
+                datasets: [
+                    {
+                        label: "Load Average",
+                        data: loadData,
+                        tension: 0.2
+                    },
+                    {
+                        label: "Memory %",
+                        data: memoryData,
+                        tension: 0.2
+                    },
+                    {
+                        label: "Disk %",
+                        data: diskData,
+                        tension: 0.2
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+
     {% if health_checks %}
         <table>
             <thead>
