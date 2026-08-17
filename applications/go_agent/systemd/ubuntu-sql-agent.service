@@ -1,1 +1,13 @@
+[Unit]
+Description=Ubuntu SQL Server Go Agent
+After=network.target postgresql.service
 
+[Service]
+Type=oneshot
+User=jonathon
+WorkingDirectory=/home/jonathon/Projects/ubuntu-sql-server/applications/go_agent
+EnvironmentFile=/home/jonathon/Projects/ubuntu-sql-server/applications/go_agent/.env
+ExecStart=/home/jonathon/Projects/ubuntu-sql-server/applications/go_agent/agent --refresh
+
+[Install]
+WantedBy=multi-user.target
