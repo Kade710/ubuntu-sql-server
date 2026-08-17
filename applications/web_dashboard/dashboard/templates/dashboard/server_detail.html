@@ -11,11 +11,11 @@
     <a href="#hardware">Hardware</a> |
     <a href="#network">Network</a> |
     <a href="#health">Health</a> |
-    <a href="#maintenance">Maintenance</a> |
+    <a href="#maintenance">Maintenance</a>
 </div>
 
 <div class="card" id="overview">
-<h2>{{ server.hostname }}</h2>
+    <h2>{{ server.hostname }}</h2>
 
     <p>Server ID: {{ server.id }}</p>
     <p>IP Address: {{ server.ip_address }}</p>
@@ -26,6 +26,7 @@
     <p>GPU: {{ server.gpu }}</p>
     <p>Motherboard: {{ server.motherboard }}</p>
 </div>
+
 <p>
     <a href="/">Back to Servers</a>
 </p>
@@ -47,6 +48,7 @@
         <p>No hardware components found.</p>
     {% endif %}
 </div>
+
 <hr>
 
 <div class="card" id="network">
@@ -59,12 +61,13 @@
             <p>MAC Address: {{ interface.mac_address }}</p>
             <p>IP Address: {{ interface.ip_address }}</p>
             <p>Network Type: {{ interface.network_type }}</p>
-            <p>Speed: {{interface.speed_mbps }} Mbps</p>
+            <p>Speed: {{ interface.speed_mbps }} Mbps</p>
         {% endfor %}
     {% else %}
         <p>No network interfaces found.</p>
     {% endif %}
 </div>
+
 <hr>
 
 <div class="card" id="health">
@@ -72,7 +75,7 @@
 
     {% if health_checks %}
         <table>
-            <thread>
+            <thead>
                 <tr>
                     <th>Check ID</th>
                     <th>Load Average</th>
@@ -82,7 +85,7 @@
                     <th>Status</th>
                     <th>Created</th>
                 </tr>
-            </thread>
+            </thead>
 
             <tbody>
                 {% for check in health_checks %}
@@ -92,7 +95,30 @@
                         <td>{{ check.memory_percent }}%</td>
                         <td>{{ check.disk_percent }}%</td>
                         <td>{{ check.uptime_hours }} hours</td>
-                        <td>{{ check.overall_status }}</td>
+
+                        <td>
+                            {% if check.overall_status == "HEALTHY" %}
+                                <span class="status-healthy">
+                                    {{ check.overall_status }}
+                                </span>
+
+                            {% elif check.overall_status == "WARNING" %}
+                                <span class="status-warning">
+                                    {{ check.overall_status }}
+                                </span>
+
+                            {% elif check.overall_status == "CRITICAL" %}
+                                <span class="status-critical">
+                                    {{ check.overall_status }}
+                                </span>
+
+                            {% else %}
+                                <span class="status-unknown">
+                                    {{ check.overall_status }}
+                                </span>
+                            {% endif %}
+                        </td>
+
                         <td>{{ check.created_at }}</td>
                     </tr>
                 {% endfor %}
@@ -103,6 +129,7 @@
         <p>No health history found.</p>
     {% endif %}
 </div>
+
 <hr>
 
 <div class="card" id="maintenance">
@@ -110,14 +137,14 @@
 
     {% if maintenance_logs %}
         <table>
-            <thread>
+            <thead>
                 <tr>
                     <th>Action</th>
                     <th>Description</th>
                     <th>Performed By</th>
                     <th>Created</th>
                 </tr>
-            </thread>
+            </thead>
 
             <tbody>
                 {% for log in maintenance_logs %}
@@ -135,4 +162,5 @@
         <p>No maintenance logs found.</p>
     {% endif %}
 </div>
+
 {% endblock %}
