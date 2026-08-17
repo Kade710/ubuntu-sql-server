@@ -21,9 +21,27 @@ Servers | Ubuntu SQL Server Dashboard
             {% if item.latest_health %}
                 <p>
                     <strong>Status:</strong>
-                    <span class="status-healthy">
-                        {{ item.latest_health.overall_status }}
-                    </span>
+
+                    {% if item.latest_health.overall_status == "HEALTHY" %}
+                        <span class="status-healthy">
+                            {{ item.latest_health.overall_status }}
+                        </span>
+
+                    {% elif item.latest_health.overall_status == "WARNING" %}
+                        <span class="stsuas-warning">
+                            {{ item.latest_health.overall_status }}
+                        </span>
+
+                    {% elif item.latest_health.overall_status == "CRITICAL" %}
+                        <span class="status-critical">
+                            {{ item.latest_health.overall_status }}
+                        </span>
+
+                    {% else %}
+                        <span class="status-unknown">
+                            {{ item.latest_health.overall_status }}
+                        </span>
+                    {% endif %}
                 </p>
 
                 <p>
