@@ -34,6 +34,7 @@ func main() {
 		fmt.Println("8. Register Hardware Components")
 		fmt.Println("9. Show System Health")
 		fmt.Println("10. View Recent Health Checks")
+		fmt.Println("11. Refresh Server Data")
 		fmt.Println("0. exit")
 		fmt.Println("\nSelect an option")
 
@@ -70,6 +71,9 @@ func main() {
 
 		case "10":
 			viewRecentHealthChecks()
+
+		case "11":
+			refreshServerData()
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -525,4 +529,26 @@ func viewRecentHealthChecks() {
 		fmt.Println("Overall Status:", record.OverallStatus)
 		fmt.Println("Created At:", record.CreatedAt)
 	}
+}
+
+func refreshServerData() {
+	fmt.Println("\nRefresh Server Data")
+	fmt.Println("---")
+
+	fmt.Println("\n[1/5] Updating server inventory....")
+	registerServerInventory()
+
+	fmt.Println("\n[2/5] Updating operating system....")
+	registerOperatingSystem()
+
+	fmt.Println("\n[3/5] Updating hardware components....")
+	registerHardwareComponents()
+
+	fmt.Println("\n[4/5] Updating network interfaces....")
+	registerNetworkInterfaces()
+
+	fmt.Println("\n[5/5] Recording system health....")
+	showSystemHealth()
+
+	fmt.Println("\nServer refresh completed!!!")
 }
