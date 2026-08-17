@@ -71,16 +71,34 @@
     <h2>Health History</h2>
 
     {% if health_checks %}
-        {% for check in health_checks %}
-            <h3>Health Check {{ check.id }}</h3>
+        <table>
+            <thread>
+                <tr>
+                    <th>Check ID</th>
+                    <th>Load Average</th>
+                    <th>Memory</th>
+                    <th>Disk</th>
+                    <th>Uptime</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                </tr>
+            </thread>
 
-            <p>Load Average: {{ check.load_average }}</p>
-            <p>Memory Usage: {{ check.memory_percent }}%</p>
-            <p>Disk Usage: {{ check.disk_percent }}%</p>
-            <p>Uptime: {{ check.uptime_hours }} hours</p>
-            <p>Status: {{ check.overall_status }}</p>
-            <p>Created At: {{ check.created_at }}</p>
-        {% endfor %}
+            <tbody>
+                {% for check in health_checks %}
+                    <tr>
+                        <td>{{ check.id }}</td>
+                        <td>{{ check.load_average }}</td>
+                        <td>{{ check.memory_percent }}%</td>
+                        <td>{{ check.disk_percent }}%</td>
+                        <td>{{ check.uptime_hours }} hours</td>
+                        <td>{{ check.overall_status }}</td>
+                        <td>{{ check.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
     {% else %}
         <p>No health history found.</p>
     {% endif %}
