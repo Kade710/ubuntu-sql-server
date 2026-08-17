@@ -22,8 +22,13 @@ Servers | Ubuntu SQL Server Dashboard
                 <p>
                     <strong>Status:</strong>
                     <span class="status-healthy">
-                    {{ item.latest_health.overall_staus }}
+                        {{ item.latest_health.overall_status }}
                     </span>
+                </p>
+
+                <p>
+                    <strong>Last Health Check:</strong>
+                    {{ item.latest_health.created_at }}
                 </p>
             {% else %}
                 <p>
@@ -34,11 +39,11 @@ Servers | Ubuntu SQL Server Dashboard
 
             <p><strong>Server ID:</strong> {{ item.server.id }}</p>
             <p><strong>IP Address:</strong> {{ item.server.ip_address }}</p>
-            <p><strong>Operating System</strong> {{ item.server.operating_system }}</p>
+            <p><strong>Operating System:</strong> {{ item.server.operating_system }}</p>
             <p><strong>CPU:</strong> {{ item.server.cpu }}</p>
             <p><strong>Storage:</strong> {{ item.server.storage_gb }} GB</p>
             <p><strong>RAM:</strong> {{ item.server.ram_gb }} GB</p>
-            <p><strong>GPU:</storng> {{ item.server.gpu }}</p>
+            <p><strong>GPU:</strong> {{ item.server.gpu }}</p>
             <p><strong>Motherboard:</strong> {{ item.server.motherboard }}</p>
 
             <p>
@@ -50,9 +55,9 @@ Servers | Ubuntu SQL Server Dashboard
         </div>
     {% endfor %}
 {% else %}
-        <div class="card">
-            <p>No registered servers found.</p>
-        </div>
+    <div class="card">
+        <p>No registered servers found.</p>
+    </div>
 {% endif %}
 
 {% endblock %}
