@@ -45,6 +45,31 @@ Servers | Ubuntu SQL Server Dashboard
                 </p>
 
                 <p>
+                    <strong>Agent Status:</strong>
+
+                    {% if item.agent_status == "ONLINE" %}
+                        <span class="status-healthy">
+                            {{ item.agent_status }}
+                        </span>
+
+                    {% elif item.agent_status == "STALE" %}
+                        <span class="stsuas-warning">
+                            {{ item.agent_status }}
+                        </span>
+
+                    {% elif item.agent_status == "OFFLINE" %}
+                        <span class="status-critical">
+                            {{ item.agent_status }}
+                        </span>
+
+                    {% else %}
+                        <span class="status-unknown">
+                            {{ item.agent_status }}
+                        </span>
+                    {% endif %}
+                </p>
+
+                <p>
                     <strong>Last Health Check:</strong>
                     {{ item.latest_health.created_at }}
                 </p>
