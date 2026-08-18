@@ -15,10 +15,31 @@ def index(request):
             server_id=server.id
         ).order_by("-created_at").first()
 
+        agent_status = "UNKNOWN"
+
+        if latest_health and latest_health.created_at:
+            last_check = latest_health.created_at
+
+            if timezone.is_naive(last_check):
+                last_check = timezone.make_aware(
+                    last_check,
+                    timezone.get_current_timezone()
+                )
+
+            age = timezone.now() - last_check
+
+            if age < timedelta(hours=25):
+                agent_status = "ONLINE"
+            elif age < timedelta(hours=48):
+                agent_status = "STALE"
+            else:
+                agent_status = "OFFLINE"
+
         server_data.append(
             {
                 "server": server,
                 "latest_health": latest_health,
+                "agent_status": agent_status,
             }
         )
 
