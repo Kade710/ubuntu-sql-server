@@ -73,7 +73,7 @@
 <div class="card" id="health">
     <h2>Health History</h2>
 
-{% if lastest_health %}
+{% if latest_health %}
     <div class="current-health">
         <h3>Current Health</h3>
 
@@ -90,8 +90,8 @@
         </p>
 
         <p><strong>Load Average:</strong> {{ latest_health.load_average }}</p>
-        <p><strong>Memory:</strong> {{ lastest_health.memory_percent }}%</p>
-        <p><strong>Disk:</strong> {{ lastest_health.disk_percent }}%</p>
+        <p><strong>Memory:</strong> {{ latest_health.memory_percent }}%</p>
+        <p><strong>Disk:</strong> {{ latest_health.disk_percent }}%</p>
         <p><strong>Uptime:</strong> {{ latest_health.uptime_hours }} hours</p>
         <p><strong>Last Check:</strong> {{ latest_health.created_at }}</p>
     </div>
