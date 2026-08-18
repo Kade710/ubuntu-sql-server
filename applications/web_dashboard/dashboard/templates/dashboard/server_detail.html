@@ -223,6 +223,20 @@
 <div class="card" id="maintenance">
     <h2>Maintenance Logs</h2>
 
+    <h3>Add Maintenance Log</h3>
+
+    <form method="POST">
+        {% csfr_token %}
+
+        {{ maintenance_form.as_p }}
+
+        <button type="submit">
+            Add Maintenance Log
+        </button>
+    </form>
+
+    <hr>
+    
     {% if maintenance_logs %}
         <table>
             <thead>
