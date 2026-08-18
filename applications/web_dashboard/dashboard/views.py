@@ -42,7 +42,7 @@ def server_detail(request, server_id):
 
     latest_health = HealthCheck.objects.filter(
         server_id=server_id
-    ).order_by("created_at").first
+    ).order_by("-created_at").first()
 
     health_chart = list(
         reversed(
