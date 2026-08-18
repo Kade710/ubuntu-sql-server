@@ -73,6 +73,30 @@
 <div class="card" id="health">
     <h2>Health History</h2>
 
+{% if lastest_health %}
+    <div class="current-health">
+        <h3>Current Health</h3>
+
+        <p><strong>Status:</strong>
+            {% if latest_health.overall_status == "HEALTHY" %}
+                <span class="status-healthy">{{ latest_health.overall_status }}</span>
+            {% elif latest_health.overall_status == "WARNING" %}
+                <span class="status-warning">{{ latest_health.overall_status }}</span>
+            {% elif latest_health.overall_status == "CRITICAL" %}
+                <span class="status-critical">{{ latest_health.overall_status }}</span>
+            {% else %}
+                <span class="status-unknown">{{ latest_health.overall_status }}</span>
+                {% endif %}
+        </p>
+
+        <p><strong>Load Average:</strong> {{ latest_health.load_average }}</p>
+        <p><strong>Memory:</strong> {{ lastest_health.memory_percent }}%</p>
+        <p><strong>Disk:</strong> {{ lastest_health.disk_percent }}%</p>
+        <p><strong>Uptime:</strong> {{ latest_health.uptime_hours }} hours</p>
+        <p><strong>Last Check:</strong> {{ latest_health.created_at }}</p>
+    </div>
+{% endif %}
+    
     <div class="health-chart">
         <canvas id="healthChart"></canvas>
     </div>

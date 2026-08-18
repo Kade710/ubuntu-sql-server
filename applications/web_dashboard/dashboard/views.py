@@ -40,6 +40,10 @@ def server_detail(request, server_id):
         server_id=server_id
     ).order_by("-created_at")[:10]
 
+    latest_health = HealthCheck.objects.filter(
+        server_id=server_id
+    ).order_by("created_at").first
+
     health_chart = list(
         reversed(
             [
@@ -62,6 +66,7 @@ def server_detail(request, server_id):
         "server": server,
         "hardware": hardware,
         "network": network,
+        "latest_health": latest_health,
         "health_chart": health_chart,
         "health_checks": health_checks,
         "maintenance_logs": maintenance_logs,

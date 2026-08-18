@@ -74,3 +74,10 @@ tbody tr:hover {
     width: 100%;
     margin-bottom: 30px;
 }
+
+.current-health {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 6px;
+}
