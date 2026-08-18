@@ -50,7 +50,15 @@ def server_detail(request, server_id):
     agent_status = "UNKNOWN"
 
     if latest_health and latest_health.created_at:
-        age = timezone.now() - latest_health.created_at
+        last_check = latest_health.created_at
+
+        if timezone.is_naive(last_check):
+            last_check = timezone.make_aware(
+                last_check,
+                timezone.get_current_timezone()
+            )
+
+        age = timezone.now() - last_check
 
         if age < timedelta(hours=25):
             agent_status = "ONLINE"
