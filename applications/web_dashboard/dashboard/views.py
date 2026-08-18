@@ -5,6 +5,8 @@ from django.utils import timezone
 
 from .models import HardwareComponent, HealthCheck, MaintenanceLog, NetworkInterface, Server
 
+from .forms import MaintenanceLogForm
+
 def index(request):
     servers = Server.objects.all().order_by("id")
 
@@ -106,6 +108,27 @@ def server_detail(request, server_id):
         server_id=server_id
     ).order_by("-created_at")[:10]
 
+    if request.method == "POST":
+        maintenance_form = MaintenanceLogForm(request.POST)
+
+        if maintenance_form.is_valid():
+            MaintenanceLog.objects.create(
+                server_id=server_id,
+                action=maintenance_form.cleaned_data["action"],
+                description=maintenance_form.cleaned_data["description"],
+                performed_by=maintenance_form.cleaned_data["performed_by"],
+                created_at=timezone.now(),
+            )
+
+            maintenance_form = MaintenanceLogForm()
+
+            maintenance_logs = MaintenanceLogForm.objects.filter(
+                server_id=server_id
+            ).oreder_by("-created_at")[:10]
+
+    else:
+        maintenance_form = MaintenanceLogForm()
+
     context = {
         "server": server,
         "hardware": hardware,
@@ -114,6 +137,7 @@ def server_detail(request, server_id):
         "agent_status": agent_status,
         "health_chart": health_chart,
         "health_checks": health_checks,
+        "maintenance_form": maintenance_form,
         "maintenance_logs": maintenance_logs,
     }
 
