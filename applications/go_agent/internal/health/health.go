@@ -45,7 +45,7 @@ func Collect() (Status, error) {
 		MemoryPercent: memory,
 		DiskPercent:   disk,
 		UptimeHours:   uptime,
-		Overall:       overallStatus(memory, disk),
+		Overall:       overallStatus(load, memory, disk),
 	}, nil
 }
 
@@ -142,11 +142,11 @@ func uptimeHours() (float64, error) {
 }
 
 func overallStatus(memoryPercent, diskPercent float64) string {
-	if memoryPercent >= 90 || diskPercent >= 90 {
+	if load >= 8.0 || memoryPercent >= 90 || diskPercent >= 90 {
 		return "CRITICAL"
 	}
 
-	if memoryPercent >= 75 || diskPercent >= 80 {
+	if load >= 4.0 memoryPercent >= 75 || diskPercent >= 80 {
 		return "WARNING"
 	}
 
