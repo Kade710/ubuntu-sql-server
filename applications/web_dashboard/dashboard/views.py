@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
 
 from .models import HardwareComponent, HealthCheck, MaintenanceLog, NetworkInterface, Server
 
@@ -44,6 +47,18 @@ def server_detail(request, server_id):
         server_id=server_id
     ).order_by("-created_at").first()
 
+    agent_status = "UNKNOWN"
+
+    if latest_health and latest_health.created_at:
+        age = timezone.now() - latest_health.created_at
+
+        if age < timedelta(hours=25):
+            agent_status = "ONLINE"
+        elif age < timedelta(hours=48):
+            agent_status = "STALE"
+        else:
+            agent_status = "OFFLINE"
+
     health_chart = list(
         reversed(
             [
@@ -67,6 +82,7 @@ def server_detail(request, server_id):
         "hardware": hardware,
         "network": network,
         "latest_health": latest_health,
+        "agent_status": agent_status,
         "health_chart": health_chart,
         "health_checks": health_checks,
         "maintenance_logs": maintenance_logs,
