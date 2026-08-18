@@ -77,7 +77,7 @@
     <div class="current-health">
         <h3>Current Health</h3>
 
-        <p><strong>Agent Status:</strong>
+        <p><strong>Status:</strong>
             {% if latest_health.overall_status == "HEALTHY" %}
                 <span class="status-healthy">{{ latest_health.overall_status }}</span>
             {% elif latest_health.overall_status == "WARNING" %}
@@ -86,6 +86,18 @@
                 <span class="status-critical">{{ latest_health.overall_status }}</span>
             {% else %}
                 <span class="status-unknown">{{ latest_health.overall_status }}</span>
+                {% endif %}
+        </p>
+
+        <p><strong>Agent Status:</strong>
+            {% if agent_status == "ONLINE" %}
+                <span class="status-healthy">{{ agent_status }}</span>
+            {% elif agent_status == "STALE" %}
+                <span class="status-warning">{{ agent_status }}</span>
+            {% elif agent_status == "OFFLINE" %}
+                <span class="status-critical">{{ agent_status }}</span>
+            {% else %}
+                <span class="status-unknown">{{ agent_status }}</span>
                 {% endif %}
         </p>
 
