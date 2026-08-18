@@ -77,7 +77,7 @@
     <div class="current-health">
         <h3>Current Health</h3>
 
-        <p><strong>Status:</strong>
+        <p><strong>Agent Status:</strong>
             {% if latest_health.overall_status == "HEALTHY" %}
                 <span class="status-healthy">{{ latest_health.overall_status }}</span>
             {% elif latest_health.overall_status == "WARNING" %}
