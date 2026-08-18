@@ -226,7 +226,7 @@
     <h3>Add Maintenance Log</h3>
 
     <form method="POST">
-        {% csfr_token %}
+        {% csrf_token %}
 
         {{ maintenance_form.as_p }}
 
@@ -236,7 +236,7 @@
     </form>
 
     <hr>
-    
+
     {% if maintenance_logs %}
         <table>
             <thead>
