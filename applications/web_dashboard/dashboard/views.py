@@ -122,9 +122,9 @@ def server_detail(request, server_id):
 
             maintenance_form = MaintenanceLogForm()
 
-            maintenance_logs = MaintenanceLogForm.objects.filter(
+            maintenance_logs = MaintenanceLog.objects.filter(
                 server_id=server_id
-            ).oreder_by("-created_at")[:10]
+            ).order_by("-created_at")[:10]
 
     else:
         maintenance_form = MaintenanceLogForm()
