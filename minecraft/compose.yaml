@@ -1,1 +1,26 @@
+services
+  minecraft:
+    image: itzg/minecraft-server:latest
+    container_name: minecraft-server
 
+    ports:
+      - "25565:25565"
+
+    environment:
+      EULA: "TRUE"
+      TYPE: "PAPER"
+      MEMORY: "10G"
+      MAX_PLAYERS: "12"
+      DIFFICULTY: "normal"
+      ONLINE_MODE: "TRUE"
+
+    volumes:
+      - ./data:/data
+
+    restart: unless_stopped
+
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 10G
