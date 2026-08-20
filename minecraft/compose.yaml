@@ -1,4 +1,4 @@
-services
+services:
   minecraft:
     image: itzg/minecraft-server:latest
     container_name: minecraft-server
