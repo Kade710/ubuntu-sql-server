@@ -4,7 +4,7 @@ set -e
 
 MINECRAFT_DIR="$HOME/projects/ubuntu-sql-server/minecraft"
 DATA_DIR="$MINECRAFT_DIR/data"
-BACKUP_DIR="$MINECRAFE_DIR/backups"
+BACKUP_DIR="$MINECRAFT_DIR/backups"
 
 TIMESTAMP=$(date +"=%Y-%m-%d_%H-%M-%S")
 BACKUP_FILE="$BACKUP_DIR/minecraft_$TIMESTAMP.tar.gz"
@@ -33,7 +33,7 @@ tar -czf "$BACKUP_FILE" \
 
 docker exec minecraft-server rcon-cli save-on
 
-trap - exit
+trap - EXIT
 
 echo "Backup completed successfully."
-echo "&BACKUP_FILE"
+echo "$BACKUP_FILE"
