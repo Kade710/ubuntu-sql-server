@@ -1,7 +1,7 @@
 from django.db import models
 
 class Server(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.IntegerField(primary_key=True)
     hostname = models.CharField(max_length=100)
     ip_address = models.CharField(max_length=45, null=True, blank=True)
     operating_system = models.CharField(max_length=100, null=True, blank=True)
@@ -64,7 +64,7 @@ class HealthCheck(models.Model):
         db_table = 'server_management"."health_checks'
 
 class MaintenanceLog(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     server_id = models.IntegerField()
     action = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
