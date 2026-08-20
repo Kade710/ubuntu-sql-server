@@ -18,6 +18,7 @@ services:
       VIEW_DISTANCE: "10"
       SIMULATION_DISTANCE: "10"
       ENABLE_RCON: "TRUE"
+      RCON_PASSWORD: "${RCON_PASSWORD}"
 
     volumes:
       - ./data:/data
