@@ -1,1 +1,9 @@
+[Unit]
+Description=Backup Minecraft Server
+After=docker.service
 
+[Service]
+Type=oneshot
+User=jonathon
+WorkingDirectory=/home/jonathon/Projects/ubuntu-sql-server/minecraft
+ExecStart=/home/jonathon/Projects/ubuntu-sql-server/minecraft/scripts/backup.sh

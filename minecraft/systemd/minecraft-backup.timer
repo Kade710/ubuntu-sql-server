@@ -1,1 +1,10 @@
+[Unit]
+Description=Run Minecraft backup daily
 
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=minecraft-backup.service
+
+[Install]
+WantedBy=timers.target
