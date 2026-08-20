@@ -12,6 +12,7 @@ type Config struct {
 	DBName     string
 	DBUser     string
 	DBPassword string
+	NTFYTopic  string
 }
 
 // Load reads PostgreSQL configuration from environment variables.
@@ -22,6 +23,7 @@ func Load() (Config, error) {
 		DBName:     os.Getenv("DB_NAME"),
 		DBUser:     os.Getenv("DB_USER"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
+		NTFYTopic:  os.Getenv("NTFY_TOPIC"),
 	}
 
 	if cfg.DBName == "" {

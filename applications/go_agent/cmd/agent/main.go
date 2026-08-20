@@ -15,6 +15,7 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/alerts"
 )
 
 func main() {
@@ -471,6 +472,15 @@ func showSystemHealth() {
 	if err != nil {
 		fmt.Println("Health reading not saved:", err)
 		return
+	}
+
+	previousStatus := ""
+
+	records, err := database.GetRecentHealthChecks(db, serverID, 1)
+	if err != nil {
+		fmt.Println("Previous health status unavailable:", err)
+	} else if len(records) > 0 {
+		previousStatus = records[0].OverallStatus
 	}
 
 	healthCheckID, err := database.AddHealthCheck(db, serverID, status)
