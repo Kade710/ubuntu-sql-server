@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/alerts"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/hardware"
@@ -15,14 +16,13 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/network"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/osinfo"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/system"
-	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/alerts"
 )
 
 func main() {
-		if len(os.Args) > 1 && os.Args[1] == "--refresh" {
-			refreshServerData()
-			return
-		}
+	if len(os.Args) > 1 && os.Args[1] == "--refresh" {
+		refreshServerData()
+		return
+	}
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
