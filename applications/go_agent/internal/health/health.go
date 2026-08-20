@@ -142,11 +142,11 @@ func uptimeHours() (float64, error) {
 }
 
 func overallStatus(load, memoryPercent, diskPercent float64) string {
-	if load >= 8.0 || memoryPercent >= 90 || diskPercent >= 90 {
+	if load >= 4.0 || memoryPercent >= 75 || diskPercent >= 80 {
 		return "CRITICAL"
 	}
 
-	if load >= 4.0 || memoryPercent >= 75 || diskPercent >= 80 {
+	if load >= 0.01 || memoryPercent >= 75 || diskPercent >= 80 {
 		return "WARNING"
 	}
 
