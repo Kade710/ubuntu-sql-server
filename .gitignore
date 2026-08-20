@@ -59,3 +59,4 @@ applications/web_dashboard/.env
 applications/web_dashboard/staticfiles/
 applications/web_dashboard/media/
 applications/go_agent/agent
+minecraft/data/
