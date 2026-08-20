@@ -34,7 +34,7 @@ func Send(topic, title, message string) error {
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		body, _ := io.ReadAll(response.Body)
 
-		retun fmt.Errorf(
+		return fmt.Errorf(
 			"ntfy returned %s: %s",
 			response.Status,
 			string(body),
