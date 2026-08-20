@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .models import HardwareComponent, HealthCheck, MaintenanceLog, NetworkInterface, Server
@@ -125,6 +125,20 @@ def server_detail(request, server_id):
             maintenance_logs = MaintenanceLog.objects.filter(
                 server_id=server_id
             ).order_by("-created_at")[:10]
+
+    if request.method == "POST":
+        maintenance_form = MaintenanceLogForm(request.POST)
+
+        if maintenance_form.is_valid():
+            MaintenanceLog.objects.create(
+                server_id=server_id,
+                action=maintenance_form.cleaned_data["action"],
+                description=maintenance_form.cleaned_data["description"],
+                performed_by=maintenance_form.cleaned_data["performed_by"],
+                created_at=timezone.now(),
+            )
+
+            return redirect("server_detail", server_id=server_id)
 
     else:
         maintenance_form = MaintenanceLogForm()
