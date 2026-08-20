@@ -13,6 +13,11 @@ services:
       MAX_PLAYERS: "12"
       DIFFICULTY: "normal"
       ONLINE_MODE: "TRUE"
+      ENABLE_WHITELIST: "TRUE"
+      MOTD: "U-Server Minecraft"
+      VIEW_DISTANCE: "10"
+      SIMULATION_DISTANCE: "10"
+      ENABLE_RCON: "TRUE"
 
     volumes:
       - ./data:/data
