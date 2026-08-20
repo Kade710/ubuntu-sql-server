@@ -9,7 +9,7 @@ import (
 
 func Send(topic, title, message string) error {
 	if topic == "" {
-		retun fmt.Errorf("NTRY-TOPIC is not configured")
+		return fmt.Errorf("NTFY-TOPIC is not configured")
 	}
 
 	url := "https://ntfy.sh/" + topic
@@ -23,7 +23,7 @@ func Send(topic, title, message string) error {
 		return fmt.Errorf("create ntfy request: %w", err)
 	}
 
-	reeq.Header.Set("Title", title)
+	req.Header.Set("Title", title)
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
