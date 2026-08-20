@@ -491,6 +491,49 @@ func showSystemHealth() {
 
 	fmt.Println("Health check saved successfully.")
 	fmt.Println("Health check ID:", healthCheckID)
+
+	if previousStatus != status.Overall {
+		title := "U-Server Health Alert"
+
+		var message string
+		switch status.Overall {
+		case "WARNING":
+			message = fmt.Sprintf(
+				"U-Server WARNING\nLoad: %.2f\nMemory: %.2f%%\nDisk: %.2f%%",
+				status.Load1,
+				status.MemoryPercent,
+				status.DiskPercent,
+			)
+
+		case "CRITICAL":
+			message = fmt.Sprintf(
+				"U-Server CRITICAL\nLoad: %.2f\nMemory: %.2f%%\nDisk: %.2f%%",
+				status.Load1,
+				status.MemoryPercent,
+				status.DiskPercent,
+			)
+
+		case "HEALTHY":
+			if previousStatus == "WARNING" || previousStatus == "CRITICAL" {
+				title = "U-Server Recovered"
+
+				message = fmt.Sprintf (
+					"U-Server has recovered.\nLoad: %.2f\nMemory: %.2f%%\nDisk: %.2f%%",
+					status.Load1,
+					status.MemoryPercent,
+					status.DiskPercent,
+				)
+			}
+		}
+
+		if message != "" {
+			if err := alerts.Send(cfg.NTFYTopic, title, message); err != nil {
+				fmt.Println("Notification failed:", err)
+			} else {
+				fmt.Println("Notification sent successfully.")
+			}
+		}
+	}
 }
 
 func viewRecentHealthChecks() {
