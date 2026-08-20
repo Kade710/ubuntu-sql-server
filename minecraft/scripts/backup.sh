@@ -2,7 +2,7 @@
 
 set -e
 
-MINECRAFT_DIR="$HOME/projects/ubuntu-sql-server/minecraft"
+MINECRAFT_DIR="$HOME/Projects/ubuntu-sql-server/minecraft"
 DATA_DIR="$MINECRAFT_DIR/data"
 BACKUP_DIR="$MINECRAFT_DIR/backups"
 
