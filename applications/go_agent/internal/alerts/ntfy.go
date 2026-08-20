@@ -9,7 +9,7 @@ import (
 
 func Send(topic, title, message string) error {
 	if topic == "" {
-		return fmt.Errorf("NTFY-TOPIC is not configured")
+		return fmt.Errorf("NTFY_TOPIC is not configured")
 	}
 
 	url := "https://ntfy.sh/" + topic
