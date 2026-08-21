@@ -50,7 +50,7 @@ if [ "$BACKUP_COUNT" -gt "$MAX_BACKUPS" ]; then
     find "$BACKUP_DIR" -maxdepth 1 -type f -name 'minecraft_*.tar.gz' \
         -printf '%T@ %p\n' \
         | sort -n \
-        | head -n "$((BACKUP_COUNT - MAX-BACKUPS)) \
+        | head -n "$((BACKUP_COUNT - MAX-BACKUPS))" \
         | cut -d' ' -f2- \
         | xargs -r rm --
 fi
