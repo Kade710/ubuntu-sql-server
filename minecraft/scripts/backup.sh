@@ -6,7 +6,7 @@ MINECRAFT_DIR="$HOME/Projects/ubuntu-sql-server/minecraft"
 DATA_DIR="$MINECRAFT_DIR/data"
 BACKUP_DIR="$MINECRAFT_DIR/backups"
 
-TIMESTAMP=$(date +"=%Y-%m-%d_%H-%M-%S")
+TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 BACKUP_FILE="$BACKUP_DIR/minecraft_$TIMESTAMP.tar.gz"
 
 mkdir -p "$BACKUP_DIR"
