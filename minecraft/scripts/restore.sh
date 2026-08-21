@@ -2,15 +2,16 @@
 
 set -e
 
-MINECRAFT_DIR="HOME/Projects/ubuntu-sql-server/minecraft"
-DATA_DIR="MINECRAFT_DIR/data"
-BACKUP_DIR="MINECRAFT_DIR/backups"
+MINECRAFT_DIR="$HOME/Projects/ubuntu-sql-server/minecraft"
+DATA_DIR="$MINECRAFT_DIR/data"
+BACKUP_DIR="$MINECRAFT_DIR/backups"
 
 if [ -z "$1" ]; then
     echo "Usage:"
-    echo "./scripts/retore.sh <backup-file>"
+    echo "./scripts/restore.sh <backup-file>"
+    echo
     echo "Available backups:"
-    ls -lh "$BACKUP_DIR"/*.tar.gz 2>/dev/null || echo "No backup found."
+    ls -lh "$BACKUP_DIR"/*.tar.gz 2>/dev/null || echo "No backups found."
     exit 1
 fi
 
@@ -22,7 +23,7 @@ if [[ "$BACKUP_FILE" != /* ]]; then
 fi
 
 if [ ! -f "$BACKUP_FILE" ]; then
-    echo "Backupnot found:"
+    echo "Backup not found:"
     echo "$BACKUP_FILE"
     exit 1
 fi
