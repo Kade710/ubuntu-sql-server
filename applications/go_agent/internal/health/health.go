@@ -3,10 +3,22 @@ package health
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
 	"syscall"
+)
+
+const (
+	warningLoad   = 2.0
+	criticalLoad  = 4.0
+
+	warningMemory  = 60.0
+	criticalMemory = 75.0
+
+	warningDisk   = 70.0
+	criticalDisk  = 80.0
 )
 
 // Status contains current server health information.
@@ -65,6 +77,10 @@ func loadAverage() (float64, error) {
 		return 0, fmt.Errorf("parse load average: %w", err)
 	}
 
+	if math.IsNaN(load) || math.IsInf(load, 0) || load < 0 {
+		return 0, fmt.Errorf("invalid load average value")
+	}
+
 	return load, nil
 }
 
@@ -77,6 +93,8 @@ func memoryUsagePercent() (float64, error) {
 
 	var total uint64
 	var available uint64
+	var foundTotal bool
+	var foundAvailable bool
 
 	scanner := bufio.NewScanner(file)
 
@@ -88,26 +106,56 @@ func memoryUsagePercent() (float64, error) {
 
 		switch fields[0] {
 		case "MemTotal:":
-			total, _ = strconv.ParseUint(fields[1], 10, 64)
+			value, err := strconv.ParseUint(fields[1], 10, 64)
+			if err != nil {
+				return 0, fmt.Errorf("parse total memory: %w", err)
+			}
+
+			total = value
+			foundTotal = true
+
 		case "MemAvailable:":
-			available, _ = strconv.ParseUint(fields[1], 10, 64)
+			value, err := strconv.ParseUint(fields[1], 10, 64)
+			if err != nil {
+				return 0, fmt.Errorf("parse available memory: %w", err)
+			}
+
+			available = value
+			foundAvailable = true
 		}
 	}
 
-	if total == 0 {
+	if err := scanner.Err(); err != nil {
+		return 0, fmt.Errorf("scan memory info: %w", err)
+	}
+
+	if !foundTotal || total == 0 {
 		return 0, fmt.Errorf("unable to determine total memory")
 	}
 
-	used := total - available
+	if !foundAvailable {
+		return 0, fmt.Errorf("unable to determine available memory")
+	}
 
-	return float64(used) / float64(total) * 100, nil
+	if available > total {
+		return 0, fmt.Errorf("available memory exceeds total memory")
+	}
+
+	used := total - available
+	percent := float64(used) / float64(total) * 100
+
+	if percent < 0 || percent > 100 {
+		return 0, fmt.Errorf("invalid memory usage percentage")
+	}
+
+	return percent, nil
 }
 
 func diskUsagePercent(path string) (float64, error) {
 	var stat syscall.Statfs_t
 
 	if err := syscall.Statfs(path, &stat); err != nil {
-		return 0, fmt.Errorf("read disk usage: %w", err)
+		return 0, fmt.Errorf("read disk usage for %s: %w", path, err)
 	}
 
 	total := stat.Blocks
@@ -117,9 +165,18 @@ func diskUsagePercent(path string) (float64, error) {
 		return 0, fmt.Errorf("unable to determine disk size")
 	}
 
-	used := total - available
+	if available > total {
+		return 0, fmt.Errorf("available disk blocks exceed total blocks")
+	}
 
-	return float64(used) / float64(total) * 100, nil
+	used := total - available
+	percent := float64(used) / float64(total) * 100
+
+	if percent < 0 || percent > 100 {
+		return 0, fmt.Errorf("invalid disk usage percentage")
+	}
+
+	return percent, nil
 }
 
 func uptimeHours() (float64, error) {
@@ -138,15 +195,23 @@ func uptimeHours() (float64, error) {
 		return 0, fmt.Errorf("parse uptime: %w", err)
 	}
 
+	if math.IsNaN(seconds) || math.IsInf(seconds, 0) || seconds < 0 {
+		return 0, fmt.Errorf("invalid uptime value")
+	}
+
 	return seconds / 3600, nil
 }
 
 func overallStatus(load, memoryPercent, diskPercent float64) string {
-	if load >= 4.0 || memoryPercent >= 75 || diskPercent >= 80 {
+	if load >= criticalLoad ||
+		memoryPercent >= criticalMemory ||
+		diskPercent >= criticalDisk {
 		return "CRITICAL"
 	}
 
-	if load >= 4.0 || memoryPercent >= 60 || diskPercent >= 70 {
+	if load >= warningLoad ||
+		memoryPercent >= warningMemory ||
+		diskPercent >= warningDisk {
 		return "WARNING"
 	}
 
