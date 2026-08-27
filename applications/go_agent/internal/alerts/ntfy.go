@@ -4,40 +4,80 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
+	"time"
 )
 
+const (
+	ntfyBaseURL    = "https://ntfy.sh/"
+	requestTimeout = 10 * time.Second
+	maxErrorBody   = 4096
+)
+
+var client = &http.Client{
+	Timeout: requestTimeout,
+}
+
 func Send(topic, title, message string) error {
+	topic = strings.TrimSpace(topic)
+	title = strings.TrimSpace(title)
+
 	if topic == "" {
 		return fmt.Errorf("NTFY_TOPIC is not configured")
 	}
 
-	url := "https://ntfy.sh/" + topic
+	if message == "" {
+		return fmt.Errorf("notification message is empty")
+	}
+
+	topicURL := ntfyBaseURL + url.PathEscape(topic)
 
 	req, err := http.NewRequest(
 		http.MethodPost,
-		url,
+		topicURL,
 		strings.NewReader(message),
 	)
 	if err != nil {
 		return fmt.Errorf("create ntfy request: %w", err)
 	}
 
-	req.Header.Set("Title", title)
+	if title != "" {
+		req.Header.Set("Title", title)
+	}
 
-	response, err := http.DefaultClient.Do(req)
+	req.Header.Set("Content-Type", "text/plain; charset=utf-8")
+
+	response, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("send ntfy notification: %w", err)
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		body, _ := io.ReadAll(response.Body)
+	if response.StatusCode < http.StatusOK ||
+		response.StatusCode >= http.StatusMultipleChoices {
+
+		body, readErr := io.ReadAll(
+			io.LimitReader(response.Body, maxErrorBody),
+		)
+		if readErr != nil {
+			return fmt.Errorf(
+				"ntfy returned %s and response body could not be read: %w",
+				response.Status,
+				readErr,
+			)
+		}
+
+		responseMessage := strings.TrimSpace(string(body))
+
+		if responseMessage == "" {
+			return fmt.Errorf("ntfy returned %s", response.Status)
+		}
 
 		return fmt.Errorf(
 			"ntfy returned %s: %s",
 			response.Status,
-			string(body),
+			responseMessage,
 		)
 	}
 
