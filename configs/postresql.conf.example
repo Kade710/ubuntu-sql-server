@@ -1,1 +1,28 @@
+# PostgreSQL Configuration Example
+#
+# Example settings used by the Ubuntu SQL Server project.
+# Values may need to be adjusted for the system running PostgreSQL.
 
+# Connection Settings
+
+listen_addresses = 'localhost'
+port = 5432
+max_connections = 100
+
+# Memory
+
+shared_buffers = 128MB
+
+# Logging
+
+logging_collector = on
+log_directory = 'log'
+log_filename = 'postgresql-%Y-%m-%d.log'
+
+# Locale
+
+timezone = 'UTC'
+
+# Security
+
+password_encryption = 'scram-sha-256'

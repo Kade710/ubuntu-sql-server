@@ -1,1 +1,19 @@
+# PostgreSQL Client Authentication Example
+#
+# This file provides an example authentication configuration
+# for the Ubuntu SQL Server project.
 
+# TYPE  DATABASE            USER              ADDRESS             METHOD
+
+# Local Unix socket connections
+local   all                 all                                   scram-sha-256
+
+# Local IPv4 connections
+host    all                 all               127.0.0.1/32        scram-sha-256
+
+# Local IPv6 connections
+host    all                 all               ::1/128             scram-sha-256
+
+# Example local network access
+# Adjust the network range before using this rule.
+# host  ubuntu_sql_server   jonathon_admin    192.168.1.0/24      scram-sha-256

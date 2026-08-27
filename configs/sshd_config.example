@@ -1,1 +1,21 @@
+# OpenSSH Server Configuration Example
+#
+# Example SSH settings for the Ubuntu SQL Server project.
+# Review all settings before applying them to a server.
 
+Port 22
+
+PermitRootLogin no
+
+PubkeyAuthentication yes
+PasswordAuthentication yes
+
+PermitEmptyPasswords no
+
+X11Forwarding no
+
+PrintMotd no
+
+UsePAM yes
+
+Subsystem sftp /usr/lib/openssh/sftp-server
