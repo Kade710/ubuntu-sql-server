@@ -400,14 +400,14 @@ func AddAlertEvent(
 	var alertID int
 
 	err :=
-	db.QueryRow(
-		query,
-		serverID,
-		previousStatus,
-		newStatus,
-		title,
-		message,
-	).Scan(&alertID)
+		db.QueryRow(
+			query,
+			serverID,
+			previousStatus,
+			newStatus,
+			title,
+			message,
+		).Scan(&alertID)
 
 	if err != nil {
 		return 0, fmt.Errorf("add allert event: %w", err)
