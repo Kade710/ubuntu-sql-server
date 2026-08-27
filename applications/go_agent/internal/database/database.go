@@ -376,3 +376,42 @@ func GetRecentHealthChecks(
 
 	return records, nil
 }
+
+fnc AddAlertEvent(
+	db *sql.DB,
+	serverID int,
+	previousStatus string,
+	newStatus string,
+	title string,
+	message string,
+) (int, error) {
+	const query = '
+		INSERT INTO server_management.alert_events (
+			server_id,
+			previous_status,
+			new_status,
+			title,
+			message
+		)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id
+	'
+
+	var alertID int
+
+	err :=
+	db.QueryRow(
+		query,
+		serverID,
+		previousStatus,
+		newStatus,
+		title,
+		message,
+	).Scan(&alertID)
+
+	if err != nil {
+		return 0, fmt.Errorf("add allert event: %w", err)
+	}
+
+	return alertID, nil
+}

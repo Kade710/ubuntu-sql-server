@@ -527,6 +527,22 @@ func showSystemHealth() {
 		}
 
 		if message != "" {
+			alertID, err := database.AddAlertEvent(
+				db,
+				serverID,
+				previousStatus,
+				status.Overall,
+				title,
+				message,
+			)
+
+			if err != nil {
+				fmt.Println("Alert event not saved:", err)
+			} else {
+				fmt.Println("Alert event saved successfully.")
+				fmt.Println("Alert event ID:", alertID)
+			}
+
 			if err := alerts.Send(cfg.NTFYTopic, title, message); err != nil {
 				fmt.Println("Notification failed:", err)
 			} else {
