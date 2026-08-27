@@ -22,7 +22,10 @@ func main() {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "--refresh":
-			refreshServerData()
+			if err := refreshServerData(); err != nil {
+				fmt.Println("Server refresh failed:", err)
+				os.Exit(1)
+			}
 			return
 
 		case "--help", "-h":
@@ -97,7 +100,9 @@ func main() {
 			viewRecentHealthChecks()
 
 		case "11":
-			refreshServerData()
+			if err := refreshServerData(); err != nil {
+				fmt.Println("\nServer refresh failed:", err)
+			}
 
 		case "0":
 			fmt.Println("\nSee Ya!")
@@ -648,24 +653,49 @@ func viewRecentHealthChecks() {
 	}
 }
 
-func refreshServerData() {
+func refreshServerData() error {
 	fmt.Println("\nRefresh Server Data")
 	fmt.Println("---")
 
 	fmt.Println("\n[1/5] Updating server inventory....")
-	registerServerInventory()
+	if _, _, err := registerServerInventoryCore(); err != nil {
+		return fmt.Errorf("server inventory refresh failed: %w", err)
+	}
+	fmt.Println("Server inventory updated successfully.")
 
 	fmt.Println("\n[2/5] Updating operating system....")
-	registerOperatingSystem()
+	if _, _, _, err := registerOperatingSystemCore(); err != nil {
+		return fmt.Errorf("operating system refresh failed: %w", err)
+	}
+	fmt.Println("Operating system updated successfully.")
 
 	fmt.Println("\n[3/5] Updating hardware components....")
-	registerHardwareComponents()
+	if _, err := registerHardwareComponentsCore(); err != nil {
+		return fmt.Errorf("hardware refresh failed: %w", err)
+	}
+	fmt.Println("Hardware components updated successfully.")
 
 	fmt.Println("\n[4/5] Updating network interfaces....")
-	registerNetworkInterfaces()
+	if _, err := registerNetworkInterfacesCore(); err != nil {
+		return fmt.Errorf("network refresh failed: %w", err)
+	}
+	fmt.Println("Network interfaces updated successfully.")
 
 	fmt.Println("\n[5/5] Recording system health....")
-	showSystemHealth()
+	status, healthCheckID, err := showSystemHealthCore()
+	if err != nil {
+		return fmt.Errorf("health refresh failed: %w", err)
+	}
 
-	fmt.Println("\nServer refresh completed!!!")
+	fmt.Printf("1-Minute Load Average: %.2f\n", status.Load1)
+	fmt.Printf("Memory Usage: %.2f%%\n", status.MemoryPercent)
+	fmt.Printf("Disk Usage: %.2f%%\n", status.DiskPercent)
+	fmt.Printf("Uptime: %.2f hours\n", status.UptimeHours)
+	fmt.Println("Overall Status:", status.Overall)
+	fmt.Println("Health check saved successfully.")
+	fmt.Println("Health check ID:", healthCheckID)
+
+	fmt.Println("\nServer refresh completed successfully.")
+
+	return nil
 }
