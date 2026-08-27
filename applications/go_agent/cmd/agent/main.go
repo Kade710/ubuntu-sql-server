@@ -172,28 +172,9 @@ func registerServerInventory() {
 	fmt.Println("\nRegister Server Inventory")
 	fmt.Println("---")
 
-	cfg, err := config.Load()
+	serverID, serverInfo, err := registerServerInventoryCore()
 	if err != nil {
-		fmt.Println("Configuration error:", err)
-		return
-	}
-
-	serverInfo, err := inventory.Collect()
-	if err != nil {
-		fmt.Println("Inventory collection failed:", err)
-		return
-	}
-
-	db, err := database.Connect(cfg)
-	if err != nil {
-		fmt.Println("Connection failed:", err)
-		return
-	}
-	defer db.Close()
-
-	serverID, err := database.RegisterServer(db, serverInfo)
-	if err != nil {
-		fmt.Println("Database update failed:", err)
+		fmt.Println("Server inventory update failed:", err)
 		return
 	}
 
@@ -207,6 +188,31 @@ func registerServerInventory() {
 	fmt.Println("Storage:", serverInfo.StorageGB, "GB")
 	fmt.Println("GPU:", serverInfo.GPU)
 	fmt.Println("Motherboard:", serverInfo.Motherboard)
+}
+
+func registerServerInventoryCore() (int, inventory.ServerInfo, error) {
+	cfg, err := config.Load()
+	if err != nil {
+		return 0, inventory.ServerInfo{}, fmt.Errorf("load configuration: %w", err)
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		return 0, inventory.ServerInfo{}, fmt.Errorf("collect inventory: %w", err)
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		return 0, inventory.ServerInfo{}, fmt.Errorf("connect to database: %w", err)
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		return 0, inventory.ServerInfo{}, fmt.Errorf("register server: %w", err)
+	}
+
+	return serverID, serverInfo, nil
 }
 
 func registerNetworkInterfaces() {
