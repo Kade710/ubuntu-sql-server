@@ -85,7 +85,7 @@ func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	err := db.QueryRow(
+	err := db.QueryRowContext(
 		ctx,
 		query,
 		server.Hostname,
