@@ -60,3 +60,9 @@ applications/web_dashboard/staticfiles/
 applications/web_dashboard/media/
 applications/go_agent/agent
 minecraft/data/
+
+# Minecraft runtime data
+minecraft/data/
+minecraft/backups/*
+!minecraft/backups/.gitkeep
+minecraft/pre-restore-data-*/
