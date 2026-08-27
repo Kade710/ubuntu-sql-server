@@ -57,7 +57,7 @@ func main() {
 		fmt.Println("0. Exit")
 		fmt.Println("\nSelect an option: ")
 
-		choice, _ := reader.ReadString('\n')
+		choice, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Println("\nInput closed.")
 			return
