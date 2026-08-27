@@ -476,9 +476,9 @@ func showSystemHealth() {
 	fmt.Println("\nSystem Health")
 	fmt.Println("---")
 
-	status, err := health.Collect()
+	status, healthCheckID, err := showSystemHealthCore()
 	if err != nil {
-		fmt.Println("Health collection failed:", err)
+		fmt.Println("Health check failed:", err)
 		return
 	}
 
@@ -488,29 +488,35 @@ func showSystemHealth() {
 	fmt.Printf("Uptime: %.2f hours\n", status.UptimeHours)
 	fmt.Println("Overall Status:", status.Overall)
 
+	fmt.Println("Health check saved successfully.")
+	fmt.Println("Health check ID:", healthCheckID)
+}
+
+func showSystemHealthCore() (health.Status, int, error) {
+	status, err := health.Collect()
+	if err != nil {
+		return health.Status{}, 0, fmt.Errorf("collect system health: %w", err)
+	}
+
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println("Health reading not saved:", err)
-		return
+		return status, 0, fmt.Errorf("load configuration: %w", err)
 	}
 
 	serverInfo, err := inventory.Collect()
 	if err != nil {
-		fmt.Println("Health reading not saved:", err)
-		return
+		return status, 0, fmt.Errorf("collect inventory: %w", err)
 	}
 
 	db, err := database.Connect(cfg)
 	if err != nil {
-		fmt.Println("Health reading not saved:", err)
-		return
+		return status, 0, fmt.Errorf("connect to database: %w", err)
 	}
 	defer db.Close()
 
 	serverID, err := database.RegisterServer(db, serverInfo)
 	if err != nil {
-		fmt.Println("Health reading not saved:", err)
-		return
+		return status, 0, fmt.Errorf("register server: %w", err)
 	}
 
 	previousStatus := ""
@@ -524,17 +530,14 @@ func showSystemHealth() {
 
 	healthCheckID, err := database.AddHealthCheck(db, serverID, status)
 	if err != nil {
-		fmt.Println("Health reading not saved:", err)
-		return
+		return status, 0, fmt.Errorf("save health check: %w", err)
 	}
-
-	fmt.Println("Health check saved successfully.")
-	fmt.Println("Health check ID:", healthCheckID)
 
 	if previousStatus != status.Overall {
 		title := "U-Server Health Alert"
 
 		var message string
+
 		switch status.Overall {
 		case "WARNING":
 			message = fmt.Sprintf(
@@ -589,6 +592,8 @@ func showSystemHealth() {
 			}
 		}
 	}
+
+	return status, healthCheckID, nil
 }
 
 func viewRecentHealthChecks() {
@@ -627,7 +632,7 @@ func viewRecentHealthChecks() {
 	}
 
 	if len(records) == 0 {
-		fmt.Println("No helth checks found.")
+		fmt.Println("No health checks found.")
 		return
 	}
 
