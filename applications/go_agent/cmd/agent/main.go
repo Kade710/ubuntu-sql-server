@@ -517,7 +517,7 @@ func showSystemHealth() {
 			if previousStatus == "WARNING" || previousStatus == "CRITICAL" {
 				title = "U-Server Recovered"
 
-				message = fmt.Sprintf (
+				message = fmt.Sprintf(
 					"U-Server has recovered.\nLoad: %.2f\nMemory: %.2f%%\nDisk: %.2f%%",
 					status.Load1,
 					status.MemoryPercent,
