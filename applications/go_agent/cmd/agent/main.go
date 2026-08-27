@@ -19,9 +19,23 @@ import (
 )
 
 func main() {
-	if len(os.Args) > 1 && os.Args[1] == "--refresh" {
-		refreshServerData()
-		return
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "--refresh":
+			refreshServerData()
+			return
+
+		case "--help", "-h":
+			fmt.Println("Usage:")
+			fmt.Println("	./agent				Start interactive mode")
+			fmt.Println("	./agent --refresh	Refresh all server data")
+			return
+		
+		default:
+			fmt.Println("That's NOT the right option, please try again:", os.Args[1])
+			fmt.Println("Use --help for available options.")
+			os.Exit(2)
+		}
 	}
 	reader := bufio.NewReader(os.Stdin)
 
