@@ -377,7 +377,7 @@ func GetRecentHealthChecks(
 	return records, nil
 }
 
-fnc AddAlertEvent(
+func AddAlertEvent(
 	db *sql.DB,
 	serverID int,
 	previousStatus string,
