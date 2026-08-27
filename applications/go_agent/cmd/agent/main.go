@@ -40,10 +40,15 @@ func main() {
 		fmt.Println("9. Show System Health")
 		fmt.Println("10. View Recent Health Checks")
 		fmt.Println("11. Refresh Server Data")
-		fmt.Println("0. exit")
-		fmt.Println("\nSelect an option")
+		fmt.Println("0. Exit")
+		fmt.Println("\nSelect an option: ")
 
 		choice, _ := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("\nInput closed.")
+			return
+		}
+
 		choice = strings.TrimSpace(choice)
 
 		switch choice {
@@ -439,7 +444,7 @@ func showSystemHealth() {
 
 	status, err := health.Collect()
 	if err != nil {
-		fmt.Println("Health collection faled:", err)
+		fmt.Println("Health collection failed:", err)
 		return
 	}
 
@@ -553,8 +558,8 @@ func showSystemHealth() {
 }
 
 func viewRecentHealthChecks() {
-	fmt.Printf("\nRecent Health Checks")
-	fmt.Print("---")
+	fmt.Println("\nRecent Health Checks")
+	fmt.Println("---")
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -588,7 +593,7 @@ func viewRecentHealthChecks() {
 	}
 
 	if len(records) == 0 {
-		fmt.Println("No helth check found.")
+		fmt.Println("No helth checks found.")
 		return
 	}
 
