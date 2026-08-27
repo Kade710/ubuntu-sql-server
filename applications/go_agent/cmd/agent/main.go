@@ -406,44 +406,9 @@ func registerHardwareComponents() {
 	fmt.Println("\nRegister Hardware Components")
 	fmt.Println("---")
 
-	cfg, err := config.Load()
+	components, err := registerHardwareComponentsCore()
 	if err != nil {
-		fmt.Println("Configuration error:", err)
-		return
-	}
-
-	serverInfo, err := inventory.Collect()
-	if err != nil {
-		fmt.Println("Inventory collection failed:", err)
-		return
-	}
-
-	db, err := database.Connect(cfg)
-	if err != nil {
-		fmt.Println("Connection failed:", err)
-		return
-	}
-	defer db.Close()
-
-	serverID, err := database.RegisterServer(db, serverInfo)
-	if err != nil {
-		fmt.Println("Server registration failed:", err)
-		return
-	}
-
-	hardwareInfo := hardware.Collect()
-
-	components := hardware.Components(
-		hardwareInfo,
-		serverInfo.RAMGB,
-	)
-
-	if err := database.UpsertHardwareComponents(
-		db,
-		serverID,
-		components,
-	); err != nil {
-		fmt.Println("Hardware update failed:", err)
+		fmt.Println("Hardware component update failed:", err)
 		return
 	}
 
@@ -465,6 +430,46 @@ func registerHardwareComponents() {
 			fmt.Println("Specification:", component.Specification)
 		}
 	}
+}
+
+func registerHardwareComponentsCore() ([]hardware.Component, error) {
+	cfg, err := config.Load()
+	if err != nil {
+		return nil, fmt.Errorf("load configuration: %w", err)
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		return nil, fmt.Errorf("collect inventory: %w", err)
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("connect to database: %w", err)
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		return nil, fmt.Errorf("register server: %w", err)
+	}
+
+	hardwareInfo := hardware.Collect()
+
+	components := hardware.Components(
+		hardwareInfo,
+		serverInfo.RAMGB,
+	)
+
+	if err := database.UpsertHardwareComponents(
+		db,
+		serverID,
+		components,
+	); err != nil {
+		return nil, fmt.Errorf("update hardware components: %w", err)
+	}
+
+	return components, nil
 }
 
 func showSystemHealth() {
