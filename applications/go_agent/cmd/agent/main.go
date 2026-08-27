@@ -219,39 +219,9 @@ func registerNetworkInterfaces() {
 	fmt.Println("\nRegister Network Interfaces")
 	fmt.Println("---")
 
-	cfg, err := config.Load()
+	interfaces, err := registerNetworkInterfacesCore()
 	if err != nil {
-		fmt.Println("Configuration error:", err)
-		return
-	}
-
-	serverInfo, err := inventory.Collect()
-	if err != nil {
-		fmt.Println("Inventory collection failed:", err)
-		return
-	}
-
-	interfaces, err := network.Collect()
-	if err != nil {
-		fmt.Println("Network collection failed:", err)
-		return
-	}
-
-	db, err := database.Connect(cfg)
-	if err != nil {
-		fmt.Println("Connection failed:", err)
-		return
-	}
-	defer db.Close()
-
-	serverID, err := database.RegisterServer(db, serverInfo)
-	if err != nil {
-		fmt.Println("Server registration failed:", err)
-		return
-	}
-
-	if err := database.UpsertNetworkInterfaces(db, serverID, interfaces); err != nil {
-		fmt.Println("Network update failed:", err)
+		fmt.Println("Network interface update failed:", err)
 		return
 	}
 
@@ -265,6 +235,40 @@ func registerNetworkInterfaces() {
 		fmt.Println("Network Type:", iface.NetworkType)
 		fmt.Println("Speed:", iface.SpeedMbps, "Mbps")
 	}
+}
+
+func registerNetworkInterfacesCore() ([]network.Interface, error) {
+	cfg, err := config.Load()
+	if err != nil {
+		return nil, fmt.Errorf("load configuration: %w", err)
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		return nil, fmt.Errorf("collect inventory: %w", err)
+	}
+
+	interfaces, err := network.Collect()
+	if err != nil {
+		return nil, fmt.Errorf("collect network interfaces: %w", err)
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("connect to database: %w", err)
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		return nil, fmt.Errorf("register server: %w", err)
+	}
+
+	if err := database.UpsertNetworkInterfaces(db, serverID, interfaces); err != nil {
+		return nil, fmt.Errorf("update network interfaces: %w", err)
+	}
+
+	return interfaces, nil
 }
 
 func addMaintenanceLog(reader *bufio.Reader) {
@@ -347,38 +351,7 @@ func registerOperatingSystem() {
 	fmt.Println("\nRegister Operating System")
 	fmt.Println("---")
 
-	cfg, err := config.Load()
-	if err != nil {
-		fmt.Println("Configuration error:", err)
-		return
-	}
-
-	serverInfo, err := inventory.Collect()
-	if err != nil {
-		fmt.Println("Inventory collection failed:", err)
-		return
-	}
-
-	osDetails := osinfo.Collect()
-
-	db, err := database.Connect(cfg)
-	if err != nil {
-		fmt.Println("Connection failed:", err)
-		return
-	}
-	defer db.Close()
-
-	serverID, err := database.RegisterServer(db, serverInfo)
-	if err != nil {
-		fmt.Println("Server registration failed", err)
-		return
-	}
-
-	osID, err := database.UpsertOperatingSystem(
-		db,
-		serverID,
-		osDetails,
-	)
+	osID, serverID, osDetails, err := registerOperatingSystemCore()
 	if err != nil {
 		fmt.Println("Operating system update failed:", err)
 		return
@@ -391,6 +364,42 @@ func registerOperatingSystem() {
 	fmt.Println("Version:", osDetails.Version)
 	fmt.Println("Kernel:", osDetails.Kernel)
 	fmt.Println("Architecture:", osDetails.Architecture)
+}
+
+func registerOperatingSystemCore() (int, int, osinfo.Info, error) {
+	cfg, err := config.Load()
+	if err != nil {
+		return 0, 0, osinfo.Info{}, fmt.Errorf("load configuration: %w", err)
+	}
+
+	serverInfo, err := inventory.Collect()
+	if err != nil {
+		return 0, 0, osinfo.Info{}, fmt.Errorf("collect inventory: %w", err)
+	}
+
+	osDetails := osinfo.Collect()
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		return 0, 0, osinfo.Info{}, fmt.Errorf("connect to database: %w", err)
+	}
+	defer db.Close()
+
+	serverID, err := database.RegisterServer(db, serverInfo)
+	if err != nil {
+		return 0, 0, osinfo.Info{}, fmt.Errorf("register server: %w", err)
+	}
+
+	osID, err := database.UpsertOperatingSystem(
+		db,
+		serverID,
+		osDetails,
+	)
+	if err != nil {
+		return 0, 0, osinfo.Info{}, fmt.Errorf("update operating system: %w", err)
+	}
+
+	return osID, serverID, osDetails, nil
 }
 
 func registerHardwareComponents() {
