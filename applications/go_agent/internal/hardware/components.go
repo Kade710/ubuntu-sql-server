@@ -27,6 +27,7 @@ func Components(info Info, ramGB int) []Component {
 		},
 		motherboardComponent(info.Motherboard),
 		gpuComponent(info.GPU),
+		psuComponent(info),
 	}
 }
 
@@ -71,6 +72,20 @@ func gpuComponent(gpu string) Component {
 	case strings.Contains(lower, "amd"),
 		strings.Contains(lower, "advanced micro devices"):
 		component.Manufacturer = "AMD"
+	}
+
+	return component
+}
+
+func psuComponent(info Info) Component {
+	component := Component{
+		Type:			"PSU",
+		Manufacturer:	strings.TrimSpace(info.PSUManufacturer),
+		Model:			strings.TrimSpace(info.PSUModel),
+	}
+
+	if info.PSUWatts > 0 {
+		component.Specification = fmt.Sprintf("%d W", info.PSUWatts)
 	}
 
 	return component
