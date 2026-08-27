@@ -185,9 +185,11 @@
 
 ## Virtualization
 
-- [x] Install virtualization platform
+- [ ] Install virtual machine platform
 - [ ] Create test virtual machines
-- [x] Document VM management
+- [ ] Document VM management
+- [x] Install Docker and Docker Compose
+- [x] Document container management
 
 ---
 
@@ -217,7 +219,7 @@
 
 # Future Ideas
 
-- [x] Containerize applications with Docker
+- [x] Add Docker and Docker Compose support
 - [ ] Add CI/CD pipeline
 - [ ] Add automated testing
 - [x] Add API documentation
