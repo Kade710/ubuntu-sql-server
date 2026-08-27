@@ -2,12 +2,16 @@ package hardware
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 )
+
+const commandTimeout = 5 * time.Second
 
 // Info contains hardware details collected from the server.
 type Info struct {
@@ -15,6 +19,10 @@ type Info struct {
 	StorageGB   int
 	GPU         string
 	Motherboard string
+
+	PSUManufacturer string
+	PSUModel        string
+	PSUWatts        int
 }
 
 // Collect gathers hardware information from the local Linux server.
@@ -24,6 +32,10 @@ func Collect() Info {
 		StorageGB:   TotalStorageGB(),
 		GPU:         GPUModel(),
 		Motherboard: MotherboardModel(),
+
+		PSUManufacturer: strings.TrimSpace(os.Getenv("PSU_MANUFACTURER")),
+		PSUModel:        strings.TrimSpace(os.Getenv("PSU_MODEL")),
+		PSUWatts:        PSUWatts(),
 	}
 }
 
@@ -53,7 +65,11 @@ func CPUModel() string {
 
 // TotalStorageGB sums the size of physical disks reported by lsblk.
 func TotalStorageGB() int {
-	output, err := exec.Command(
+	ctx, cancel := context.WithTimeout(context.Background(), commandTimeout)
+	defer cancel()
+
+	output, err := exec.CommandContext(
+		ctx,
 		"lsblk",
 		"-b",
 		"-d",
@@ -90,7 +106,10 @@ func TotalStorageGB() int {
 
 // GPUModel returns the first VGA or 3D controller found by lspci.
 func GPUModel() string {
-	output, err := exec.Command("lspci").Output()
+	ctx, cancel := context.WithTimeout(context.Background(), commandTimeout)
+	defer cancel()
+
+	output, err := exec.CommandContext(ctx, "lspci").Output()
 	if err != nil {
 		return ""
 	}
@@ -102,6 +121,7 @@ func GPUModel() string {
 
 		if strings.Contains(line, "VGA compatible controller") ||
 			strings.Contains(line, "3D controller") {
+
 			parts := strings.SplitN(line, ": ", 2)
 			if len(parts) == 2 {
 				return strings.TrimSpace(parts[1])
@@ -127,6 +147,21 @@ func MotherboardModel() string {
 	default:
 		return vendor
 	}
+}
+
+// PSUWatts reads the manually configured PSU wattage.
+func PSUWatts() int {
+	value := strings.TrimSpace(os.Getenv("PSU_WATTS"))
+	if value == "" {
+		return 0
+	}
+
+	watts, err := strconv.Atoi(value)
+	if err != nil || watts < 0 {
+		return 0
+	}
+
+	return watts
 }
 
 func readTrimmedFile(path string) string {
