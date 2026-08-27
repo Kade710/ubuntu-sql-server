@@ -385,7 +385,7 @@ func AddAlertEvent(
 	title string,
 	message string,
 ) (int, error) {
-	const query = '
+	const query = `
 		INSERT INTO server_management.alert_events (
 			server_id,
 			previous_status,
@@ -395,7 +395,7 @@ func AddAlertEvent(
 		)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id
-	'
+	`
 
 	var alertID int
 
