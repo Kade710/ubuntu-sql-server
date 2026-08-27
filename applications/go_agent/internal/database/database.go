@@ -383,8 +383,10 @@ func GetRecentHealthChecks(
 		ORDER BY created_at DESC
 		LIMIT $2
 	`
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	rows, err := db.Query(query, serverID, limit)
+	rows, err := db.QueryContext(ctx, query, serverID, limit)
 	if err != nil {
 		return nil, fmt.Errorf("get recent health checks: %w", err)
 	}
