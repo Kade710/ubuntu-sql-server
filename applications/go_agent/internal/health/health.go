@@ -146,7 +146,7 @@ func overallStatus(load, memoryPercent, diskPercent float64) string {
 		return "CRITICAL"
 	}
 
-	if load >= 2.0 || memoryPercent >= 60 || diskPercent >= 70 {
+	if load >= 4.0 || memoryPercent >= 60 || diskPercent >= 70 {
 		return "WARNING"
 	}
 
