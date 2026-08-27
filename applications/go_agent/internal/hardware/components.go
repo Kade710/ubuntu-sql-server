@@ -13,8 +13,12 @@ type Component struct {
 	Specification string
 }
 
-// Components convert collected hardware information into database records.
+// Components converts collected hardware information into database records.
 func Components(info Info, ramGB int) []Component {
+	if ramGB < 0 {
+		ramGB = 0
+	}
+
 	return []Component{
 		cpuComponent(info.CPU),
 		{
@@ -27,6 +31,8 @@ func Components(info Info, ramGB int) []Component {
 }
 
 func cpuComponent(cpu string) Component {
+	cpu = strings.TrimSpace(cpu)
+
 	component := Component{
 		Type:          "CPU",
 		Model:         cpu,
@@ -38,7 +44,8 @@ func cpuComponent(cpu string) Component {
 	switch {
 	case strings.Contains(lower, "intel"):
 		component.Manufacturer = "Intel"
-	case strings.Contains(lower, "amd"):
+	case strings.Contains(lower, "amd"),
+		strings.Contains(lower, "advanced micro devices"):
 		component.Manufacturer = "AMD"
 	}
 
@@ -46,6 +53,8 @@ func cpuComponent(cpu string) Component {
 }
 
 func gpuComponent(gpu string) Component {
+	gpu = strings.TrimSpace(gpu)
+
 	component := Component{
 		Type:          "GPU",
 		Model:         gpu,
@@ -59,7 +68,8 @@ func gpuComponent(gpu string) Component {
 		component.Manufacturer = "NVIDIA"
 	case strings.Contains(lower, "intel"):
 		component.Manufacturer = "Intel"
-	case strings.Contains(lower, "amd"):
+	case strings.Contains(lower, "amd"),
+		strings.Contains(lower, "advanced micro devices"):
 		component.Manufacturer = "AMD"
 	}
 
@@ -67,6 +77,8 @@ func gpuComponent(gpu string) Component {
 }
 
 func motherboardComponent(board string) Component {
+	board = strings.TrimSpace(board)
+
 	component := Component{
 		Type:          "Motherboard",
 		Model:         board,
@@ -76,9 +88,11 @@ func motherboardComponent(board string) Component {
 	lower := strings.ToLower(board)
 
 	switch {
-	case strings.HasPrefix(lower, "msi"):
+	case strings.HasPrefix(lower, "msi"),
+		strings.Contains(lower, "micro-star"):
 		component.Manufacturer = "MSI"
-	case strings.HasPrefix(lower, "asus"):
+	case strings.HasPrefix(lower, "asus"),
+		strings.Contains(lower, "asustek"):
 		component.Manufacturer = "ASUS"
 	case strings.HasPrefix(lower, "gigabyte"):
 		component.Manufacturer = "Gigabyte"
