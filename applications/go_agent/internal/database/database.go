@@ -183,7 +183,12 @@ func AddMaintenanceLog(
 	`
 
 	var logID int
-	err := db.QueryRow(
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err := db.QueryRowContent(
+		ctx,
 		query,
 		serverID,
 		logEntry.Action,
