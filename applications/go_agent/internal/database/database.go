@@ -280,7 +280,7 @@ func UpsertHardwareComponents(
 	defer tx.Rollback()
 
 	for _, component := range components {
-		_, err := tx.Exec(
+		_, err := tx.ExecContext(
 			ctx,
 			query,
 			serverID,
