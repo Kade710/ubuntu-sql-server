@@ -19,7 +19,7 @@ func Components(info Info, ramGB int) []Component {
 		ramGB = 0
 	}
 
-	return []Component{
+	components := []Component{
 		cpuComponent(info.CPU),
 		{
 			Type:          "RAM",
@@ -27,8 +27,15 @@ func Components(info Info, ramGB int) []Component {
 		},
 		motherboardComponent(info.Motherboard),
 		gpuComponent(info.GPU),
-		psuComponent(info),
 	}
+
+	if info.PSUManufacturer != "" ||
+		info.PSUModel != "" ||
+		info.PSUWatts > 0 {
+		components = append(components, psuComponent(info))
+	}
+
+	return components
 }
 
 func cpuComponent(cpu string) Component {
