@@ -129,15 +129,18 @@ func UpsertNetworkInterfaces(
 			speed_mbps = EXCLUDED.speed_mbps
 	`
 
-	tx, err := db.Begin()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin network transaction: %w", err)
 	}
-
 	defer tx.Rollback()
 
 	for _, iface := range interfaces {
-		_, err := tx.Exec(
+		_, err := tx.ExecContext(
+			ctx,
 			query,
 			serverID,
 			iface.Name,
@@ -154,6 +157,7 @@ func UpsertNetworkInterfaces(
 			)
 		}
 	}
+
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("commit network transaction: %w", err)
 	}
