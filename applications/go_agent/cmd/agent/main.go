@@ -190,26 +190,26 @@ func registerServerInventory() {
 	fmt.Println("Motherboard:", serverInfo.Motherboard)
 }
 
-func registerServerInventoryCore() (int, inventory.ServerInfo, error) {
+func registerServerInventoryCore() (int, inventory.Server, error) {
 	cfg, err := config.Load()
 	if err != nil {
-		return 0, inventory.ServerInfo{}, fmt.Errorf("load configuration: %w", err)
+		return 0, inventory.Server{}, fmt.Errorf("load configuration: %w", err)
 	}
 
 	serverInfo, err := inventory.Collect()
 	if err != nil {
-		return 0, inventory.ServerInfo{}, fmt.Errorf("collect inventory: %w", err)
+		return 0, inventory.Server{}, fmt.Errorf("collect inventory: %w", err)
 	}
 
 	db, err := database.Connect(cfg)
 	if err != nil {
-		return 0, inventory.ServerInfo{}, fmt.Errorf("connect to database: %w", err)
+		return 0, inventory.Server{}, fmt.Errorf("connect to database: %w", err)
 	}
 	defer db.Close()
 
 	serverID, err := database.RegisterServer(db, serverInfo)
 	if err != nil {
-		return 0, inventory.ServerInfo{}, fmt.Errorf("register server: %w", err)
+		return 0, inventory.Server{}, fmt.Errorf("register server: %w", err)
 	}
 
 	return serverID, serverInfo, nil
