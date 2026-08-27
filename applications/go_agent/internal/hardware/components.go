@@ -86,9 +86,9 @@ func gpuComponent(gpu string) Component {
 
 func psuComponent(info Info) Component {
 	component := Component{
-		Type:			"PSU",
-		Manufacturer:	strings.TrimSpace(info.PSUManufacturer),
-		Model:			strings.TrimSpace(info.PSUModel),
+		Type:         "PSU",
+		Manufacturer: strings.TrimSpace(info.PSUManufacturer),
+		Model:        strings.TrimSpace(info.PSUModel),
 	}
 
 	if info.PSUWatts > 0 {
