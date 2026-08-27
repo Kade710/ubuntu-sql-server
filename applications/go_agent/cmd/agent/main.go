@@ -30,7 +30,7 @@ func main() {
 			fmt.Println("	./agent				Start interactive mode")
 			fmt.Println("	./agent --refresh	Refresh all server data")
 			return
-		
+
 		default:
 			fmt.Println("That's NOT the right option, please try again:", os.Args[1])
 			fmt.Println("Use --help for available options.")
