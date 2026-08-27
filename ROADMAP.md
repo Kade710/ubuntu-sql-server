@@ -169,6 +169,20 @@
 - [x] Test health warning notifications
 - [x] Test recovery notifications
 - [x] Verify alert event database logging
+- [x] Add PostgreSQL connection pool limits
+- [x] Add PostgreSQL connection lifetime limits
+- [x] Add database connection timeout
+- [x] Add database query timeouts
+- [x] Add database transaction timeouts
+- [x] Validate health history query limits
+- [x] Improve database transaction error reporting
+- [x] Verify server inventory database operations
+- [x] Verify network interface database operations
+- [x] Verify maintenance log database operations
+- [x] Verify operating system database operations
+- [x] Verify hardware database operations
+- [x] Verify health check database operations
+- [x] Verify alert event database operations
 
 ## Rust Application
 
@@ -238,6 +252,7 @@
 - [x] Configuration validation
 - [x] ntfy notification hardening
 - [x] Health alert end-to-end verification
+- [x] Go Agent database layer hardening
 
 # Future Ideas
 
