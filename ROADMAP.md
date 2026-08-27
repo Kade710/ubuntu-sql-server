@@ -153,6 +153,23 @@
 - [ ] Create REST endpoints
 - [ ] Add authentication
 
+### Go Agent Hardening
+
+
+- [x] Add command-line argument validation
+- [x] Add proper exit codes for command failures
+- [x] Harden full server refresh error handling
+- [x] Stop refresh when a required stage fails
+- [x] Validate database configuration
+- [x] Validate PostgreSQL port configuration
+- [x] Prevent database password output
+- [x] Add ntfy request timeout
+- [x] Validate notification input
+- [x] Limit notification error response size
+- [x] Test health warning notifications
+- [x] Test recovery notifications
+- [x] Verify alert event database logging
+
 ## Rust Application
 
 - [x] Create Rust database client
@@ -216,6 +233,11 @@
 - [x] Docker and Docker Compose
 - [x] Project security documentation
 - [x] Disaster recovery documentation
+- [x] Go Agent command-line hardening
+- [x] Go Agent refresh failure handling
+- [x] Configuration validation
+- [x] ntfy notification hardening
+- [x] Health alert end-to-end verification
 
 # Future Ideas
 
