@@ -270,7 +270,10 @@ func UpsertHardwareComponents(
 			specification = COALESCE(EXCLUDED.specification, hardware_components.specification)
 	`
 
-	tx, err := db.Begin()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin hardware transaction: %w", err)
 	}
@@ -278,6 +281,7 @@ func UpsertHardwareComponents(
 
 	for _, component := range components {
 		_, err := tx.Exec(
+			ctx,
 			query,
 			serverID,
 			component.Type,
