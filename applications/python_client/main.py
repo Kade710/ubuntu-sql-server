@@ -1,13 +1,14 @@
 # =====================================================
 # Ubuntu SQL Server
-# Python Administrative Client 
+# Python Administrative Client
 # =====================================================
 
-from inventory import get_servers
 from hardware import get_hardware
-from network import get_network_interfaces
+from inventory import get_servers
 from maintenance import get_maintenance_logs
+from network import get_network_interfaces
 from reports import generate_reports
+
 
 def menu():
     """Displays the main menu."""
@@ -17,13 +18,13 @@ def menu():
     print("=" * 60)
 
     print("1. View Server Inventory")
-    print("2. View Hardware Component")
-    print("3. View Netork Interfaces")
+    print("2. View Hardware Components")
+    print("3. View Network Interfaces")
     print("4. View Maintenance Logs")
     print("5. Generate Report")
     print("0. Exit")
 
-    return input("\nSelect an option: ")
+    return input("\nSelect an option: ").strip()
 
 
 def display_inventory():
@@ -42,15 +43,14 @@ def display_inventory():
         print(f"GPU: {server[7]}")
         print(f"Motherboard: {server[8]}")
         print()
-        
-        
+
+
 def display_hardware():
-    """Displays hardware for every server"""
+    """Displays hardware for every server."""
 
     servers = get_servers()
 
     for server in servers:
-
         print("-" * 60)
         print(f"Hardware Components for {server[1]}")
         print("-" * 60)
@@ -69,7 +69,6 @@ def display_network():
     servers = get_servers()
 
     for server in servers:
-
         print("-" * 60)
         print(f"Network Interfaces for {server[1]}")
         print("-" * 60)
@@ -91,7 +90,6 @@ def display_maintenance():
     servers = get_servers()
 
     for server in servers:
-
         print("-" * 60)
         print(f"Maintenance Logs for {server[1]}")
         print("-" * 60)
@@ -106,32 +104,40 @@ def display_maintenance():
 
 
 def main():
+    """Runs the administrative client."""
 
     while True:
+        try:
+            choice = menu()
 
-        choice = menu()
+            if choice == "1":
+                display_inventory()
 
-        if choice == "1":
-            display_inventory()
+            elif choice == "2":
+                display_hardware()
 
-        elif choice == "2":
-            display_hardware()
+            elif choice == "3":
+                display_network()
 
-        elif choice == "3":
-            display_network()
+            elif choice == "4":
+                display_maintenance()
 
-        elif choice == "4":
-            display_maintenance()
+            elif choice == "5":
+                generate_reports()
 
-        elif choice == "5":
-            generate_reports()
+            elif choice == "0":
+                print("\nSee ya later!\n")
+                break
 
-        elif choice == "0":
-            print("\nSee ya later!\n")
+            else:
+                print("\nInvalid option.\n")
+
+        except (EOFError, KeyboardInterrupt):
+            print("\n\nExiting.\n")
             break
 
-        else:
-            print("\nInvalid option.\n")
+        except (RuntimeError, OSError, ValueError) as exc:
+            print(f"\nError: {exc}\n")
 
 
 if __name__ == "__main__":
