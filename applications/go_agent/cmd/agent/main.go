@@ -292,19 +292,19 @@ func addMaintenanceLog(reader *bufio.Reader) {
 		return
 	}
 
-	action := readRequiredInput(reader, "Action: ")
+	action, err := readRequiredInput(reader, "Action: ")
 	if err != nil {
 		fmt.Println("Input failed:", err)
 		return
 	}
 
-	description := readInput(reader, "Description: ")
+	description, err := readInput(reader, "Description: ")
 	if err != nil {
 		fmt.Println("Input failed:", err)
 		return
 	}
-	
-	performedBy := readInput(reader, "Performed by: ")
+
+	performedBy, err := readInput(reader, "Performed by: ")
 	if err != nil {
 		fmt.Println("Input failed:", err)
 		return
