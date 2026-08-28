@@ -5,9 +5,10 @@
 
 from database import execute_query
 
+
 def get_servers():
     """
-    Returns all servers in inventory
+    Returns all servers in inventory.
     """
 
     query = """
@@ -21,7 +22,8 @@ def get_servers():
             storage_gb,
             gpu,
             motherboard
-        FROM server_management.server_inventory;
+        FROM server_management.server_inventory
+        ORDER BY hostname, id;
     """
 
     return execute_query(query)
