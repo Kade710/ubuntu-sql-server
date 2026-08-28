@@ -304,7 +304,11 @@ func addMaintenanceLog(reader *bufio.Reader) {
 		return
 	}
 
+<<<<<<< HEAD
 	performedBy, err := readInput(reader, "Performed by: ")
+=======
+	performedBy := readInput(reader, "Performed by: ")
+>>>>>>> bb9672c (Harden maintenance input handling)
 	if err != nil {
 		fmt.Println("Input failed:", err)
 		return
