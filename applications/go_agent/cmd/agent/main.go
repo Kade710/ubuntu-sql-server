@@ -344,7 +344,7 @@ func addMaintenanceLog(reader *bufio.Reader) {
 	fmt.Println("Performed by:", logEntry.PerformedBy)
 }
 
-func readInput(reader *bufio.Reader, prompt string) string {
+func readInput(reader *bufio.Reader, prompt string) (string, error) {
 	fmt.Print(prompt)
 
 	value, err := reader.ReadString('\n')
@@ -355,10 +355,10 @@ func readInput(reader *bufio.Reader, prompt string) string {
 	return strings.TrimSpace(value), nil
 }
 
-func readRequiredInput(reader *bufio.Reader, prompt string) string {
+func readRequiredInput(reader *bufio.Reader, prompt string) (string, error) {
 	for {
-		value := readInput(reader, prompt)
-		if value != nil {
+		value, err := readInput(reader, prompt)
+		if err != nil {
 			return "", err
 		}
 
