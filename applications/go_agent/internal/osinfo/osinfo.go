@@ -35,26 +35,30 @@ func readOSRelease() (string, string) {
 	}
 	defer file.Close()
 
-	var distribution string
+	distribution := runtime.GOOS
 	var version string
 
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		line := scanner.Text()
+		line := strings.TrimSpace(scanner.Text())
 
-		if strings.HasPrefix(line, "NAME=") {
-			distribution = strings.Trim(
-				strings.TrimPrefix(line, "NAME="),
-				`"`,
-			)
+		key, value, found := strings.Cut(line, "=")
+		if !found {
+			continue
 		}
 
-		if strings.HasPrefix(line, "VERSION=") {
-			version = strings.Trim(
-				strings.TrimPrefix(line, "VERSION="),
-				`"`,
-			)
+		value = strings.TrimSpace(value)
+		value = strings.Trim(value, `"'`)
+
+		switch key {
+		case "NAME":
+			if value != "" {
+				distribution = value
+			}
+
+		case "VERSION":
+			version = value
 		}
 	}
 
@@ -68,7 +72,12 @@ func kernelVersion() string {
 		return ""
 	}
 
-	return "Linux " + charsToString(uname.Release[:])
+	release := strings.TrimSpace(charsToString(uname.Release[:]))
+	if release == "" {
+		return ""
+	}
+
+	return "Linux " + release
 }
 
 func charsToString(chars []int8) string {
@@ -82,7 +91,7 @@ func charsToString(chars []int8) string {
 		result = append(result, byte(char))
 	}
 
-	return string(result)
+	return strings.TrimSpace(string(result))
 }
 
 func architecture() string {
@@ -92,6 +101,6 @@ func architecture() string {
 	case "arm64":
 		return "aarch64"
 	default:
-		return runtime.GOARCH
+		return strings.TrimSpace(runtime.GOARCH)
 	}
 }
