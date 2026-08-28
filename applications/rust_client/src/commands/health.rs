@@ -10,26 +10,31 @@ pub fn show_health() {
     println!("---");
 
     print!("Enter Server ID: ");
-    io::stdout().flush().expect("Failed to flush stdout");
+
+    if let Err(error) = io::stdout().flush() {
+        println!("Failed to flush output: {}", error);
+        return;
+    }
 
     let mut input = String::new();
 
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
+    if let Err(error) = io::stdin().read_line(&mut input) {
+        println!("Failed to read input: {}", error);
+        return;
+    }
 
     let server_id: i32 = match input.trim().parse() {
-        Ok(id) => id,
-        Err(_) => {
+        Ok(id) if id > 0 => id,
+        _ => {
             println!("Invalid server ID.");
             return;
         }
     };
 
     let config = match DatabaseConfig::load() {
-        Ok(client) => client,
+        Ok(config) => config,
         Err(error) => {
-            println!("Connection error: {}", error);
+            println!("Configuration error: {}", error);
             return;
         }
     };
@@ -37,7 +42,7 @@ pub fn show_health() {
     let mut client = match database::connect(&config) {
         Ok(client) => client,
         Err(error) => {
-            println!("Database connecction failed: {}", error);
+            println!("Database connection failed: {}", error);
             return;
         }
     };
@@ -67,7 +72,10 @@ pub fn show_health() {
     };
 
     if rows.is_empty() {
-        println!("No health history found for Server ID {}.", server_id);
+        println!(
+            "No health history found for Server ID {}.",
+            server_id
+        );
         return;
     }
 
@@ -94,8 +102,8 @@ pub fn show_health() {
         }
 
         match disk_percent {
-            Some(value) => println!("Disk Usage: {:.2}% ", value),
-            None => println!("Uptime: Not available"),
+            Some(value) => println!("Disk Usage: {:.2}%", value),
+            None => println!("Disk Usage: Not available"),
         }
 
         match uptime_hours {
@@ -108,6 +116,6 @@ pub fn show_health() {
             overall_status.as_deref().unwrap_or("Not available")
         );
 
-        println!("Created At: {:?}", created_at)
+        println!("Created At: {:?}", created_at);
     }
 }
