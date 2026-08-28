@@ -72,10 +72,7 @@ pub fn show_health() {
     };
 
     if rows.is_empty() {
-        println!(
-            "No health history found for Server ID {}.",
-            server_id
-        );
+        println!("No health history found for Server ID {}.", server_id);
         return;
     }
 
