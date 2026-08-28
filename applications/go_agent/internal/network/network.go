@@ -28,7 +28,8 @@ func Collect() ([]Interface, error) {
 	var collected []Interface
 
 	for _, iface := range systemInterfaces {
-		if iface.Flags&net.FlagUp == 0 || iface.Flags&net.FlagLoopback != 0 {
+		if iface.Flags&net.FlagUp == 0 ||
+			iface.Flags&net.FlagLoopback != 0 {
 			continue
 		}
 
@@ -38,7 +39,7 @@ func Collect() ([]Interface, error) {
 		}
 
 		collected = append(collected, Interface{
-			Name:        iface.Name,
+			Name:        strings.TrimSpace(iface.Name),
 			MACAddress:  iface.HardwareAddr.String(),
 			IPAddress:   ipAddress,
 			NetworkType: interfaceType(iface.Name),
@@ -63,18 +64,53 @@ func ipv4Address(iface net.Interface) string {
 			ip = value.IP
 		case *net.IPAddr:
 			ip = value.IP
+		default:
+			continue
 		}
 
 		ip = ip.To4()
-		if ip != nil && !ip.IsLoopback() {
-			return ip.String()
+		if ip == nil ||
+			ip.IsLoopback() ||
+			ip.IsUnspecified() ||
+			ip.IsMulticast() {
+			continue
 		}
+
+		return ip.String()
 	}
 
 	return ""
 }
 
 func interfaceType(name string) string {
+	name = strings.TrimSpace(name)
+	lowerName := strings.ToLower(name)
+
+	virtualPrefixes := []string{
+		"docker",
+		"br-",
+		"veth",
+		"virbr",
+	}
+
+	for _, prefix := range virtualPrefixes {
+		if strings.HasPrefix(lowerName, prefix) {
+			return "Virtual"
+		}
+	}
+
+	tunnelPrefixes := []string{
+		"tailscale",
+		"tun",
+		"tap",
+	}
+
+	for _, prefix := range tunnelPrefixes {
+		if strings.HasPrefix(lowerName, prefix) {
+			return "Tunnel"
+		}
+	}
+
 	wirelessPath := filepath.Join("/sys/class/net", name, "wireless")
 
 	if _, err := os.Stat(wirelessPath); err == nil {
@@ -85,6 +121,11 @@ func interfaceType(name string) string {
 }
 
 func interfaceSpeed(name string) int {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return 0
+	}
+
 	speedPath := filepath.Join("/sys/class/net", name, "speed")
 
 	value, err := os.ReadFile(speedPath)
