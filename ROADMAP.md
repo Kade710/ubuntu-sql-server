@@ -183,6 +183,11 @@
 - [x] Verify hardware database operations
 - [x] Verify health check database operations
 - [x] Verify alert event database operations
+- [x] Harden system health metric parsing
+- [x] Validate health metric values
+- [x] Add named health thresholds
+- [x] Separate warning and critical load thresholds
+- [x] Verify hardened health collection
 
 ## Rust Application
 
