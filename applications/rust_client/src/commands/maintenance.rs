@@ -70,10 +70,7 @@ pub fn show_maintenance() {
     };
 
     if rows.is_empty() {
-        println!(
-            "No maintenance logs found for Server ID {}.",
-            server_id
-        );
+        println!("No maintenance logs found for Server ID {}.", server_id);
         return;
     }
 
