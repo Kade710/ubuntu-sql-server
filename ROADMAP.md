@@ -146,6 +146,95 @@
 - [ ] Create CRUD operations
 - [x] Document setup
 
+### Python Client Hardening
+
+#### Configuration
+
+- [x] Validate required database environment variables
+- [x] Validate PostgreSQL port
+- [x] Preserve database password exactly
+- [x] Protect environment credentials from Git
+
+#### Database
+
+- [x] Add PostgreSQL connection timeout
+- [x] Validate queries before execution
+- [x] Add contextual database errors
+- [x] Ensure database connections are closed
+- [x] Verify live PostgreSQL connectivity
+
+#### Inventory
+
+- [x] Harden server inventory query
+- [x] Add deterministic inventory ordering
+- [x] Verify inventory against live database
+
+#### Hardware
+
+- [x] Validate server ID
+- [x] Reject invalid server IDs
+- [x] Verify hardware query against live database
+
+#### Network
+
+- [x] Validate server ID
+- [x] Reject invalid server IDs
+- [x] Verify network query against live database
+
+#### Maintenance
+
+- [x] Validate server ID
+- [x] Reject invalid server IDs
+- [x] Verify maintenance query against live database
+
+#### Data Models
+
+- [x] Refactor Server model to dataclass
+- [x] Add model type annotations
+- [x] Verify model compilation and compatibility
+
+#### Report Generation
+
+- [x] Use UTF-8 report output
+- [x] Support configurable output directory
+- [x] Prevent incomplete final reports
+- [x] Add collision-resistant report filenames
+- [x] Return generated report path
+- [x] Verify generated report contents
+
+#### Administrative Client
+
+- [x] Harden menu input handling
+- [x] Handle invalid menu options
+- [x] Handle Ctrl+C cleanly
+- [x] Handle EOF cleanly
+- [x] Handle expected runtime errors
+- [x] Verify all menu options
+
+#### Dependencies
+
+- [x] Pin verified Python dependencies
+- [x] Verify requirements installation
+
+#### Python Client Final Verification
+
+- [x] Complete audit of Python Client source files
+- [x] Compile all active Python source files
+- [x] Verify all Python modules import together
+- [x] Test all interactive menu options
+- [x] Test invalid menu input
+- [x] Test normal exit
+- [x] Test Ctrl+C handling
+- [x] Test EOF handling
+- [x] Verify live PostgreSQL queries
+- [x] Verify report generation
+- [x] Inspect generated report contents
+- [x] Verify dependency installation
+- [x] Review Git working tree
+- [x] Verify repository synchronized with origin
+
+**Status:** HARDENED / FINAL VERIFICATION COMPLETE
+
 ---
 
 ## Go Application
@@ -466,10 +555,25 @@
 
 # Future Ideas
 
-- [x] Add Docker and Docker Compose support
+## Development & Automation
+
 - [ ] Add CI/CD pipeline
 - [ ] Add automated testing
-- [x] Add API documentation
+
+## Python Application
+
+- [ ] Implement full Python CRUD operations
+
+## Infrastructure
+
+- [x] Add Docker and Docker Compose support
 - [ ] Add cloud backup
+
+## Database & Data Maintenance
+
+- [ ] Remove stale network interface records during server refresh
+
+## Documentation & Recovery
+
+- [x] Add API documentation
 - [x] Add disaster recovery plan
-- [ ] Remove stale network interface records during refresh
