@@ -39,7 +39,7 @@ func Collect() (Server, error) {
 	hw := hardware.Collect()
 
 	return Server{
-		Hostname:        hostname,
+		Hostname:        strings.TrimSpace(hostname),
 		IPAddress:       primaryIPv4(),
 		OperatingSystem: prettyOperatingSystem(),
 		RAMGB:           int(memoryGB + 0.5),
@@ -61,11 +61,16 @@ func prettyOperatingSystem() string {
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		line := scanner.Text()
+		line := strings.TrimSpace(scanner.Text())
 
 		if strings.HasPrefix(line, "PRETTY_NAME=") {
 			value := strings.TrimPrefix(line, "PRETTY_NAME=")
-			return strings.Trim(value, `"`)
+			value = strings.TrimSpace(value)
+			value = strings.Trim(value, `"`)
+
+			if value != "" {
+				return value
+			}
 		}
 	}
 
@@ -78,10 +83,12 @@ func primaryIPv4() string {
 		return ""
 	}
 
-	var fallback string
+	var privateFallback string
+	var publicFallback string
 
 	for _, iface := range interfaces {
-		if iface.Flags&net.FlagUp == 0 || iface.Flags&net.FlagLoopback != 0 {
+		if iface.Flags&net.FlagUp == 0 ||
+			iface.Flags&net.FlagLoopback != 0 {
 			continue
 		}
 
@@ -98,22 +105,63 @@ func primaryIPv4() string {
 				ip = value.IP
 			case *net.IPAddr:
 				ip = value.IP
-			}
-
-			ip = ip.To4()
-			if ip == nil || ip.IsLoopback() {
+			default:
 				continue
 			}
 
-			if ip.IsPrivate() {
-				return ip.String()
+			ip = ip.To4()
+			if ip == nil ||
+				ip.IsLoopback() ||
+				ip.IsUnspecified() ||
+				ip.IsMulticast() {
+				continue
 			}
 
-			if fallback == "" {
-				fallback = ip.String()
+			ipString := ip.String()
+
+			if ip.IsPrivate() {
+				if !isVirtualInterface(iface.Name) {
+					return ipString
+				}
+
+				if privateFallback == "" {
+					privateFallback = ipString
+				}
+
+				continue
+			}
+
+			if publicFallback == "" && !isVirtualInterface(iface.Name) {
+				publicFallback = ipString
 			}
 		}
 	}
 
-	return fallback
+	if privateFallback != "" {
+		return privateFallback
+	}
+
+	return publicFallback
+}
+
+func isVirtualInterface(name string) bool {
+	name = strings.ToLower(strings.TrimSpace(name))
+
+	virtualPrefixes := []string{
+		"docker",
+		"br-",
+		"veth",
+		"virbr",
+		"tailscale",
+		"tun",
+		"tap",
+	}
+
+	for _, prefix := range virtualPrefixes {
+		if strings.HasPrefix(name, prefix) {
+			return true
+		}
+	}
+
+	return false
 }
