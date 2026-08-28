@@ -69,10 +69,7 @@ pub fn show_network() {
     };
 
     if rows.is_empty() {
-        println!(
-            "No network interfaces found for Server ID {}.",
-            server_id
-        );
+        println!("No network interfaces found for Server ID {}.", server_id);
         return;
     }
 
