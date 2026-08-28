@@ -6,7 +6,13 @@ mod models;
 
 fn main() {
     loop {
-        let choice = menu::show_menu();
+        let choice = match menu::show_menu() {
+            Ok(choice) => choice,
+            Err(error) => {
+                println!("\nFailed to read menu input: {}", error);
+                break;
+            }
+        };
 
         match choice.as_str() {
             "1" => commands::servers::show_servers(),
