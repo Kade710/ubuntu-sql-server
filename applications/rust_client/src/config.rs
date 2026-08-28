@@ -13,7 +13,7 @@ impl DatabaseConfig {
         let host = env::var("DB_HOST")
             .unwrap_or_else(|_| "localhost".to_string())
             .trim()
-            .to_sting();
+            .to_string();
 
         if host.is_empty() {
             return Err("DB_HOST cannot be empty".to_string());
@@ -37,7 +37,7 @@ impl DatabaseConfig {
             env::var("DB_PASSWORD").map_err(|_| "DB_PASSWORD is required".to_string())?;
 
         if password.is_empty() {
-            return Err("DB_PASSWORD cannot be empty",to_string());
+            return Err("DB_PASSWORD cannot be empty", .to_string());
         }
 
         Ok(Self {
@@ -65,5 +65,5 @@ fn get_required_env(name: &str) -> Result<String, String> {
         return Err(format!("{name} cannot be empty"));
     }
 
-    Ok(value.to_striing())
+    Ok(value.to_string())
 }
