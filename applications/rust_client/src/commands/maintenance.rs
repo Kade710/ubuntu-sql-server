@@ -6,22 +6,27 @@ use crate::config::DatabaseConfig;
 use crate::database;
 
 pub fn show_maintenance() {
-    println!("Maintenance Logs");
+    println!("\nMaintenance Logs");
     println!("---");
 
     print!("Enter Server ID: ");
-    io::stdout().flush().expect("Failed to flush stdout");
+
+    if let Err(error) = io::stdout().flush() {
+        println!("Failed to flush output: {}", error);
+        return;
+    }
 
     let mut input = String::new();
 
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
+    if let Err(error) = io::stdin().read_line(&mut input) {
+        println!("Failed to read input: {}", error);
+        return;
+    }
 
     let server_id: i32 = match input.trim().parse() {
-        Ok(id) => id,
-        Err(_) => {
-            println!("Invalid server ID");
+        Ok(id) if id > 0 => id,
+        _ => {
+            println!("Invalid server ID.");
             return;
         }
     };
@@ -63,6 +68,14 @@ pub fn show_maintenance() {
             return;
         }
     };
+
+    if rows.is_empty() {
+        println!(
+            "No maintenance logs found for Server ID {}.",
+            server_id
+        );
+        return;
+    }
 
     for row in rows {
         let id: i32 = row.get("id");
