@@ -1,5 +1,6 @@
 // src/commands/maintenance.rs
 
+use chrono::{DateTime, Local};
 use std::io::{self, Write};
 
 use crate::config::DatabaseConfig;
@@ -70,7 +71,10 @@ pub fn show_maintenance() {
     };
 
     if rows.is_empty() {
-        println!("No maintenance logs found for Server ID {}.", server_id);
+        println!(
+            "No maintenance logs found for Server ID {}.",
+            server_id
+        );
         return;
     }
 
@@ -80,6 +84,7 @@ pub fn show_maintenance() {
         let description: Option<String> = row.get("description");
         let performed_by: Option<String> = row.get("performed_by");
         let created_at: std::time::SystemTime = row.get("created_at");
+        let created_at: DateTime<Local> = created_at.into();
 
         println!();
         println!("Maintenance Log ID: {}", id);
@@ -92,6 +97,9 @@ pub fn show_maintenance() {
             "Performed By: {}",
             performed_by.as_deref().unwrap_or("Not available")
         );
-        println!("Created At: {:?}", created_at);
+        println!(
+            "Created At: {}",
+            created_at.format("%Y-%m-%d %H:%M:%S")
+        );
     }
 }
