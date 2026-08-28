@@ -2,28 +2,43 @@
 
 The Rust Client is a command-line application for viewing U-Server information stored in the PostgreSQL database.
 
-It provides a simple menu for accessing server information without using the web dashboard.
+It provides a lightweight terminal interface for accessing server management information without using the web dashboard.
 
 ## Features
 
 - List registered servers
-- View server details
-- View hardware information
-- View network information
+- View detailed server information
+- View hardware components
+- View network interfaces
 - View health history
 - View maintenance logs
-
-## Database
-
-The client reads server management data from the `ubuntu_sql_server` PostgreSQL database.
-
-Most server information is stored in the `server_management` schema.
+- Validate server ID input
+- Handle database and configuration errors gracefully
+- Display health and maintenance timestamps in a human-readable format
 
 ## Technologies
 
 - Rust
 - PostgreSQL
+- Chrono
 
-## Status
+## Project Structure
 
-The Rust Client is working and actively being developed. Additional features may be added as the Ubuntu SQL Server project grows.
+```text
+rust_client/
+├── src/
+│   ├── commands/
+│   │   ├── hardware.rs
+│   │   ├── health.rs
+│   │   ├── maintenance.rs
+│   │   ├── mod.rs
+│   │   ├── network.rs
+│   │   └── servers.rs
+│   ├── config.rs
+│   ├── database.rs
+│   ├── main.rs
+│   ├── menu.rs
+│   └── models.rs
+├── Cargo.lock
+├── Cargo.toml
+└── README.md
