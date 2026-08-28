@@ -352,6 +352,15 @@ docker ps -a
 ```
 
 Start a container:
+=======
+## Current Docker Images
+
+Docker images currently stored on U-Server include:
+
+```text
+docker-bittensor-node:latest
+nvidia/cuda:12.0.0-base-ubuntu22.04
+```
 
 ```bash
 docker start <container-name>
@@ -361,6 +370,16 @@ Stop a container:
 
 ```bash
 docker stop <container-name>
+=======
+Unused images may remain available so containers can be recreated later without downloading or rebuilding the image again.
+
+## Compose Projects
+
+Two Docker Compose configurations are currently stored under the Projects directory.
+
+```text
+/home/jonathon/Projects/bittensor-node/docker/docker-compose.yaml
+>>>>>>> a738d80 (udated virtualization readme.md)
 ```
 
 Restart a container:
@@ -477,6 +496,17 @@ View its logs:
 docker logs --tail 50 bittensor-node-dev
 ```
 
+<<<<<<< HEAD
+=======
+Live logs can be followed with:
+
+```bash
+docker logs -f bittensor-node-dev
+```
+
+Press `Ctrl+C` to stop following the logs.
+
+>>>>>>> a738d80 (udated virtualization readme.md)
 ## Docker Networks
 
 View Docker networks:
@@ -739,9 +769,25 @@ Bittensor Container:
 
 Bittensor Image:
 - docker-bittensor-node:latest
+<<<<<<< HEAD
 
 CUDA Image:
 - nvidia/cuda:12.0.0-base-ubuntu22.04
+=======
+- nvidia/cuda:12.0.0-base-ubuntu22.04
+
+Docker Networks:
+- bridge
+- docker_default
+- host
+- none
+
+Named Docker Volumes:
+- None currently listed
+
+Compose Projects:
+- bittensor-node/docker
+>>>>>>> a738d80 (udated virtualization readme.md)
 ```
 
 This document should be updated whenever major virtual machines, containers, networks, storage configurations, or virtualization technologies are added, removed, or changed.
