@@ -146,6 +146,8 @@
 - [ ] Create CRUD operations
 - [x] Document setup
 
+---
+
 ## Go Application
 
 - [ ] Create Go API
@@ -155,27 +157,73 @@
 
 ### Go Agent Hardening
 
+#### Layer: Command / Agent Entry Point
+
+`applications/go_agent/cmd/agent/main.go`
 
 - [x] Add command-line argument validation
 - [x] Add proper exit codes for command failures
 - [x] Harden full server refresh error handling
 - [x] Stop refresh when a required stage fails
-- [x] Validate database configuration
+- [x] Verify interactive agent operation
+- [x] Verify non-interactive refresh operation
+
+**Status:** HARDENED / VERIFIED
+
+---
+
+#### Layer: Configuration
+
+`applications/go_agent/internal/config/config.go`
+
+- [x] Validate required database configuration
 - [x] Validate PostgreSQL port configuration
 - [x] Prevent database password output
+- [x] Trim appropriate configuration values
+- [x] Preserve database password exactly
+- [x] Verify invalid configuration failure handling
+
+**Status:** HARDENED / VERIFIED
+
+---
+
+#### Layer: Alerting
+
+`applications/go_agent/internal/alerts/ntfy.go`
+
 - [x] Add ntfy request timeout
 - [x] Validate notification input
+- [x] Safely construct notification topic URL
 - [x] Limit notification error response size
+- [x] Handle notification response errors
 - [x] Test health warning notifications
 - [x] Test recovery notifications
 - [x] Verify alert event database logging
+
+**Status:** HARDENED / END-TO-END VERIFIED
+
+---
+
+#### Layer: Database
+
+`applications/go_agent/internal/database/database.go`
+
+##### Connection Management
+
 - [x] Add PostgreSQL connection pool limits
 - [x] Add PostgreSQL connection lifetime limits
+- [x] Add PostgreSQL idle connection lifetime
 - [x] Add database connection timeout
+
+##### Query and Transaction Safety
+
 - [x] Add database query timeouts
 - [x] Add database transaction timeouts
 - [x] Validate health history query limits
 - [x] Improve database transaction error reporting
+
+##### Database Operations
+
 - [x] Verify server inventory database operations
 - [x] Verify network interface database operations
 - [x] Verify maintenance log database operations
@@ -183,15 +231,158 @@
 - [x] Verify hardware database operations
 - [x] Verify health check database operations
 - [x] Verify alert event database operations
+
+**Status:** HARDENED / END-TO-END VERIFIED
+
+---
+
+#### Layer: Hardware Collection
+
+`applications/go_agent/internal/hardware/hardware.go`
+
+- [x] Harden hardware command execution
+- [x] Add external command timeouts
+- [x] Collect CPU information
+- [x] Collect storage information
+- [x] Collect GPU information
+- [x] Collect motherboard information
+- [x] Add optional PSU inventory support
+- [x] Validate PSU wattage input
+- [ ] Populate PSU specifications after hardware upgrade
+
+**Status:** HARDENED / VERIFIED  
+**PSU inventory:** IMPLEMENTED / HARDWARE DATA PENDING
+
+---
+
+#### Layer: Hardware Components
+
+`applications/go_agent/internal/hardware/components.go`
+
+- [x] Harden hardware component generation
+- [x] Normalize component strings
+- [x] Protect against invalid RAM values
+- [x] Improve CPU manufacturer detection
+- [x] Improve GPU manufacturer detection
+- [x] Improve motherboard manufacturer detection
+- [x] Add PSU component support
+- [x] Prevent empty PSU records
+- [x] Remove test PSU database record
+- [x] Verify hardware component registration
+
+**Status:** HARDENED / VERIFIED
+
+---
+
+#### Layer: System Health
+
+`applications/go_agent/internal/health/health.go`
+
 - [x] Harden system health metric parsing
 - [x] Validate health metric values
+- [x] Check memory scanner errors
+- [x] Prevent invalid memory calculations
+- [x] Prevent invalid disk calculations
+- [x] Validate load average
+- [x] Validate uptime
 - [x] Add named health thresholds
 - [x] Separate warning and critical load thresholds
 - [x] Verify hardened health collection
+- [x] Verify health check database storage
+
+**Status:** HARDENED / VERIFIED
+
+---
+
+#### Layer: Server Inventory
+
+`applications/go_agent/internal/inventory/inventory.go`
+
 - [x] Harden server inventory collection
-- [x] Prefer physical LAN IPv4 over virtual interfaces
+- [x] Normalize hostname
 - [x] Harden operating system name parsing
-- [x] Verify server inventory network selection
+- [x] Prefer physical LAN IPv4 over virtual interfaces
+- [x] Exclude Docker interfaces from preferred IP selection
+- [x] Exclude Tailscale interfaces from preferred IP selection
+- [x] Retain fallback IPv4 selection
+- [x] Verify server inventory database update
+- [x] Verify physical LAN address selection
+
+**Status:** HARDENED / VERIFIED
+
+---
+
+#### Layer: Maintenance
+
+`applications/go_agent/internal/maintenance/`
+
+- [ ] Audit maintenance package files
+- [ ] Harden maintenance collection
+- [ ] Validate maintenance input
+- [ ] Verify maintenance database integration
+
+**Status:** AUDIT PENDING
+
+---
+
+#### Layer: Networking
+
+`applications/go_agent/internal/network/`
+
+- [ ] Audit network package files
+- [ ] Harden network interface collection
+- [ ] Validate interface data
+- [ ] Review virtual interface handling
+- [ ] Verify network database integration
+
+**Status:** AUDIT PENDING
+
+---
+
+#### Layer: Operating System Information
+
+`applications/go_agent/internal/osinfo/`
+
+- [ ] Audit operating system information files
+- [ ] Harden OS information collection
+- [ ] Validate parsed OS information
+- [ ] Verify OS database integration
+
+**Status:** AUDIT PENDING
+
+---
+
+#### Layer: System Information
+
+`applications/go_agent/internal/system/`
+
+- [ ] Audit system package files
+- [ ] Harden hostname collection
+- [ ] Harden memory collection
+- [ ] Validate system metric parsing
+- [ ] Verify system information integration
+
+**Status:** AUDIT PENDING
+
+---
+
+#### Go Agent Final Verification
+
+- [ ] Complete audit of all Go Agent source files
+- [ ] Run `gofmt` across Go Agent
+- [ ] Run clean Go Agent build
+- [ ] Test all interactive menu options
+- [ ] Test `--refresh`
+- [ ] Test systemd execution
+- [ ] Verify database records after final test
+- [ ] Verify warning notification path
+- [ ] Verify recovery notification path
+- [ ] Review Git working tree
+- [ ] Push final hardened Go Agent
+
+**Status:** IN PROGRESS
+
+---
 
 ## Rust Application
 
@@ -262,6 +453,11 @@
 - [x] ntfy notification hardening
 - [x] Health alert end-to-end verification
 - [x] Go Agent database layer hardening
+- [x] Go Agent hardware layer hardening
+- [x] Go Agent health layer hardening
+- [x] Go Agent inventory layer hardening
+
+---
 
 # Future Ideas
 
