@@ -51,7 +51,7 @@ impl DatabaseConfig {
 
     pub fn connection_string(&self) -> String {
         format!(
-            "host={} port={} dbname={} user={} password={}",
+            "host={} port={} dbname={} user={} password={} connect_timeout=5",
             self.host, self.port, self.database, self.user, self.password
         )
     }
