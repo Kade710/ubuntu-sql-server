@@ -1,8 +1,8 @@
-// Interactive menu logic will live here.
+// src/menu.rs
 
 use std::io::{self, Write};
 
-pub fn show_menu() -> String {
+pub fn show_menu() -> io::Result<String> {
     println!("------------------------------");
     println!(" Ubuntu SQL Server Rust Client");
     println!("------------------------------");
@@ -13,15 +13,12 @@ pub fn show_menu() -> String {
     println!("5. View Health History");
     println!("6. View Maintenance Logs");
     println!("0. Exit");
-    println!("\nSelect an option: ");
 
-    io::stdout().flush().expect("Failed to flush stout");
+    print!("\nSelect an option: ");
+    io::stdout().flush()?;
 
     let mut choice = String::new();
+    io::stdin().read_line(&mut choice)?;
 
-    io::stdin()
-        .read_line(&mut choice)
-        .expect("Failed to read input");
-
-    choice.trim().to_string()
+    Ok(choice.trim().to_string())
 }
