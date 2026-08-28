@@ -188,6 +188,10 @@
 - [x] Add named health thresholds
 - [x] Separate warning and critical load thresholds
 - [x] Verify hardened health collection
+- [x] Harden server inventory collection
+- [x] Prefer physical LAN IPv4 over virtual interfaces
+- [x] Harden operating system name parsing
+- [x] Verify server inventory network selection
 
 ## Rust Application
 
