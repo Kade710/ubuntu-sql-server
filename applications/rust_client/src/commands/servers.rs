@@ -1,4 +1,6 @@
-// src/commands/serever.rs
+// src/commands/servers.rs
+
+use std::io::{self, Write};
 
 use crate::config::DatabaseConfig;
 use crate::database;
@@ -74,23 +76,26 @@ pub fn show_servers() {
 }
 
 pub fn show_server_details() {
-    use std::io::{self, Write};
-
     println!("\nServer Details");
     println!("---");
 
-    println!("Enter Server ID: ");
-    io::stdout().flush().expect("Failed to flush stdout");
+    print!("Enter Server ID: ");
+
+    if let Err(error) = io::stdout().flush() {
+        println!("Failed to flush output: {}", error);
+        return;
+    }
 
     let mut input = String::new();
 
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
+    if let Err(error) = io::stdin().read_line(&mut input) {
+        println!("Failed to read input: {}", error);
+        return;
+    }
 
     let server_id: i32 = match input.trim().parse() {
-        Ok(id) => id,
-        Err(_) => {
+        Ok(id) if id > 0 => id,
+        _ => {
             println!("Invalid server ID.");
             return;
         }
