@@ -622,7 +622,7 @@
 
 - [x] Install virtual machine platform
 - [x] Create test virtual machines
-- [ ] Document VM management
+- [x] Document VM management
 - [x] Install Docker and Docker Compose
 - [x] Document container management
 
