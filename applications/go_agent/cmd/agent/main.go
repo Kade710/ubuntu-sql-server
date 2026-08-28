@@ -293,8 +293,22 @@ func addMaintenanceLog(reader *bufio.Reader) {
 	}
 
 	action := readRequiredInput(reader, "Action: ")
+	if err != nil {
+		fmt.Println("Input failed:", err)
+		return
+	}
+
 	description := readInput(reader, "Description: ")
+	if err != nil {
+		fmt.Println("Input failed:", err)
+		return
+	}
+	
 	performedBy := readInput(reader, "Performed by: ")
+	if err != nil {
+		fmt.Println("Input failed:", err)
+		return
+	}
 
 	db, err := database.Connect(cfg)
 	if err != nil {
@@ -335,17 +349,21 @@ func readInput(reader *bufio.Reader, prompt string) string {
 
 	value, err := reader.ReadString('\n')
 	if err != nil {
-		return ""
+		return "", fmt.Errorf("read input: %w", err)
 	}
 
-	return strings.TrimSpace(value)
+	return strings.TrimSpace(value), nil
 }
 
 func readRequiredInput(reader *bufio.Reader, prompt string) string {
 	for {
 		value := readInput(reader, prompt)
+		if value != nil {
+			return "", err
+		}
+
 		if value != "" {
-			return value
+			return value, nil
 		}
 
 		fmt.Println("This field is required.")
