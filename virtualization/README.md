@@ -2,138 +2,446 @@
 
 ## Overview
 
-This directory contains documentation for virtualization and container technologies used on U-Server.
+U-Server uses two forms of application isolation and virtualization:
 
-U-Server currently uses Docker and Docker Compose to run containerized services.
+- KVM/QEMU with libvirt for full virtual machines
+- Docker and Docker Compose for containers
 
-Containers allow applications to run in isolated environments while still sharing the Linux host system.
+KVM provides hardware-assisted virtualization for running complete guest operating systems.
 
-## Docker Installation
+Docker provides isolated application environments while sharing the U-Server Linux kernel.
 
-Docker is installed and running on U-Server.
+This document contains the primary management and troubleshooting commands for both environments.
 
-The current Docker root directory is:
+---
+
+# Virtual Machines
+
+## Platform
+
+U-Server uses the following virtualization stack:
 
 ```text
-/var/lib/docker
+KVM
+QEMU
+libvirt
+virsh
+virt-install
+bridge-utils
 ```
 
-Docker can be checked with:
+Intel VT-x hardware virtualization is enabled on the host.
+
+Verify virtualization support:
+
+```bash
+lscpu | grep -E 'Virtualization|Hypervisor'
+```
+
+Expected virtualization type:
+
+```text
+VT-x
+```
+
+Verify the KVM kernel modules:
+
+```bash
+lsmod | grep kvm
+```
+
+The host currently uses:
+
+```text
+kvm_intel
+kvm
+```
+
+## libvirt
+
+libvirt manages the virtual machines running on U-Server.
+
+Check the service:
+
+```bash
+systemctl status libvirtd --no-pager
+```
+
+Check the libvirt and KVM groups:
+
+```bash
+getent group libvirt
+getent group kvm
+```
+
+The `jonathon` user belongs to both groups and can perform normal `virsh` management without `sudo`.
+
+## List Virtual Machines
+
+List running VMs:
+
+```bash
+virsh list
+```
+
+List all VMs:
+
+```bash
+virsh list --all
+```
+
+## VM Information
+
+Display detailed information about a VM:
+
+```bash
+virsh dominfo <vm-name>
+```
+
+Example:
+
+```bash
+virsh dominfo ubuntu-test
+```
+
+This displays information such as:
+
+- Current state
+- Number of virtual CPUs
+- Memory allocation
+- Persistence
+- Autostart status
+
+## Start a VM
+
+```bash
+virsh start <vm-name>
+```
+
+Example:
+
+```bash
+virsh start ubuntu-test
+```
+
+## Shut Down a VM
+
+Request a normal operating system shutdown:
+
+```bash
+virsh shutdown <vm-name>
+```
+
+A normal shutdown should be preferred whenever possible.
+
+## Force Stop a VM
+
+If a VM cannot shut down normally:
+
+```bash
+virsh destroy <vm-name>
+```
+
+This immediately stops the VM and is similar to removing power from a physical computer.
+
+Use it only when necessary.
+
+## Reboot a VM
+
+```bash
+virsh reboot <vm-name>
+```
+
+## VM Console
+
+Connect to a guest serial console:
+
+```bash
+virsh console <vm-name>
+```
+
+Example:
+
+```bash
+virsh console ubuntu-test
+```
+
+Detach from the console without stopping the VM with:
+
+```text
+Ctrl + ]
+```
+
+## VM Networking
+
+The current virtual machines use the default libvirt NAT network.
+
+View libvirt networks:
+
+```bash
+virsh net-list --all
+```
+
+The default network is configured as:
+
+```text
+Name: default
+State: active
+Autostart: yes
+Persistent: yes
+Network: 192.168.122.0/24
+```
+
+View the virtual network interfaces assigned to a VM:
+
+```bash
+virsh domiflist <vm-name>
+```
+
+Attempt to determine a guest IP address:
+
+```bash
+virsh domifaddr <vm-name>
+```
+
+libvirt provides DHCP through `dnsmasq` for the default NAT network.
+
+## VM Storage
+
+View the block devices assigned to a VM:
+
+```bash
+virsh domblklist <vm-name>
+```
+
+Virtual machine disk images are normally stored in:
+
+```text
+/var/lib/libvirt/images/
+```
+
+Installation ISO images are stored in:
+
+```text
+/var/lib/libvirt/iso/
+```
+
+The current Ubuntu Server installation ISO is:
+
+```text
+/var/lib/libvirt/iso/ubuntu-24.04.4-live-server-amd64.iso
+```
+
+The ISO was verified against the official Ubuntu SHA256 checksum before installation.
+
+## VM Autostart
+
+Check autostart status:
+
+```bash
+virsh dominfo <vm-name>
+```
+
+Enable autostart:
+
+```bash
+virsh autostart <vm-name>
+```
+
+Disable autostart:
+
+```bash
+virsh autostart --disable <vm-name>
+```
+
+Test VMs should normally remain disabled unless they need to run continuously.
+
+## Remove a VM
+
+Before removing a VM, shut it down and confirm that its data is no longer required.
+
+Remove the persistent VM definition while retaining its storage:
+
+```bash
+virsh undefine <vm-name>
+```
+
+Remove the definition and associated storage:
+
+```bash
+virsh undefine <vm-name> --remove-all-storage
+```
+
+The second command permanently removes associated virtual disks and should be used carefully.
+
+---
+
+# Test Virtual Machine
+
+The current virtualization test system is:
+
+```text
+Name: ubuntu-test
+Guest OS: Ubuntu Server 24.04.4 LTS
+Guest Kernel: 6.8.0-138-generic
+vCPUs: 2
+Memory: 3 GiB
+Virtual Disk: 20 GiB
+Network: libvirt default NAT
+IPv4 Address: 192.168.122.154
+Persistent: yes
+Autostart: disabled
+```
+
+The VM uses VirtIO virtual hardware for its disk and network interface.
+
+OpenSSH Server is installed in the guest.
+
+The test VM has been verified to:
+
+- Install successfully with KVM/QEMU and libvirt
+- Boot from its virtual disk
+- Boot without the installation ISO attached
+- Run as a persistent libvirt domain
+- Use two virtual CPUs
+- Use 3 GiB of memory
+- Connect to the default libvirt NAT network
+- Receive an IPv4 address through DHCP
+- Provide a working serial console
+- Run Ubuntu Server 24.04.4 LTS
+- Use Intel VT-x hardware-assisted virtualization
+
+---
+
+# Docker
+
+## Platform
+
+Docker and Docker Compose are installed on U-Server.
+
+Check Docker:
 
 ```bash
 docker --version
 ```
 
-Running containers can be viewed with:
-
-```bash
-docker ps
-```
-
-All containers, including stopped containers, can be viewed with:
-
-```bash
-docker ps -a
-```
-
-Detailed Docker information can be viewed with:
-
-```bash
-docker info
-```
-
-## Docker Compose
-
-Docker Compose is installed on U-Server.
-
-The installed version can be checked with:
+Check Docker Compose:
 
 ```bash
 docker compose version
 ```
 
-Docker Compose uses YAML configuration files to define and manage containerized applications.
-
-Common Compose filenames include:
+Docker stores its data under:
 
 ```text
-compose.yaml
-compose.yml
-docker-compose.yaml
-docker-compose.yml
+/var/lib/docker
 ```
 
-A Compose project should normally be managed from the directory containing its Compose file.
+## Container Management
 
-For example:
-
-```bash
-cd <compose-project-directory>
-docker compose up -d
-```
-
-Running `docker compose up -d` from a directory without a Compose configuration will return an error stating that no configuration file was found.
-
-## Current Containers
-
-The currently active Docker container is:
-
-```text
-bittensor-node-dev
-```
-
-It uses the image:
-
-```text
-docker-bittensor-node:latest
-```
-
-Current container status can be checked with:
+List running containers:
 
 ```bash
 docker ps
 ```
 
-Detailed information about the container can be viewed with:
+List all containers:
 
 ```bash
-docker inspect bittensor-node-dev
+docker ps -a
 ```
 
-## Current Docker Images
-
-Docker images currently stored on U-Server include:
-
-```text
-docker-bittensor-node:latest
-itzg/minecraft-server:latest
-nvidia/cuda:12.0.0-base-ubuntu22.04
-```
-
-Images can be viewed with:
+Start a container:
 
 ```bash
-docker images
+docker start <container-name>
 ```
 
-An image being stored on U-Server does not mean a container using that image is currently running.
+Stop a container:
 
-Unused images may remain available so containers can be recreated later without downloading or rebuilding the image again.
-
-## Compose Projects
-
-Two Docker Compose configurations are currently stored under the Projects directory.
-
-```text
-/home/jonathon/Projects/ubuntu-sql-server/minecraft/compose.yaml
-/home/jonathon/Projects/bittensor-node/docker/docker-compose.yaml
+```bash
+docker stop <container-name>
 ```
 
-These configurations manage separate Docker projects.
+Restart a container:
+
+```bash
+docker restart <container-name>
+```
+
+Inspect a container:
+
+```bash
+docker inspect <container-name>
+```
+
+## Container Logs
+
+View logs:
+
+```bash
+docker logs <container-name>
+```
+
+View recent logs:
+
+```bash
+docker logs --tail 50 <container-name>
+```
+
+Follow live logs:
+
+```bash
+docker logs -f <container-name>
+```
+
+Press `Ctrl+C` to stop following logs.
+
+## Docker Compose
+
+Compose projects should normally be managed from the directory containing their Compose configuration.
+
+Validate a Compose configuration:
+
+```bash
+docker compose config
+```
+
+Start a project:
+
+```bash
+docker compose up -d
+```
+
+View project containers:
+
+```bash
+docker compose ps
+```
+
+Stop a project:
+
+```bash
+docker compose stop
+```
+
+Restart a project:
+
+```bash
+docker compose restart
+```
+
+Remove project containers and networks:
+
+```bash
+docker compose down
+```
+
+Persistent storage should be understood before removing volumes or application data.
 
 ## Bittensor Development Container
 
-The Bittensor Docker project is located at:
+The Bittensor Docker project is stored at:
 
 ```text
 ~/Projects/bittensor-node/docker/
@@ -145,370 +453,100 @@ Its Compose configuration is:
 ~/Projects/bittensor-node/docker/docker-compose.yaml
 ```
 
-The current development container is:
+The development container is:
 
 ```text
 bittensor-node-dev
 ```
 
-The container currently uses:
+The project uses:
 
 ```text
 docker-bittensor-node:latest
 ```
 
-as its Docker image.
-
-The Bittensor Docker environment also uses an NVIDIA CUDA base image during its container build process.
-
-The CUDA image currently stored on U-Server is:
-
-```text
-nvidia/cuda:12.0.0-base-ubuntu22.04
-```
-
-The Bittensor container can be checked with:
+Check the container:
 
 ```bash
 docker ps
 ```
 
-Its logs can be viewed with:
-
-```bash
-docker logs bittensor-node-dev
-```
-
-Recent logs can be viewed with:
+View its logs:
 
 ```bash
 docker logs --tail 50 bittensor-node-dev
 ```
 
-Live logs can be followed with:
-
-```bash
-docker logs -f bittensor-node-dev
-```
-
-Press `Ctrl+C` to stop following the logs.
-
-## Minecraft Docker Project
-
-The Minecraft Docker project is stored at:
-
-```text
-~/Projects/ubuntu-sql-server/minecraft/
-```
-
-Its Compose configuration is:
-
-```text
-~/Projects/ubuntu-sql-server/minecraft/compose.yaml
-```
-
-The Minecraft Docker image currently stored on U-Server is:
-
-```text
-itzg/minecraft-server:latest
-```
-
-The Minecraft image being present does not mean the Minecraft server is currently running.
-
-The current Docker container list should always be checked before assuming the Minecraft server is online:
-
-```bash
-docker ps
-```
-
-The Minecraft Compose configuration can be checked with:
-
-```bash
-cd ~/Projects/ubuntu-sql-server/minecraft
-docker compose config
-```
-
-The project can be started with:
-
-```bash
-cd ~/Projects/ubuntu-sql-server/minecraft
-docker compose up -d
-```
-
-After starting it, verify the container with:
-
-```bash
-docker ps
-```
-
 ## Docker Networks
 
-Docker creates virtual networks for container communication.
-
-Current Docker networks include:
-
-```text
-bridge
-docker_default
-host
-none
-```
-
-Networks can be viewed with:
+View Docker networks:
 
 ```bash
 docker network ls
 ```
 
-Detailed information about a network can be viewed with:
+Inspect a network:
 
 ```bash
 docker network inspect <network-name>
 ```
 
-### bridge
+Common Docker network types include:
 
-The default Docker bridge network provides networking for containers that use Docker's standard bridge configuration.
+```text
+bridge
+host
+none
+```
 
-### docker_default
+Docker Compose may also create project-specific bridge networks.
 
-The `docker_default` network is a Docker bridge network created for a Compose project.
-
-Docker Compose normally creates networks for applications when they are started.
-
-### host
-
-The `host` network allows a container to use the host's network stack directly when configured to do so.
-
-### none
-
-The `none` network provides a container with no normal external network connectivity.
-
-## Docker Network Interfaces
-
-Docker networking may create virtual Linux interfaces on U-Server.
-
-Examples include:
+Docker networking creates virtual Linux interfaces such as:
 
 ```text
 docker0
+br-*
 ```
 
-and interfaces beginning with:
+These interfaces may be detected by the Ubuntu SQL Server monitoring system.
 
-```text
-br-
-```
+## Docker Storage
 
-These bridge interfaces may also be detected by the Ubuntu SQL Server Go Agent when network inventory is collected.
-
-Docker-generated bridge names can change when networks are removed and recreated.
-
-## Docker Volumes
-
-There are currently no named Docker volumes listed on U-Server.
-
-Named volumes can be checked with:
+View named volumes:
 
 ```bash
 docker volume ls
 ```
 
-An empty volume list does not mean container data is temporary.
+Check Docker disk usage:
 
-Applications can also use bind mounts that map directories or files from U-Server directly into a container.
+```bash
+docker system df
+```
 
-## Persistent Data
+View detailed disk usage:
 
-Important application data should not depend only on the writable filesystem inside a container.
+```bash
+docker system df -v
+```
 
-Containers may be removed and recreated during updates, troubleshooting, or configuration changes.
+Important application data should use persistent storage such as:
 
-Persistent data should use one of the following methods:
-
-- Host directories
 - Bind mounts
+- Host directories
 - Docker volumes
 
-The correct storage method depends on the application.
-
-Important persistent data should also be included in an appropriate backup plan.
-
-## Container Logs
-
-Docker captures output generated by containers.
-
-Logs for a container can be viewed with:
-
-```bash
-docker logs <container-name>
-```
-
-Recent logs can be viewed with:
-
-```bash
-docker logs --tail 50 <container-name>
-```
-
-Live logs can be followed with:
-
-```bash
-docker logs -f <container-name>
-```
-
-Press `Ctrl+C` to stop following live logs.
-
-Container logs are useful for troubleshooting:
-
-- Application startup problems
-- Container crashes
-- Configuration problems
-- Dependency failures
-- Network problems
-- Application errors
-- Unexpected shutdowns
-
-## Container Management
-
-### List Running Containers
-
-```bash
-docker ps
-```
-
-### List All Containers
-
-```bash
-docker ps -a
-```
-
-### Start a Container
-
-```bash
-docker start <container-name>
-```
-
-### Stop a Container
-
-```bash
-docker stop <container-name>
-```
-
-### Restart a Container
-
-```bash
-docker restart <container-name>
-```
-
-### Inspect a Container
-
-```bash
-docker inspect <container-name>
-```
-
-### View Container Logs
-
-```bash
-docker logs <container-name>
-```
-
-## Docker Compose Management
-
-A Compose project should normally be managed from its project directory.
-
-### Validate Configuration
-
-```bash
-docker compose config
-```
-
-### Start the Project
-
-```bash
-docker compose up -d
-```
-
-### View Project Containers
-
-```bash
-docker compose ps
-```
-
-### Stop the Project
-
-```bash
-docker compose stop
-```
-
-### Restart the Project
-
-```bash
-docker compose restart
-```
-
-### Stop and Remove Project Containers
-
-```bash
-docker compose down
-```
-
-`docker compose down` removes containers and project networks created by Compose.
-
-Persistent data should be understood before removing volumes or other storage.
-
-## Port Publishing
-
-Docker containers may publish application ports through U-Server.
-
-Published ports can be viewed with:
-
-```bash
-docker ps
-```
-
-A published port may appear similar to:
-
-```text
-0.0.0.0:25565->25565/tcp
-```
-
-This means traffic arriving on port `25565` on U-Server is forwarded to port `25565` inside the container.
-
-A published Docker port and a firewall rule are separate parts of network access.
-
-When troubleshooting a containerized service, check:
-
-1. Whether the container is running.
-2. Whether the application is running inside the container.
-3. Whether the required port is published.
-4. Whether UFW allows the connection.
-5. Whether the client can reach U-Server.
-
-## Firewall
-
-UFW is used on U-Server to control incoming network connections.
-
-Current firewall rules can be viewed with:
-
-```bash
-sudo ufw status numbered
-```
-
-Containerized services should only expose ports that are actually required.
-
-Firewall configuration should be reviewed whenever a new containerized network service is added.
+Important persistent data should also be included in the server backup strategy.
 
 ## Docker Resource Monitoring
 
-Docker can report resource usage for running containers.
-
-Use:
+Monitor running containers:
 
 ```bash
 docker stats
 ```
 
-This can display information such as:
+This reports information such as:
 
 - CPU usage
 - Memory usage
@@ -518,106 +556,114 @@ This can display information such as:
 
 Press `Ctrl+C` to exit.
 
-A single container should not be allowed to consume unnecessary host resources.
-
-Resource limits may be added when monitoring shows that they are needed.
-
-## Docker Disk Usage
-
-Docker storage usage can be checked with:
-
-```bash
-docker system df
-```
-
-Detailed usage can be viewed with:
-
-```bash
-docker system df -v
-```
-
-This can help identify disk space being used by:
-
-- Images
-- Containers
-- Build cache
-- Volumes
-
-Unused Docker data should only be removed after confirming it is no longer required.
-
-## Docker Permissions
-
-Docker access should be treated as privileged system access.
-
-Users with permission to control the Docker daemon can perform operations that have significant control over U-Server.
-
-Current group membership can be checked with:
-
-```bash
-groups
-```
-
-Docker group membership can be checked with:
-
-```bash
-getent group docker
-```
-
-Only trusted users should receive Docker access.
-
 ## Docker Service
 
-The Docker service can be checked with:
+Check Docker:
 
 ```bash
 systemctl status docker
 ```
 
-If Docker is not running, it can be started with:
+Start Docker:
 
 ```bash
 sudo systemctl start docker
 ```
 
-Docker can be restarted with:
+Restart Docker:
 
 ```bash
 sudo systemctl restart docker
 ```
 
-Docker service logs can be viewed with:
-
-```bash
-journalctl -u docker
-```
-
-Recent Docker service logs can be viewed with:
+View recent Docker service logs:
 
 ```bash
 journalctl -u docker -n 50 --no-pager
 ```
 
-## Troubleshooting
+---
 
-If a containerized application stops working, begin by checking Docker itself:
+# Security
+
+Virtual machines and containers should follow the same security principles as the rest of U-Server.
+
+- Only trusted users should receive virtualization or Docker access.
+- Only required network services should be exposed.
+- Guest operating systems should receive security updates.
+- Container images should be kept updated.
+- Passwords, tokens, and private keys must not be committed to Git.
+- Environment files containing secrets must be protected.
+- Containers should not receive unnecessary privileges.
+- VM and container storage should be backed up when it contains important data.
+- Firewall rules should be reviewed whenever a new network service is deployed.
+- Logs should be reviewed after unexpected behavior.
+
+Docker group membership should be treated as privileged host access.
+
+---
+
+# Troubleshooting
+
+## Virtual Machines
+
+Check libvirt:
+
+```bash
+systemctl status libvirtd --no-pager
+```
+
+Check all VMs:
+
+```bash
+virsh list --all
+```
+
+Inspect a VM:
+
+```bash
+virsh dominfo <vm-name>
+```
+
+Check its storage:
+
+```bash
+virsh domblklist <vm-name>
+```
+
+Check its network interface:
+
+```bash
+virsh domiflist <vm-name>
+```
+
+Check libvirt networks:
+
+```bash
+virsh net-list --all
+```
+
+Attempt console access:
+
+```bash
+virsh console <vm-name>
+```
+
+## Containers
+
+Check Docker:
 
 ```bash
 systemctl status docker
 ```
 
-Then check running containers:
-
-```bash
-docker ps
-```
-
-Check all containers:
+Check containers:
 
 ```bash
 docker ps -a
 ```
 
-Review the affected container:
+Check container logs:
 
 ```bash
 docker logs --tail 50 <container-name>
@@ -629,7 +675,7 @@ Check Docker networks:
 docker network ls
 ```
 
-Check listening ports:
+Check listening host ports:
 
 ```bash
 sudo ss -lntp
@@ -641,118 +687,61 @@ Check the firewall:
 sudo ufw status numbered
 ```
 
-If Docker Compose is involved, move into the correct project directory and run:
+For Compose projects:
 
 ```bash
 docker compose config
 docker compose ps
 ```
 
-This helps separate Docker problems from application, networking, or firewall problems.
+---
 
-## Recovery
-
-Containerized applications can often be recreated using their Compose configuration and persistent data.
-
-A basic recovery process is:
-
-1. Confirm Docker is running.
-2. Locate the application's Compose file.
-3. Confirm persistent application data is available.
-4. Restore data from backup if necessary.
-5. Validate the Compose configuration.
-6. Start the project.
-7. Check the container status.
-8. Review application logs.
-9. Verify network access.
-10. Confirm the application is working normally.
-
-Example:
-
-```bash
-docker compose config
-docker compose up -d
-docker compose ps
-```
-
-## Security
-
-Docker security should follow the same basic security practices as the rest of U-Server.
-
-- Only trusted users should control Docker.
-- Only required ports should be published.
-- Environment files should be protected.
-- Passwords and tokens should not be committed to Git.
-- Secrets should not be placed directly in public Compose files.
-- Container images should be kept updated.
-- Container logs should be reviewed after unexpected behavior.
-- Important persistent data should be backed up.
-- Firewall rules should be reviewed when services are added.
-- Containers should not receive unnecessary privileges.
-
-## Virtual Machines
-
-U-Server currently uses containers for the documented virtualized application environments.
-
-The current environment does not depend on a full virtual machine platform for these services.
-
-If a hypervisor or virtual machine platform is added later, such as:
-
-- KVM
-- QEMU
-- VirtualBox
-- VMware
-
-its configuration and management can be documented in this directory.
-
-## Current Environment Summary
-
-The current container environment includes:
+# Current Environment
 
 ```text
-Container Platform: Docker
-Container Management: Docker Compose
-Docker Root: /var/lib/docker
+Host:
+- U-Server
+- Ubuntu 24.04.4 LTS
 
-Running Container:
+Virtual Machine Platform:
+- KVM
+- QEMU
+- libvirt
+
+VM Management:
+- virsh
+- virt-install
+
+libvirt Network:
+- default
+- NAT
+- 192.168.122.0/24
+- autostart enabled
+
+Test VM:
+- ubuntu-test
+- Ubuntu Server 24.04.4 LTS
+- 2 vCPUs
+- 3 GiB RAM
+- 20 GiB virtual disk
+- 192.168.122.154
+- autostart disabled
+
+Container Platform:
+- Docker
+- Docker Compose
+
+Docker Root:
+- /var/lib/docker
+
+Bittensor Container:
 - bittensor-node-dev
 
-Stored Images:
+Bittensor Image:
 - docker-bittensor-node:latest
-- itzg/minecraft-server:latest
+
+CUDA Image:
 - nvidia/cuda:12.0.0-base-ubuntu22.04
-
-Docker Networks:
-- bridge
-- docker_default
-- host
-- none
-
-Named Docker Volumes:
-- None currently listed
-
-Compose Projects:
-- ubuntu-sql-server/minecraft
-- bittensor-node/docker
 ```
 
-This section represents the current documented state and should be updated when containers, images, networks, volumes, or Compose projects change.
-
-## Future Improvements
-
-Possible future improvements include:
-
-- Additional container monitoring
-- Docker health monitoring
-- Resource usage history
-- Container backup automation
-- Improved container recovery procedures
-- Additional Compose projects
-- Image update management
-- Automated image cleanup
-- Improved Docker network documentation
-- Dashboard container status
-- Container health alerts
-- Virtual machine support if needed
-
-This document should be updated whenever major Docker services or virtualization technologies are added, removed, or changed.
+This document should be updated whenever major virtual machines, containers, networks, storage configurations, or virtualization technologies are added, removed, or changed.

@@ -620,8 +620,8 @@
 
 ## Virtualization
 
-- [ ] Install virtual machine platform
-- [ ] Create test virtual machines
+- [x] Install virtual machine platform
+- [x] Create test virtual machines
 - [ ] Document VM management
 - [x] Install Docker and Docker Compose
 - [x] Document container management
