@@ -1,12 +1,24 @@
 package system
 
 import (
+	"fmt"
 	"os"
 	"runtime"
+	"strings"
 )
 
 func Hostname() (string, error) {
-	return os.Hostname()
+	hostname, err := os.Hostname()
+	if err != nil {
+		return "", fmt.Errorf("get hostname: %w", err)
+	}
+
+	hostname = strings.TrimSpace(hostname)
+	if hostname == "" {
+		return "", fmt.Errorf("hostname is empty")
+	}
+
+	return hostname, nil
 }
 
 func OperatingSystem() string {
