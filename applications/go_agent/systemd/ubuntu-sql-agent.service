@@ -1,6 +1,7 @@
 [Unit]
 Description=Ubuntu SQL Server Go Agent
-After=network.target postgresql.service
+Wants=network-online.target
+After=network-online.target postgresql.service
 
 [Service]
 Type=oneshot
