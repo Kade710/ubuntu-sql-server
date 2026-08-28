@@ -472,3 +472,4 @@
 - [x] Add API documentation
 - [ ] Add cloud backup
 - [x] Add disaster recovery plan
+- [ ] Remove stale network interface records during refresh
