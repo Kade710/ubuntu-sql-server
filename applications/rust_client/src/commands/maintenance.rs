@@ -71,10 +71,7 @@ pub fn show_maintenance() {
     };
 
     if rows.is_empty() {
-        println!(
-            "No maintenance logs found for Server ID {}.",
-            server_id
-        );
+        println!("No maintenance logs found for Server ID {}.", server_id);
         return;
     }
 
@@ -97,9 +94,6 @@ pub fn show_maintenance() {
             "Performed By: {}",
             performed_by.as_deref().unwrap_or("Not available")
         );
-        println!(
-            "Created At: {}",
-            created_at.format("%Y-%m-%d %H:%M:%S")
-        );
+        println!("Created At: {}", created_at.format("%Y-%m-%d %H:%M:%S"));
     }
 }

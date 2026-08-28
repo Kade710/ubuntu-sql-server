@@ -115,9 +115,6 @@ pub fn show_health() {
             overall_status.as_deref().unwrap_or("Not available")
         );
 
-        println!(
-            "Created At: {}",
-            created_at.format("%Y-%m-%d %H:%M:%S")
-        );
+        println!("Created At: {}", created_at.format("%Y-%m-%d %H:%M:%S"));
     }
 }
