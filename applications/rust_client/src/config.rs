@@ -37,7 +37,7 @@ impl DatabaseConfig {
             env::var("DB_PASSWORD").map_err(|_| "DB_PASSWORD is required".to_string())?;
 
         if password.is_empty() {
-            return Err("DB_PASSWORD cannot be empty", .to_string());
+            return Err("DB_PASSWORD cannot be empty".to_string());
         }
 
         Ok(Self {
