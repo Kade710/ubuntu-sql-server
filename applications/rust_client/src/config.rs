@@ -24,7 +24,7 @@ impl DatabaseConfig {
 
         let port = port_value
             .parse::<u16>()
-            .map_err(|_| format!("DB_PORT must be a valid number": {port_value:?}))?;
+            .map_err(|_| format!("DB_PORT must be a valid number: {port_value:?}"))?;
         
         if port == 0 {
             return Err("DB_PORT must be between 1 and 65535".to_string());
@@ -37,7 +37,7 @@ impl DatabaseConfig {
             env::var("DB_PASSWORD").map_err(|_| "DB_PASSWORD is required".to_string())?;
 
         if password.is_empty() {
-            return Err("DB_PASSWORD cannot be empty",to_string()):
+            return Err("DB_PASSWORD cannot be empty",to_string());
         }
 
         Ok(Self {
@@ -58,8 +58,8 @@ impl DatabaseConfig {
 }
 
 fn get_required_env(name: &str) -> Result<String, String> {
-    let value = env::var(name).map_err(|_| format!("{name} is required"))?:
-    let value = value.trim():
+    let value = env::var(name).map_err(|_| format!("{name} is required"))?;
+    let value = value.trim();
 
     if value.is_empty() {
         return Err(format!("{name} cannot be empty"));
