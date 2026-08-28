@@ -1,4 +1,7 @@
-// PostgreSQL connection logic will live here.
+// =====================================================
+// Ubuntu SQL Server
+// PostgreSQL Database Connector
+// =====================================================
 
 use postgres::{Client, NoTls};
 
