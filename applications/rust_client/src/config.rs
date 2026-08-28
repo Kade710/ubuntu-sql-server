@@ -25,7 +25,7 @@ impl DatabaseConfig {
         let port = port_value
             .parse::<u16>()
             .map_err(|_| format!("DB_PORT must be a valid number: {port_value:?}"))?;
-        
+
         if port == 0 {
             return Err("DB_PORT must be between 1 and 65535".to_string());
         }
