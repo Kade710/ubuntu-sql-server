@@ -1,4 +1,4 @@
-// src/commands/netnork.rs
+// src/commands/network.rs
 
 use std::io::{self, Write};
 
@@ -10,17 +10,22 @@ pub fn show_network() {
     println!("------------------");
 
     print!("Enter Server ID: ");
-    io::stdout().flush().expect("Failed to flush stdout");
+
+    if let Err(error) = io::stdout().flush() {
+        println!("Failed to flush output: {}", error);
+        return;
+    }
 
     let mut input = String::new();
 
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
+    if let Err(error) = io::stdin().read_line(&mut input) {
+        println!("Failed to read input: {}", error);
+        return;
+    }
 
     let server_id: i32 = match input.trim().parse() {
-        Ok(id) => id,
-        Err(_) => {
+        Ok(id) if id > 0 => id,
+        _ => {
             println!("Invalid server ID.");
             return;
         }
@@ -52,7 +57,7 @@ pub fn show_network() {
             speed_mbps
         FROM server_management.network_interfaces
         WHERE server_id = $1
-        ORDER BY id
+        ORDER BY interface_name
         ",
         &[&server_id],
     ) {
@@ -64,7 +69,10 @@ pub fn show_network() {
     };
 
     if rows.is_empty() {
-        println!("No network interfaces found for Server ID {}.", server_id);
+        println!(
+            "No network interfaces found for Server ID {}.",
+            server_id
+        );
         return;
     }
 
