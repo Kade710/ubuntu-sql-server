@@ -1,25 +1,31 @@
 // src/commands/hardware.rs
+
 use std::io::{self, Write};
 
 use crate::config::DatabaseConfig;
 use crate::database;
 
 pub fn show_hardware() {
-    println!("Hardware components");
+    println!("\nHardware Components");
     println!("---");
 
-    println!("Enter Server ID: ");
-    io::stdout().flush().expect("Failed to flush stdout");
+    print!("Enter Server ID: ");
+
+    if let Err(error) = io::stdout().flush() {
+        println!("Failed to flush output: {}", error);
+        return;
+    }
 
     let mut input = String::new();
 
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read iinput");
+    if let Err(error) = io::stdin().read_line(&mut input) {
+        println!("Failed to read input: {}", error);
+        return;
+    }
 
     let server_id: i32 = match input.trim().parse() {
-        Ok(id) => id,
-        Err(_) => {
+        Ok(id) if id > 0 => id,
+        _ => {
             println!("Invalid server ID.");
             return;
         }
@@ -50,7 +56,7 @@ pub fn show_hardware() {
             specification
         FROM server_management.hardware_components
         WHERE server_id = $1
-        ORDER BY id
+        ORDER BY component_type
         ",
         &[&server_id],
     ) {
@@ -62,29 +68,32 @@ pub fn show_hardware() {
     };
 
     if rows.is_empty() {
-        println!("No hardware components found for Server ID {}.", server_id);
+        println!(
+            "No hardware components found for Server ID {}.",
+            server_id
+        );
         return;
     }
 
     for row in rows {
-        let component_type: String = row.get("Component_type");
-        let manufacturer: Option<String> = row.get("Manufacturer");
-        let model: Option<String> = row.get("Model");
+        let component_type: String = row.get("component_type");
+        let manufacturer: Option<String> = row.get("manufacturer");
+        let model: Option<String> = row.get("model");
         let specification: Option<String> = row.get("specification");
 
         println!();
         println!("Component: {}", component_type);
-
-        if let Some(value) = manufacturer {
-            println!("Manufacturer: {}", value);
-        }
-
-        if let Some(value) = model {
-            println!("Model: {}", value);
-        }
-
-        if let Some(value) = specification {
-            println!("Specifications: {}", value);
-        }
+        println!(
+            "Manufacturer: {}",
+            manufacturer.as_deref().unwrap_or("Not available")
+        );
+        println!(
+            "Model: {}",
+            model.as_deref().unwrap_or("Not available")
+        );
+        println!(
+            "Specifications: {}",
+            specification.as_deref().unwrap_or("Not available")
+        );
     }
 }
