@@ -1,18 +1,38 @@
 # Python Client
 
-The Python Client is part of the Ubuntu SQL Server project.
+The Python Client is part of the Ubuntu SQL Server project. It provides a command-line administrative interface for viewing server management data stored in PostgreSQL and generating server reports.
 
-It is designed to interact with server management data stored in the PostgreSQL database using Python.
+## Features
 
-## Purpose
+The client currently supports:
 
-The client provides a Python-based way to work with data collected from U-Server.
+- Viewing server inventory
+- Viewing hardware components
+- Viewing network interfaces
+- Viewing maintenance history
+- Generating text-based server reports
+- PostgreSQL database connectivity
+- Environment-based database configuration
 
 ## Technologies
 
-- Python
+- Python 3
 - PostgreSQL
+- psycopg
+- python-dotenv
 
-## Status
+## Project Structure
 
-This client is still under development. Additional features and documentation will be added as the project grows.
+```text
+python_client/
+├── config.py
+├── database.py
+├── hardware.py
+├── inventory.py
+├── main.py
+├── maintenance.py
+├── models.py
+├── network.py
+├── reports.py
+├── README.md
+└── requirements.txt
