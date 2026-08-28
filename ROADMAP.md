@@ -483,6 +483,117 @@
 - [x] Test PostgreSQL integration
 - [x] Document implementation
 
+### Rust Client Hardening
+
+#### Configuration
+
+- [x] Validate required database environment variables
+- [x] Validate PostgreSQL port
+- [x] Reject invalid PostgreSQL port values
+- [x] Preserve database password exactly
+- [x] Provide defaults for database host and port
+
+#### Database
+
+- [x] Add PostgreSQL connection timeout
+- [x] Verify live PostgreSQL connectivity
+- [x] Review database connection handling
+
+#### Server Inventory
+
+- [x] Harden registered server query
+- [x] Harden server detail query
+- [x] Validate server ID
+- [x] Reject invalid and non-positive server IDs
+- [x] Verify server inventory against live database
+
+#### Hardware
+
+- [x] Harden hardware query
+- [x] Correct PostgreSQL column access
+- [x] Validate server ID
+- [x] Reject invalid and non-positive server IDs
+- [x] Add deterministic component ordering
+- [x] Verify hardware query against live database
+
+#### Network
+
+- [x] Harden network query
+- [x] Validate server ID
+- [x] Reject invalid and non-positive server IDs
+- [x] Add deterministic interface ordering
+- [x] Verify network query against live database
+
+#### Health History
+
+- [x] Harden health history query
+- [x] Validate server ID
+- [x] Reject invalid and non-positive server IDs
+- [x] Correct missing disk usage output
+- [x] Limit health history to latest 10 records
+- [x] Format timestamps with Chrono
+- [x] Verify health history against live database
+
+#### Maintenance Logs
+
+- [x] Harden maintenance log query
+- [x] Validate server ID
+- [x] Reject invalid and non-positive server IDs
+- [x] Handle empty maintenance history
+- [x] Limit maintenance history to latest 10 records
+- [x] Format timestamps with Chrono
+- [x] Verify maintenance logs against live database
+
+#### Menu and Input Handling
+
+- [x] Remove panic-based menu input handling
+- [x] Handle terminal input errors gracefully
+- [x] Handle invalid menu selections
+- [x] Verify menu command dispatch
+- [x] Verify normal exit
+
+#### Data Models
+
+- [x] Review Rust server data model
+- [x] Verify model compatibility with server inventory query
+
+#### Dependencies
+
+- [x] Review Cargo.toml dependencies
+- [x] Use Chrono for timestamp formatting
+- [x] Review Cargo.lock
+- [x] Verify locked Rust dependencies
+
+#### Documentation
+
+- [x] Document Rust client features
+- [x] Document project structure
+- [x] Document database configuration
+- [x] Document build and run commands
+- [x] Document security characteristics
+
+#### Rust Client Final Verification
+
+- [x] Complete file-by-file audit of Rust Client
+- [x] Run cargo fmt
+- [x] Run cargo check
+- [x] Compile and run Rust Client
+- [x] Test registered server listing
+- [x] Test server detail lookup
+- [x] Test hardware lookup
+- [x] Test network lookup
+- [x] Test health history
+- [x] Test maintenance logs
+- [x] Test invalid server IDs
+- [x] Test invalid menu selection
+- [x] Test normal exit
+- [x] Verify live PostgreSQL queries
+- [x] Verify human-readable timestamp formatting
+- [x] Review Git working tree
+- [x] Verify repository synchronized with origin
+
+**Status:** HARDENED / FINAL VERIFICATION COMPLETE
+
 ## Web Dashboard
 
 - [x] Create dashboard interface
