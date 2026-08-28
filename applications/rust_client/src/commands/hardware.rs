@@ -68,10 +68,7 @@ pub fn show_hardware() {
     };
 
     if rows.is_empty() {
-        println!(
-            "No hardware components found for Server ID {}.",
-            server_id
-        );
+        println!("No hardware components found for Server ID {}.", server_id);
         return;
     }
 
@@ -87,10 +84,7 @@ pub fn show_hardware() {
             "Manufacturer: {}",
             manufacturer.as_deref().unwrap_or("Not available")
         );
-        println!(
-            "Model: {}",
-            model.as_deref().unwrap_or("Not available")
-        );
+        println!("Model: {}", model.as_deref().unwrap_or("Not available"));
         println!(
             "Specifications: {}",
             specification.as_deref().unwrap_or("Not available")
