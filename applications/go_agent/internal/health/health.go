@@ -11,14 +11,14 @@ import (
 )
 
 const (
-	warningLoad   = 2.0
-	criticalLoad  = 4.0
+	warningLoad  = 2.0
+	criticalLoad = 4.0
 
 	warningMemory  = 60.0
 	criticalMemory = 75.0
 
-	warningDisk   = 70.0
-	criticalDisk  = 80.0
+	warningDisk  = 70.0
+	criticalDisk = 80.0
 )
 
 // Status contains current server health information.
