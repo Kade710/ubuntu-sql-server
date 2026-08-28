@@ -769,11 +769,8 @@ Bittensor Container:
 
 Bittensor Image:
 - docker-bittensor-node:latest
-<<<<<<< HEAD
 
 CUDA Image:
-- nvidia/cuda:12.0.0-base-ubuntu22.04
-=======
 - nvidia/cuda:12.0.0-base-ubuntu22.04
 
 Docker Networks:
@@ -787,7 +784,6 @@ Named Docker Volumes:
 
 Compose Projects:
 - bittensor-node/docker
->>>>>>> a738d80 (udated virtualization readme.md)
 ```
 
 This document should be updated whenever major virtual machines, containers, networks, storage configurations, or virtualization technologies are added, removed, or changed.
