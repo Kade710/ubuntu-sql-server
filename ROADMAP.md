@@ -688,3 +688,15 @@
 
 - [x] Add API documentation
 - [x] Add disaster recovery plan
+
+## User Access Management
+
+- [ ] Create user management API
+- [ ] Add role-based access control
+- [ ] Create user management dashboard
+- [ ] Add SSH public key registration
+- [ ] Add SSH public key revocation
+- [ ] Display SSH key fingerprints
+- [ ] Add access audit logging
+- [ ] Test user onboarding and revocation
+- [ ] Document user access management

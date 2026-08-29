@@ -4,9 +4,25 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
+	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 )
 
 func main() {
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("failed to load configuration: %v", err)
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		log.Fatalf("failed to connect to PostgreSQL: %v", err)
+	}
+	defer db.Close()
+
+	log.Println("PostgreSQL connection successful.")
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
