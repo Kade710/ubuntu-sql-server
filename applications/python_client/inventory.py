@@ -135,3 +135,18 @@ def update_server(
     )
 
     return execute_query(query, params)
+
+def delete_server(server_id):
+    """
+    Deletes a server inventory record by ID.
+    """
+
+    query = """
+        DELETE FROM server_management.server_inventory
+        WHERE id = %s
+        RETURNING
+            id,
+            hostname;
+    """
+
+    return execute_query(query, (server_id,))
