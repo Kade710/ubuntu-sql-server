@@ -75,4 +75,57 @@ def create_server(
         motherboard,
     )
 
+    def update_server(
+    server_id,
+    hostname,
+    ip_address=None,
+    operating_system=None,
+    cpu=None,
+    ram_gb=None,
+    storage_gb=None,
+    gpu=None,
+    motherboard=None,
+):
+    """
+    Updates an existing server inventory record.
+    """
+
+    query = """
+        UPDATE server_management.server_inventory
+        SET
+            hostname = %s,
+            ip_address = %s,
+            operating_system = %s,
+            cpu = %s,
+            ram_gb = %s,
+            storage_gb = %s,
+            gpu = %s,
+            motherboard = %s
+        WHERE id = %s
+        RETURNING
+            id,
+            hostname,
+            ip_address,
+            operating_system,
+            cpu,
+            ram_gb,
+            storage_gb,
+            gpu,
+            motherboard,
+            created_at;
+    """
+
+    params = (
+        hostname,
+        ip_address,
+        operating_system,
+        cpu,
+        ram_gb,
+        storage_gb,
+        gpu,
+        motherboard,
+        server_id,
+    )
+
     return execute_query(query, params)
+
