@@ -34,7 +34,7 @@ def execute_query(query, params=None):
     """
 
     if not isinstance(query, str) or not query.strip():
-        raise ValueError("Query must be non-emtpy string")
+        raise ValueError("Query must be non-empty string")
 
     connection = get_connection()
 
