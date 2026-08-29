@@ -35,7 +35,7 @@ def get_database_port():
     except ValueError as exc:
         raise ValueError(f"DB_PORT must be a valid integer: {value!r}") from exc
 
-    if not 1 <= 65535:
+    if not 1 <= port <= 65535:
         raise ValueError(f"DB_PORT must be between 1 and 65535")
 
     return port
