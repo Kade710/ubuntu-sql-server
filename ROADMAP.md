@@ -28,10 +28,10 @@
 - [x] Document storage devices
 - [x] Document GPU model
 - [ ] Document power supply specifications
-- [ ] Install 250GB SSD
-- [ ] Install 1TB HDD
-- [ ] Verify BIOS settings
-- [ ] Enable virtualization support (if available)
+- [ ] Install 250GB SSD (og dead)
+- [x] Install 2TB HDD
+- [x] Verify BIOS settings
+- [x] Enable virtualization support (if available)
 
 ## Ubuntu Installation
 
@@ -40,7 +40,7 @@
 - [x] Install Ubuntu on SSD
 - [x] Configure user account
 - [x] Set hostname
-- [ ] Configure timezone
+- [x] Configure timezone
 - [x] Apply system updates
 - [x] Document installation process
 
