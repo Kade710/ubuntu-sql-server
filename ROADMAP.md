@@ -131,9 +131,9 @@
 
 ## Future Monitoring Tools
 
-- [ ] Install Prometheus
-- [ ] Install Grafana
-- [ ] Create monitoring dashboard
+- [x] Install Prometheus
+- [x] Install Grafana
+- [x] Create monitoring dashboard
 
 ---
 
