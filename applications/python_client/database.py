@@ -43,7 +43,13 @@ def execute_query(query, params=None):
             cursor.execute(query, params)
             return cursor.fetchall()
 
+        connection.commit()
+
+        return results
+
     except psycopg.Error as exc:
+        connection.rollback()
+
         raise RuntimeError(
             f"PostgreSQL query failed: {exc}"
         ) from exc
