@@ -9,7 +9,7 @@ services:
       - ../../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
 
-    grafana:
+  grafana:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
