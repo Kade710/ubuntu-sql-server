@@ -143,7 +143,7 @@
 
 - [x] Create Python PostgreSQL client
 - [x] Connect application to database
-- [ ] Create CRUD operations
+- [x] Create CRUD operations
 - [x] Document setup
 
 ### Python Client Hardening
