@@ -25,6 +25,10 @@ def get_servers():
         FROM server_management.server_inventory
         ORDER BY hostname, id;
     """
+
+    return execute_query(query)
+
+
 def create_server(
     hostname,
     ip_address=None,
@@ -75,7 +79,10 @@ def create_server(
         motherboard,
     )
 
-    def update_server(
+    return execute_query(query, params)
+
+
+def update_server(
     server_id,
     hostname,
     ip_address=None,
@@ -128,4 +135,3 @@ def create_server(
     )
 
     return execute_query(query, params)
-
