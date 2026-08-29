@@ -19,7 +19,7 @@ def get_connection():
             dbname=DATABASE_CONFIG["database"],
             user=DATABASE_CONFIG["user"],
             password=DATABASE_CONFIG["password"],
-             port=DATABASE_CONFIG["port"]
+            port=DATABASE_CONFIG["port"],
         )
 
     except psycopg.Error as exc:
@@ -30,7 +30,7 @@ def get_connection():
 
 def execute_query(query, params=None):
     """
-    Executes a SELECT query and returns results.
+    Executes a SQL query and returns results.
     """
 
     if not isinstance(query, str) or not query.strip():
@@ -41,7 +41,7 @@ def execute_query(query, params=None):
     try:
         with connection.cursor() as cursor:
             cursor.execute(query, params)
-            return cursor.fetchall()
+            results = cursor.fetchall()
 
         connection.commit()
 
@@ -53,6 +53,6 @@ def execute_query(query, params=None):
         raise RuntimeError(
             f"PostgreSQL query failed: {exc}"
         ) from exc
-        
+
     finally:
         connection.close()
