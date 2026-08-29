@@ -420,6 +420,72 @@ func GetRecentHealthChecks(
 	return records, nil
 }
 
+type ServerRecord struct {
+	ID              int
+	Hostname        string
+	IPAddress       string
+	OperatingSystem string
+	CPU             string
+	RAMGB           int
+	StorageGB       int
+	GPU             string
+	Motherboard     string
+}
+
+func GetServers(db *sql.DB) ([]ServerRecord, error) {
+	const query = `
+		SELECT
+			id,
+			hostname,
+			ip_address,
+			operating_system,
+			cpu,
+			ram_gb,
+			storage_gb,
+			gpu,
+			motherboard
+		FROM server_management.server_inventory
+		ORDER BY hostname, id
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	rows, err := db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("get servers: %w", err)
+	}
+	defer rows.Close()
+
+	var servers []ServerRecord
+
+	for rows.Next() {
+		var server ServerRecord
+
+		if err := rows.Scan(
+			&server.ID,
+			&server.Hostname,
+			&server.IPAddress,
+			&server.OperatingSystem,
+			&server.CPU,
+			&server.RAMGB,
+			&server.StorageGB,
+			&server.GPU,
+			&server.Motherboard,
+		); err != nil {
+			return nil, fmt.Errorf("scan server inventory: %w", err)
+		}
+
+		servers = append(servers, server)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("read server inventory: %w", err)
+	}
+
+	return servers, nil
+}
+
 func AddAlertEvent(
 	db *sql.DB,
 	serverID int,
