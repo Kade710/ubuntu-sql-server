@@ -53,11 +53,11 @@
 - [x] Install OpenSSH server
 - [x] Verify SSH service is running
 - [x] Connect from Windows workstation
-- [ ] Configure static IP address
+- [x] Configure static IP address
 - [x] Document SSH setup
-- [ ] Create SSH key authentication
-- [ ] Disable root SSH login
-- [ ] Disable password authentication (after testing)
+- [x] Create SSH key authentication
+- [x] Disable root SSH login
+- [x] Disable password authentication (after testing)
 
 ---
 
@@ -104,10 +104,10 @@
 ## System Security
 
 - [x] Configure UFW firewall
-- [ ] Configure SSH security
-- [ ] Create least-privilege users
+- [x] Configure SSH security
+- [x] Create least-privilege users
 - [x] Review file permissions
-- [ ] Enable automatic security updates
+- [x] Enable automatic security updates
 - [x] Document security configuration
 
 ## Database Security
