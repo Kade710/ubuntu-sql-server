@@ -144,6 +144,27 @@ func main() {
 		}
 	})
 
+	mux.HandleFunc("DELETE /api/servers/{id}", func(w http.ResponseWriter, r *http.Request) {
+		serverID, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil || serverID <= 0 {
+			writeJSONError(w, "invalid server id", http.StatusBadRequest)
+			return
+		}
+
+		if err := database.DeleteServer(db, serverID); err != nil {
+			if err == sql.ErrNoRows {
+				writeJSONError(w, "server not found", http.StatusNotFound)
+				return
+			}
+
+			writeJSONError(w, "failed to delete server", http.StatusInternalServerError)
+			log.Printf("failed to delete server %d: %v", serverID, err)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	})
+
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: mux,
