@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -31,6 +32,21 @@ func main() {
 
 		if _, err := fmt.Fprintln(w, `{"status":"ok"}`); err != nil {
 			log.Printf("failed to write response: %v", err)
+		}
+	})
+
+	mux.HandleFunc("GET /api/servers", func(w http.ResponseWriter, r *http.Request) {
+		servers, err := database.GetServers(db)
+		if err != nil {
+			http.Error(w, `{"error":"failed to retrieve servers"}`, http.StatusInternalServerError)
+			log.Printf("failed to retrieve servers: %v", err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		if err := json.NewEncoder(w).Encode(servers); err != nil {
+			log.Printf("failed to encode servers response: %v", err)
 		}
 	})
 
