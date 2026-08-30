@@ -105,6 +105,66 @@ func RegisterServer(db *sql.DB, server inventory.Server) (int, error) {
 	return serverID, nil
 }
 
+func CreateServer(db *sql.DB, server ServerRecord) (ServerRecord, error) {
+	const query = `
+		INSERT INTO server_management.server_inventory (
+			hostname,
+			ip_address,
+			operating_system,
+			cpu,
+			ram_gb,
+			storage_gb,
+			gpu,
+			motherboard
+		)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		RETURNING
+			id,
+			hostname,
+			ip_address,
+			operating_system,
+			cpu,
+			ram_gb,
+			storage_gb,
+			gpu,
+			motherboard
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var created ServerRecord
+
+	err := db.QueryRowContext(
+		ctx,
+		query,
+		server.Hostname,
+		server.IPAddress,
+		server.OperatingSystem,
+		server.CPU,
+		server.RAMGB,
+		server.StorageGB,
+		server.GPU,
+		server.Motherboard,
+	).Scan(
+		&created.ID,
+		&created.Hostname,
+		&created.IPAddress,
+		&created.OperatingSystem,
+		&created.CPU,
+		&created.RAMGB,
+		&created.StorageGB,
+		&created.GPU,
+		&created.Motherboard,
+	)
+
+	if err != nil {
+		return ServerRecord{}, fmt.Errorf("create server: %w", err)
+	}
+
+	return created, nil
+}
+
 // UpsertNetworkInterfaces inserts or updates network interface records.
 func UpsertNetworkInterfaces(
 	db *sql.DB,
