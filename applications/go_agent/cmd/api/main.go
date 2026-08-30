@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/config"
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
@@ -47,6 +48,27 @@ func main() {
 
 		if err := json.NewEncoder(w).Encode(servers); err != nil {
 			log.Printf("failed to encode servers response: %v", err)
+		}
+	})
+
+	mux.HandleFunc("GET /api/servers/{id}", func(w http.ResponseWriter, r *http.Request) {
+		serverID, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil || serverID <= 0 {
+			http.Error(w, `{"error":"invalid server id"}`, http.StatusBadRequest)
+			return
+		}
+
+		server, err := database.GetServerByID(db, serverID)
+		if err != nil {
+			http.Error(w, `{"error":"server not found"}`, http.StatusNotFound)
+			log.Printf("failed to retrieve server %d: %v", serverID, err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		if err := json.NewEncoder(w).Encode(server); err != nil {
+			log.Printf("failed to encode server response: %v", err)
 		}
 	})
 
