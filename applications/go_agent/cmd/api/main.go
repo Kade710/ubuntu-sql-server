@@ -11,6 +11,17 @@ import (
 	"github.com/Kade710/ubuntu-sql-server/applications/go_agent/internal/database"
 )
 
+func writeJSONError(w http.ResponseWriter, message string, status int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	if err := json.NewEncoder(w).Encode(map[string]string{
+		"error": message,
+	}); err != nil {
+		log.Printf("failed to encode error response: %v", err)
+	}
+}
+
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
@@ -39,7 +50,7 @@ func main() {
 	mux.HandleFunc("GET /api/servers", func(w http.ResponseWriter, r *http.Request) {
 		servers, err := database.GetServers(db)
 		if err != nil {
-			http.Error(w, `{"error":"failed to retrieve servers"}`, http.StatusInternalServerError)
+			writeJSONError(w, "failed to retrieve servers", http.StatusInternalServerError)
 			log.Printf("failed to retrieve servers: %v", err)
 			return
 		}
@@ -54,13 +65,13 @@ func main() {
 	mux.HandleFunc("GET /api/servers/{id}", func(w http.ResponseWriter, r *http.Request) {
 		serverID, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil || serverID <= 0 {
-			http.Error(w, `{"error":"invalid server id"}`, http.StatusBadRequest)
+			writeJSONError(w, "invalid server id", http.StatusBadRequest)
 			return
 		}
 
 		server, err := database.GetServerByID(db, serverID)
 		if err != nil {
-			http.Error(w, `{"error":"server not found"}`, http.StatusNotFound)
+			writeJSONError(w, "server not found", http.StatusNotFound)
 			log.Printf("failed to retrieve server %d: %v", serverID, err)
 			return
 		}
