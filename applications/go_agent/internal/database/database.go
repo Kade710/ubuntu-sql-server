@@ -421,15 +421,15 @@ func GetRecentHealthChecks(
 }
 
 type ServerRecord struct {
-	ID              int		`json: "id"`
-	Hostname        string  `json: "hostname"`
-	IPAddress       string	`json: "ip_address"`
-	OperatingSystem string 	`json: "operating_system"`
-	CPU             string	`json: "cpu"`
-	RAMGB           int		`json: "ram_gb"`
-	StorageGB       int		`json: "storage_gb"`
-	GPU             string	`json: "gpu"`
-	Motherboard     string	`json: "motherboard"`
+	ID              int		`json:"id"`
+	Hostname        string  `json:"hostname"`
+	IPAddress       string	`json:"ip_address"`
+	OperatingSystem string 	`json:"operating_system"`
+	CPU             string	`json:"cpu"`
+	RAMGB           int		`json:"ram_gb"`
+	StorageGB       int		`json:"storage_gb"`
+	GPU             string	`json:"gpu"`
+	Motherboard     string	`json:"motherboard"`
 }
 
 func GetServers(db *sql.DB) ([]ServerRecord, error) {
