@@ -226,6 +226,32 @@ func UpdateServer(db *sql.DB, serverID int, server ServerRecord) (ServerRecord, 
 	return updated, nil
 }
 
+func DeleteServer(db *sql.DB, serverID int) error {
+	const query = `
+		DELETE FROM server_management.server_inventory
+		WHERE id = $1
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := db.ExecContext(ctx, query, serverID)
+	if err != nil {
+		return fmt.Errorf("delete server: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("delete server rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
+
 // UpsertNetworkInterfaces inserts or updates network interface records.
 func UpsertNetworkInterfaces(
 	db *sql.DB,
