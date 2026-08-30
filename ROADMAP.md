@@ -241,7 +241,7 @@
 
 - [ ] Create Go API
 - [x] Connect Go application to PostgreSQL
-- [ ] Create REST endpoints
+- [x] Create REST endpoints
 - [ ] Add authentication
 
 ### Go Agent Hardening
