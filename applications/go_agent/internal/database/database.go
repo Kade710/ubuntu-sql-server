@@ -486,6 +486,46 @@ func GetServers(db *sql.DB) ([]ServerRecord, error) {
 	return servers, nil
 }
 
+func GetServerByID(db *sql.DB, serverID int) (ServerRecord, error) {
+	const query = `
+		SELECT
+			id,
+			hostname,
+			ip_address,
+			operating_system,
+			cpu,
+			ram_gb,
+			storage_gb,
+			gpu,
+			motherboard
+		FROM server_management.server_inventory
+		WHERE id = $1
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var server ServerRecord
+
+	err := db.QueryRowContext(ctx, query, serverID).Scan(
+		&server.ID,
+		&server.Hostname,
+		&server.IPAddress,
+		&server.OperatingSystem,
+		&server.CPU,
+		&server.RAMGB,
+		&server.StorageGB,
+		&server.GPU,
+		&server.Motherboard,
+	)
+
+	if err != nil {
+		return ServerRecord{}, fmt.Errorf("get server by ID: %w", err)
+	}
+
+	return server, nil
+}
+
 func AddAlertEvent(
 	db *sql.DB,
 	serverID int,
