@@ -111,6 +111,39 @@ func main() {
 		}
 	})
 
+	mux.HandleFunc("PUT /api/servers/{id}", func(w http.ResponseWriter, r *http.Request) {
+		serverID, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil || serverID <= 0 {
+			writeJSONError(w, "invalid server id", http.StatusBadRequest)
+			return
+		}
+
+		var server database.ServerRecord
+
+		if err := json.NewDecoder(r.Body).Decode(&server); err != nil {
+			writeJSONError(w, "invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if server.Hostname == "" {
+			writeJSONError(w, "hostname is required", http.StatusBadRequest)
+			return
+		}
+
+		updated, err := database.UpdateServer(db, serverID, server)
+		if err != nil {
+			writeJSONError(w, "server not found", http.StatusNotFound)
+			log.Printf("failed to update server %d: %v", serverID, err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		if err := json.NewEncoder(w).Encode(updated); err != nil {
+			log.Printf("failed to encode updated server response: %v", err)
+		}
+	})
+
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: mux,
