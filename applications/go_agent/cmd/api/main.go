@@ -62,6 +62,34 @@ func main() {
 		}
 	})
 
+	mux.HandleFunc("POST /api/servers", func(w http.ResponseWriter, r *http.Request) {
+		var server database.ServerRecord
+
+		if err := json.NewDecoder(r.Body).Decode(&server); err != nil {
+			writeJSONError(w, "invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		if server.Hostname == "" {
+			writeJSONError(w, "hostname is required", http.StatusBadRequest)
+			return
+		}
+
+		created, err := database.CreateServer(db, server)
+		if err != nil {
+			writeJSONError(w, "failed to create server", http.StatusInternalServerError)
+			log.Printf("failed to create server: %v", err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+
+		if err := json.NewEncoder(w).Encode(created); err != nil {
+			log.Printf("failed to encode created server response: %v", err)
+		}
+	})
+
 	mux.HandleFunc("GET /api/servers/{id}", func(w http.ResponseWriter, r *http.Request) {
 		serverID, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil || serverID <= 0 {
