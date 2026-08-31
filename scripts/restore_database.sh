@@ -26,7 +26,7 @@ psql -U "$USER" -d postgres -c "CREATE DATABASE $DATABASE;"
 
 echo "Restoring backup..."
 
-pg_restore -U "$USER" -d "$DATABASE" "$BACKUP_FILE"
+pg_restore --no-owner -U "$USER" -d "$DATABASE" "$BACKUP_FILE"
 
 if [ $? -eq 0 ]; then
     echo "Restore completed successfully."
