@@ -28,7 +28,7 @@ func Load() (Config, error) {
 		DBUser:     strings.TrimSpace(os.Getenv("DB_USER")),
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		NTFYTopic:  strings.TrimSpace(os.Getenv("NTFY_TOPIC")),
-		APIToken: strings.TrimSpace(os.Getenv("API_TOKEN")),
+		APIToken:	strings.TrimSpace(os.Getenv("API_TOKEN")),
 	}
 
 	if cfg.DBName == "" {
