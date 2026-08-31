@@ -39,3 +39,47 @@ class UserListAPITests(TestCase):
 
         self.assertIn("testadmin", usernames)
         self.assertIn("testuser", usernames)
+
+        class UserCreateAPITests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+
+        self.admin = User.objects.create_superuser(
+            username="testadmin",
+            email="admin@example.com",
+            password="TestPassword123!",
+        )
+
+    def test_unauthenticated_request_is_denied(self):
+        response = self.client.post(
+            reverse("api_user_create"),
+            data={
+                "username": "newuser",
+                "email": "newuser@example.com",
+                "password": "SecurePassword123!",
+            },
+        )
+
+        self.assertNotEqual(response.status_code, 201)
+
+    def test_admin_can_create_user(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.post(
+            reverse("api_user_create"),
+            data={
+                "username": "newuser",
+                "email": "newuser@example.com",
+                "password": "SecurePassword123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+        User = get_user_model()
+
+        user = User.objects.get(username="newuser")
+
+        self.assertEqual(user.email, "newuser@example.com")
+        self.assertTrue(user.check_password("SecurePassword123!"))
+        self.assertTrue(user.is_active)
