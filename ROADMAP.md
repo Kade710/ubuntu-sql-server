@@ -669,7 +669,7 @@
 ## Development & Automation
 
 - [x] Add CI/CD pipeline
-- [ ] Add automated testing
+- [x] Add automated testing
 
 ## Python Application
 
