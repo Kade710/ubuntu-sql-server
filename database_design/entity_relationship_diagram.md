@@ -162,7 +162,6 @@ Foreign key constraint pattern:
 ```sql
 FOREIGN KEY (server_id)
 REFERENCES server_management.server_inventory(id)
->>>>>>> 7b3d2cd (Complete database documentation and automation scripts)
 
 ## Overview
 

@@ -136,4 +136,3 @@ The database will support:
 - Web dashboard reporting
 - Infrastructure automation
 - Monitoring integrations
->>>>>>> 7b3d2cd (Complete database documentation and automation scripts)
