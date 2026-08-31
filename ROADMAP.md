@@ -239,7 +239,7 @@
 
 ## Go Application
 
-- [ ] Create Go API
+- [x] Create Go API
 - [x] Connect Go application to PostgreSQL
 - [x] Create REST endpoints
 - [x] Add authentication
