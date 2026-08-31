@@ -40,7 +40,7 @@ class UserListAPITests(TestCase):
         self.assertIn("testadmin", usernames)
         self.assertIn("testuser", usernames)
 
-        class UserCreateAPITests(TestCase):
+    class UserCreateAPITests(TestCase):
     def setUp(self):
         User = get_user_model()
 
