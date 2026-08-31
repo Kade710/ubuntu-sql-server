@@ -189,7 +189,7 @@ func main() {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if len(r.URL.Path) >= 5 && r.URL.Path[:5] =="/api/" {
-			requiredBearerToken(cfg.APIToken, mux).ServeHTTP(w, r,)
+			requireBearerToken(cfg.APIToken, mux).ServeHTTP(w, r,)
 			return
 		}
 
