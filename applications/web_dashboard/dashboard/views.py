@@ -168,3 +168,49 @@ def api_user_list(request):
     ]
 
     return JsonResponse({"users": data})
+
+@require_POST
+def api_user_create(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return JsonResponse(
+            {"detail": "Authentication required."},
+            status=403,
+        )
+
+    username = request.POST.get("username", "").strip()
+    email = request.POST.get("email", "").strip()
+    password = request.POST.get("password", "")
+
+    if not username or not password:
+        return JsonResponse(
+            {"detail": "Username and password are required."},
+            status=400,
+        )
+
+    User = get_user_model()
+
+    if User.objects.filter(username=username).exists():
+        return JsonResponse(
+            {"detail": "Username already exists."},
+            status=400,
+        )
+
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password,
+    )
+
+    return JsonResponse(
+        {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "is_active": user.is_active,
+                "is_staff": user.is_staff,
+                "is_superuser": user.is_superuser,
+            }
+        },
+        status=201,
+    )
