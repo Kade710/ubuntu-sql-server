@@ -120,24 +120,6 @@ def server_detail(request, server_id):
                 created_at=timezone.now(),
             )
 
-            maintenance_form = MaintenanceLogForm()
-
-            maintenance_logs = MaintenanceLog.objects.filter(
-                server_id=server_id
-            ).order_by("-created_at")[:10]
-
-    if request.method == "POST":
-        maintenance_form = MaintenanceLogForm(request.POST)
-
-        if maintenance_form.is_valid():
-            MaintenanceLog.objects.create(
-                server_id=server_id,
-                action=maintenance_form.cleaned_data["action"],
-                description=maintenance_form.cleaned_data["description"],
-                performed_by=maintenance_form.cleaned_data["performed_by"],
-                created_at=timezone.now(),
-            )
-
             return redirect("server_detail", server_id=server_id)
 
     else:
