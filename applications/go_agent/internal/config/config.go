@@ -15,6 +15,7 @@ type Config struct {
 	DBUser     string
 	DBPassword string
 	NTFYTopic  string
+	APIToken   string
 }
 
 // Load reads configuration from environment variables and validates
@@ -27,6 +28,7 @@ func Load() (Config, error) {
 		DBUser:     strings.TrimSpace(os.Getenv("DB_USER")),
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		NTFYTopic:  strings.TrimSpace(os.Getenv("NTFY_TOPIC")),
+		APIToken: strings.TrimSpace(os.Getenv("API_TOKEN"))
 	}
 
 	if cfg.DBName == "" {
@@ -39,6 +41,10 @@ func Load() (Config, error) {
 
 	if cfg.DBPassword == "" {
 		return Config{}, fmt.Errorf("DB_PASSWORD is required")
+	}
+
+	if cfg.APIToken == "" {
+		return Config{}, fmt.Errorf("API_TOKEN is required")
 	}
 
 	port, err := strconv.Atoi(cfg.DBPort)
