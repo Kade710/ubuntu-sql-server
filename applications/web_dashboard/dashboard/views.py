@@ -128,7 +128,7 @@ def server_detail(request, server_id):
     else:
         maintenance_form = MaintenanceLogForm()
 
-        context = {
+    context = {
         "server": server,
         "hardware": hardware,
         "network": network,
