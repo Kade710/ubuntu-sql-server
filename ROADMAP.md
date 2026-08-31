@@ -1,6 +1,48 @@
 # Ubuntu SQL Server Project Roadmap
 
-## Version 0.1 - Project Initialization
+## Project Status
+
+### ✅ Completed
+
+- Ubuntu Server foundation
+- Remote administration and SSH hardening
+- PostgreSQL database server and schema
+- Database backup and recovery tooling
+- System and database security hardening
+- Prometheus and Grafana monitoring
+- Python PostgreSQL client
+- Go monitoring agent and REST API
+- Rust PostgreSQL client
+- Django Web Dashboard
+- Virtualization with KVM/QEMU
+- Docker and Docker Compose
+- NAS file sharing and permissions
+- CI/CD pipeline
+- Automated Go testing
+
+### ⏸️ Hardware / Infrastructure Blocked
+
+- PSU model/specifications cannot be documented until the installed PSU is identified
+- Replacement 250GB SSD hardware is not currently installed
+- PSU inventory verification requires a PSU hardware upgrade
+- RAID implementation requires at least one additional healthy storage drive
+- Final redundant storage architecture depends on additional storage hardware
+- NAS backup requires a separate physical or remote backup target
+
+### 🚧 Active / Next Development
+
+- Add cloud backup
+- Remove stale network interface records during server refresh
+- Build user and access management
+- Add role-based access control
+- Add SSH public-key lifecycle management
+- Add access audit logging
+
+---
+
+# Version History
+
+# Version 0.1 - Project Initialization
 
 - [x] Create GitHub repository
 - [x] Create project folder structure
@@ -129,7 +171,7 @@
 - [x] Monitor system uptime
 - [x] Document system health checks
 
-## Future Monitoring Tools
+## Monitoring Tools
 
 - [x] Install Prometheus
 - [x] Install Grafana
@@ -339,7 +381,8 @@
 - [x] Validate PSU wattage input
 - [ ] ⏸️ BLOCKED — Requires PSU hardware upgrade
 
-**Status:** HARDENED / VERIFIED  
+**Status:** HARDENED / VERIFIED
+
 **PSU inventory:** IMPLEMENTED / HARDWARE DATA PENDING
 
 ---
@@ -473,7 +516,7 @@
 - [x] Review Git working tree
 - [x] Push final hardened Go Agent
 
-**Status:** IN PROGRESS
+**Status:** HARDENED / FINAL VERIFICATION COMPLETE
 
 ---
 
@@ -594,6 +637,8 @@
 
 **Status:** HARDENED / FINAL VERIFICATION COMPLETE
 
+---
+
 ## Web Dashboard
 
 - [x] Create dashboard interface
@@ -628,75 +673,53 @@
 
 ---
 
-# Completed Features
+# Version 3.1 - Development Automation
 
-- [x] Ubuntu server environment
-- [x] PostgreSQL database server
-- [x] Server management database
-- [x] Go monitoring agent
-- [x] Python PostgreSQL client
-- [x] Rust PostgreSQL client
-- [x] Django Web Dashboard
-- [x] Server inventory collection
-- [x] Hardware inventory collection
-- [x] Operating system inventory
-- [x] Network interface inventory
-- [x] Automated health checks
-- [x] Health history
-- [x] Health status alerts
-- [x] Recovery notifications
-- [x] Alert event history
-- [x] systemd Go Agent automation
-- [x] Database backup and recovery
-- [x] Docker and Docker Compose
-- [x] Project security documentation
-- [x] Disaster recovery documentation
-- [x] Go Agent command-line hardening
-- [x] Go Agent refresh failure handling
-- [x] Configuration validation
-- [x] ntfy notification hardening
-- [x] Health alert end-to-end verification
-- [x] Go Agent database layer hardening
-- [x] Go Agent hardware layer hardening
-- [x] Go Agent health layer hardening
-- [x] Go Agent inventory layer hardening
-- [x] Go Agent maintenance layer hardening
+## CI/CD
+
+- [x] Add GitHub Actions Go CI pipeline
+- [x] Run CI on pushes to `main`
+- [x] Run CI on pull requests to `main`
+- [x] Download Go dependencies in CI
+- [x] Build Go applications in CI
+
+## Automated Testing
+
+- [x] Add Go system tests
+- [x] Run `go test ./...` locally
+- [x] Run `go test ./...` in GitHub Actions
+- [x] Verify automated test workflow passes
 
 ---
 
-# Future Ideas
+# Version 4.0 - User & Access Management
 
-## Development & Automation
+## User Management
 
-- [x] Add CI/CD pipeline
-- [x] Add automated testing
+- [ ] Create user management API
+- [ ] Add role-based access control
+- [ ] Create user management dashboard
 
-## Python Application
+## SSH Access Management
 
-- [ ] Implement full Python CRUD operations
+- [ ] Add SSH public key registration
+- [ ] Add SSH public key revocation
+- [ ] Display SSH key fingerprints
+
+## Access Auditing & Verification
+
+- [ ] Add access audit logging
+- [ ] Test user onboarding and revocation
+- [ ] Document user access management
+
+---
+
+# Backlog
 
 ## Infrastructure
 
-- [x] Add Docker and Docker Compose support
 - [ ] Add cloud backup
 
 ## Database & Data Maintenance
 
 - [ ] Remove stale network interface records during server refresh
-
-## Documentation & Recovery
-
-- [x] Add API documentation
-- [x] Add disaster recovery plan
-
-## User Access Management
-
-- [ ] Create user management API
-- [ ] Add role-based access control
-- [ ] Create user management dashboard
-- [ ] Add SSH public key registration
-- [ ] Add SSH public key revocation
-- [ ] Display SSH key fingerprints
-- [ ] Add access audit logging
-- [ ] Test user onboarding and revocation
-- [ ] Document user access management
