@@ -27,8 +27,8 @@
 - [x] Document RAM capacity
 - [x] Document storage devices
 - [x] Document GPU model
-- [ ] Document power supply specifications
-- [ ] Install 250GB SSD (og dead)
+- [ ] ⏸️ BLOCKED — PSU model/specifications cannot be documented until the installed PSU is identified
+- [ ] ⏸️ BLOCKED — Replacement 250GB SSD hardware not currently installed
 - [x] Install 2TB HDD
 - [x] Verify BIOS settings
 - [x] Enable virtualization support (if available)
@@ -337,7 +337,7 @@
 - [x] Collect motherboard information
 - [x] Add optional PSU inventory support
 - [x] Validate PSU wattage input
-- [ ] Populate PSU specifications after hardware upgrade
+- [ ] ⏸️ BLOCKED — Requires PSU hardware upgrade
 
 **Status:** HARDENED / VERIFIED  
 **PSU inventory:** IMPLEMENTED / HARDWARE DATA PENDING
@@ -608,15 +608,15 @@
 
 - [x] Add additional storage drives
 - [x] Research RAID configurations
-- [ ] Configure redundant storage
-- [ ] Document storage architecture
+- [ ] ⏸️ BLOCKED — Requires at least one additional healthy storage drive to configure RAID
+- [ ] ⏸️ BLOCKED — Final storage architecture depends on implementation of redundant storage
 
 ## NAS Development
 
 - [x] Install file sharing services
 - [x] Configure network shares
 - [x] Create user permissions
-- [ ] Configure backup storage
+- [ ] ⏸️ BLOCKED — Requires a separate physical or remote backup target
 
 ## Virtualization
 
