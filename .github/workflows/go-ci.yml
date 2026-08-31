@@ -32,5 +32,8 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
+      - name: Run tests
+        run: go test ./...
+
       - name: Build Go applications
         run: go build ./...
