@@ -614,8 +614,8 @@
 ## NAS Development
 
 - [x] Install file sharing services
-- [ ] Configure network shares
-- [ ] Create user permissions
+- [x] Configure network shares
+- [x] Create user permissions
 - [ ] Configure backup storage
 
 ## Virtualization
