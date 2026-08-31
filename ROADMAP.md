@@ -668,7 +668,7 @@
 
 ## Development & Automation
 
-- [ ] Add CI/CD pipeline
+- [x] Add CI/CD pipeline
 - [ ] Add automated testing
 
 ## Python Application
