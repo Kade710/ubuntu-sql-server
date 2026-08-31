@@ -43,10 +43,6 @@ func Load() (Config, error) {
 		return Config{}, fmt.Errorf("DB_PASSWORD is required")
 	}
 
-	if cfg.APIToken == "" {
-		return Config{}, fmt.Errorf("API_TOKEN is required")
-	}
-
 	port, err := strconv.Atoi(cfg.DBPort)
 	if err != nil || port < 1 || port > 65535 {
 		return Config{}, fmt.Errorf("DB_PORT must be a valid TCP port")

@@ -50,6 +50,10 @@ func main() {
 		log.Fatalf("failed to load configuration: %v", err)
 	}
 
+	if cfg.APIToken == "" {
+		log.Fatal("API_TOKEN is required")
+	}
+
 	db, err := database.Connect(cfg)
 	if err != nil {
 		log.Fatalf("failed to connect to PostgreSQL: %v", err)
