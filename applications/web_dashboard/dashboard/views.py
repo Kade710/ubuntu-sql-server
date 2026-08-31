@@ -128,7 +128,7 @@ def server_detail(request, server_id):
     else:
         maintenance_form = MaintenanceLogForm()
 
-    context = {
+        context = {
         "server": server,
         "hardware": hardware,
         "network": network,
@@ -141,3 +141,30 @@ def server_detail(request, server_id):
     }
 
     return render(request, "dashboard/server_detail.html", context)
+
+
+@require_GET
+def api_user_list(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return JsonResponse(
+            {"detail": "Authentication required."},
+            status=403,
+        )
+
+    User = get_user_model()
+
+    users = User.objects.all().order_by("username")
+
+    data = [
+        {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "is_active": user.is_active,
+            "is_staff": user.is_staff,
+            "is_superuser": user.is_superuser,
+        }
+        for user in users
+    ]
+
+    return JsonResponse({"users": data})
