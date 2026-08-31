@@ -607,13 +607,13 @@
 ## Storage Expansion
 
 - [x] Add additional storage drives
-- [ ] Research RAID configurations
+- [x] Research RAID configurations
 - [ ] Configure redundant storage
 - [ ] Document storage architecture
 
 ## NAS Development
 
-- [ ] Install file sharing services
+- [x] Install file sharing services
 - [ ] Configure network shares
 - [ ] Create user permissions
 - [ ] Configure backup storage
