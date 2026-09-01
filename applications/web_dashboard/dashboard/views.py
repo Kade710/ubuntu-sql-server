@@ -214,3 +214,29 @@ def api_user_create(request):
         },
         status=201,
     )
+
+@require_POST
+def api_user_disable(request, user_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return JsonResponse(
+            {"detail": "Authentication required."},
+            status=403,
+        )
+
+    User = get_user_model()
+
+    user = get_object_or_404(User, id=user_id)
+
+    user.is_active = False
+    user.save(update_fields=["is_active"])
+
+    return JsonResponse(
+        {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "is_active": user.is_active,
+            }
+        },
+        status=200,
+    )
