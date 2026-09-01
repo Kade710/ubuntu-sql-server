@@ -119,3 +119,43 @@ class UserDisableAPITests(TestCase):
         self.user.refresh_from_db()
 
         self.assertFalse(self.user.is_active)
+
+class UserRoleAPITests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+
+        self.admin = User.objects.create_superuser(
+            username="testadmin",
+            email="admin@example.com",
+            password="TestPassword123!",
+        )
+
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="user@example.com",
+            password="TestPassword123!",
+        )
+
+    def test_unauthenticated_request_is_denied(self):
+        response = self.client.post(
+            reverse("api_user_role", args=[self.user.id]),
+            data={"role": "operator"},
+        )
+
+        self.assertNotEqual(response.status_code, 200)
+
+    def test_admin_can_assign_role(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.post(
+            reverse("api_user_role", args=[self.user.id]),
+            data={"role": "operator"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.user.refresh_from_db()
+
+        self.assertTrue(
+            self.user.groups.filter(name="operator").exists()
+        )
