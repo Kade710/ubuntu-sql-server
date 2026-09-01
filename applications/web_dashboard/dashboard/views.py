@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth import Group
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -236,6 +237,46 @@ def api_user_disable(request, user_id):
                 "id": user.id,
                 "username": user.username,
                 "is_active": user.is_active,
+            }
+        },
+        status=200,
+    )
+
+@require_POST
+def api_user_role(request, user_id):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return JsonResponse(
+            {"detail": "Authentication required."},
+            status=403,
+        )
+
+    role_name = request.POST.get("role", "").strip()
+
+    if not role_name:
+        return JsonResponse(
+            {"detail": "Role is required."},
+            status=400,
+        )
+
+    User = get_user_model()
+
+    user = get_object_or_404(User, id=user_id)
+
+    role, _ = Group.objects.get_or_create(name=role_name)
+
+    user.groups.add(role)
+
+    return JsonResponse(
+        {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "roles": list(
+                    user.groups.order_by("name").values_list(
+                        "name",
+                        flat=True,
+                    )
+                ),
             }
         },
         status=200,
