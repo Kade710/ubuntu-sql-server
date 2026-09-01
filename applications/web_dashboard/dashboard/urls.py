@@ -12,4 +12,9 @@ urlpatterns = [
         views.api_user_disable,
         name="api_user_disable",
     ),
+    path(
+        "api/users/<int:user_id>/role/",
+        views.api_user_role,
+        name="api_user_role",
+    ),
 ]
