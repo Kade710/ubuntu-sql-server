@@ -74,3 +74,11 @@ class MaintenanceLog(models.Model):
     class Meta:
         managed = False
         db_table = 'server_management"."maintenance_logs'
+
+class DashboardPermission(models.Model):
+    class Meta:
+        permissions = [
+            ("manage_users", "Can manage users"),
+            ("manage_ssh_access", "Can manage SSH access"),
+            ("manage_servers", "Can manage servers"),
+        ]
