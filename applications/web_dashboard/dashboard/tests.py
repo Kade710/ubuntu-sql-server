@@ -40,6 +40,30 @@ class UserListAPITests(TestCase):
         self.assertIn("testadmin", usernames)
         self.assertIn("testuser", usernames)
 
+    def test_user_with_manage_users_permission_can_list_users(self):
+        from django.contrib.auth.models import Permission
+
+        User = get_user_model()
+
+        permitted_user = User.objects.create_user(
+            username="permitteduser",
+            email="permitted@example.com",
+            password="TestPassword123!",
+        )
+
+        permission = Permission.objects.get(
+            codename="manage_users",
+            content_type__app_label="dashboard",
+        )
+
+        permitted_user.user_permissions.add(permission)
+
+        self.client.force_login(permitted_user)
+
+        response = self.client.get(reverse("api_user_list"))
+
+        self.assertEqual(response.status_code, 200)
+
     def test_user_without_manage_users_permission_is_denied(self):
         User = get_user_model()
 
