@@ -77,6 +77,8 @@ class MaintenanceLog(models.Model):
 
 class DashboardPermission(models.Model):
     class Meta:
+        managed = False
+        default_permissions = ()
         permissions = [
             ("manage_users", "Can manage users"),
             ("manage_ssh_access", "Can manage SSH access"),
