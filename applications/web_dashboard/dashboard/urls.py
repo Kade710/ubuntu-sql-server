@@ -17,4 +17,9 @@ urlpatterns = [
         views.api_user_role,
         name="api_user_role",
     ),
+    path(
+        "users/",
+        views.user_management,
+        name="user_management",
+    ),
 ]
