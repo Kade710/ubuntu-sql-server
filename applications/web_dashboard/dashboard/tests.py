@@ -394,7 +394,7 @@ class RBACRolePermissionTests(TestCase):
         self.assertTrue(
             user.has_perm("dashboard.manage_servers")
         )
-        
+
     def test_operator_has_expected_permissions(self):
         User = get_user_model()
 
@@ -418,5 +418,31 @@ class RBACRolePermissionTests(TestCase):
         )
 
         self.assertTrue(
+            user.has_perm("dashboard.manage_servers")
+        )
+
+    def test_viewer_has_no_management_permissions(self):
+        User = get_user_model()
+
+        user = User.objects.create_user(
+            username="viewer",
+            password="TestPassword123!",
+        )
+
+        user.groups.add(
+            user.groups.model.objects.get(
+                name="Viewer"
+            )
+        )
+
+        self.assertFalse(
+            user.has_perm("dashboard.manage_users")
+        )
+
+        self.assertFalse(
+            user.has_perm("dashboard.manage_ssh_access")
+        )
+
+        self.assertFalse(
             user.has_perm("dashboard.manage_servers")
         )
