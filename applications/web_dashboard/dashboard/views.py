@@ -677,6 +677,8 @@ def ssh_key_revoke(request, key_id):
         )
         return redirect("ssh_access_management")
 
+    privious_revoked_at = ssh_key.revoked_at
+
     ssh_key.is_active = False
     ssh_key.revoked_at = timezone.now()
 
@@ -687,9 +689,22 @@ def ssh_key_revoke(request, key_id):
         ]
     )
 
-    messages.success(
+    try:
+        _sync_uaccess_ssh_keys()
+    except (OSError, subprocess.SubprocessError):
+        ssh_key.is_active = True
+        ssh_key.revoked_at = previous_revoked_at
+
+        ssh_key.save(
+            update_fields=[
+                "is_active",
+                "revoke_at",
+            ]
+        )
+
+    messages.error(
         request,
-        f'SSH key "{ssh_key.name}" revoked.',
+        "SSH key synchronization failed. The key remains active",
     )
 
     return redirect("ssh_access_management")
