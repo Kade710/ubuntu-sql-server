@@ -80,6 +80,20 @@ class UserListAPITests(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_invalid_role_is_rejected(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.post(
+            reverse("api_user_role", args=[self.user.id]),
+            data={"role": "InvalidRole"},
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+        self.assertFalse(
+            self.user.groups.filter(name="InvalidRole").exists()
+        )
+
 class UserCreateAPITests(TestCase):
     def setUp(self):
         User = get_user_model()
