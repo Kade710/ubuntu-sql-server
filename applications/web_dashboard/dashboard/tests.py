@@ -216,6 +216,31 @@ class UserRoleAPITests(TestCase):
             self.user.groups.filter(name="InvalidRole").exists()
         )
 
+    def test_assigning_role_replaces_existing_role(self):
+        self.client.force_login(self.admin)
+
+        self.client.post(
+            reverse("api_user_role", args=[self.user.id]),
+            data={"role": "Viewer"},
+        )
+
+        response = self.client.post(
+            reverse("api_user_role", args=[self.user.id]),
+            data={"role": "Operator"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.user.refresh_from_db()
+
+        self.assertTrue(
+            self.user.groups.filter(name="Operator").exists()
+        )
+
+        self.assertFalse(
+            self.user.groups.filter(name="Viewer").exists()
+        )
+
 @require_POST
 def api_user_role(request, user_id):
     if not request.user.has_perm("dashboard.manage_users"):
