@@ -74,3 +74,28 @@ class MaintenanceLog(models.Model):
     class Meta:
         managed = False
         db_table = 'server_management"."maintenance_logs'
+
+class SSHKey(models.Model):
+    user = models.ForeignKey(
+        "auth.User",
+        on_delete=models.CASCADE,
+        related_name="ssh_keys",
+    )
+    name = models.CharField(max_length=100)
+    public_key = models.TextField()
+    fingerprint = models.CharField(
+        max_length=100,
+        unique=True
+    )
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    revoked_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ["user__username", "name"]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.name}"
