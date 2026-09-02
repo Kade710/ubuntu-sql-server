@@ -1,6 +1,9 @@
 import base64
 import binascii
 import hashlib
+import os
+import subprocess
+import tempfile
 
 from datetime import timedelta
 
@@ -481,6 +484,53 @@ def user_management_role(request, user_id):
 
     return redirect("user_management")
 
+def _sync_uaccess_ssh_keys():
+    staging_path = "/var/lib/ubuntu-sql-server/ssh/uaccess.keys"
+    staging_dir = os.path.dirname(staging_path)
+
+    active_keys = SSHKey.objects.filter(
+        is_active=True
+    ).order_by("id")
+
+    key_data = "".join(
+        f"{ssh_key.public_key.strip()}\n"
+        for ssh_key in active_keys
+    )
+
+    temp_path = None
+
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=staging_dir,
+            prefix=".uaccess.",
+            delete=False,
+        ) as temp_file:
+            temp_file.write(key_data)
+            temp_file.flush()
+            os.fsync(temp_file.fileno())
+            temp_path = temp_file.name
+
+        os.chmod(temp_path, 0o600)
+        os.replace(temp_path, staging_path)
+
+        subprocess.run(
+            [
+                "sudo",
+                "-n",
+                "/usr/local/sbin/u-server-sync-uaccess-keys",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            os.unlink(temp_path)
+
 def _ssh_public_key_fingerprint(public_key):
     parts = public_key.strip().split()
 
@@ -587,16 +637,21 @@ def ssh_key_register(request):
         )
         return redirect("ssh_access_management")
 
-    SSHKey.objects.create(
+    ssh_key = SSHKey.objects.create(
         user=request.user,
         name=name,
         public_key=public_key,
         fingerprint=fingerprint,
     )
 
-    messages.success(
+    try:
+        _sync_uaccess_ssh_keys()
+    except (OSError, subprocess.SubproccessError):
+        ssh_key.delete()
+
+    messages.error(
         request,
-        f'SSH key "{name}" registered successfully.',
+        "SSH key synchronization failed. The key was not registered.",
     )
 
     return redirect("ssh_access_management")
