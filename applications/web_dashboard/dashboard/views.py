@@ -1,3 +1,7 @@
+import base64
+import binascii
+import hashlib
+
 from datetime import timedelta
 
 from django.contrib import messages
@@ -8,13 +12,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
-from .forms import MaintenanceLogForm
+from .forms import MaintenanceLogForm, SSHKeyRegistrationForm
 from .models import (
     HardwareComponent,
     HealthCheck,
     MaintenanceLog,
     NetworkInterface,
     Server,
+    SSHKey,
 )
 
 
@@ -475,3 +480,161 @@ def user_management_role(request, user_id):
     )
 
     return redirect("user_management")
+
+def _ssh_public_key_fingerprint(public_key):
+    parts = public_key.strip().split()
+
+    if len(parts) < 2:
+        raise ValueError("Invalid OpenSSH public key.")
+
+    key_type = parts[0]
+    key_data = parts[1]
+
+    allowed_types = {
+        "ssh-ed25519",
+        "ssh-rsa",
+        "ecdsa-sha2-nistp265",
+        "ecdsa-sha2-nistp384",
+        "ecdsa-sha2-nistp521",
+    }
+
+    if key_type not in allowed_types:
+        raise ValueError("Unsupported SSH public key type.")
+
+    try:
+        decoded_key = base64.b64decode(
+            key_data,
+            validate=True,
+        )
+    except (binascii.Error, ValueError):
+        raise ValueError("Invalid SSH public key encoding.")
+
+    if not decoded_key:
+        raise ValueError("Invalid SSH public key.")
+
+    digest = hashlib.sha256(decoded_key).digest()
+
+    fingerprint = base64.b64encode(
+        digest
+    ).decode("ascii").rstrip("=")
+
+    return f"SHA256:{fingerprint}"
+
+
+def ssh_access_management(request):
+    if not request.user.has_perm("dashboard.manage_ssh_access"):
+        return JsonResponse(
+            {"detail": "Permission denied."},
+            status=403,
+        )
+
+    keys = SSHKey.objects.select_related(
+        "user"
+    ).order_by(
+        "user__username",
+        "name",
+    )
+
+    form = SSHKeyRegistrationForm()
+
+    context = {
+        "ssh_keys": keys,
+        "form": form,
+    }
+
+    return render(
+        request,
+        "dashboard/ssh_access.html",
+        context,
+    )
+
+
+@require_POST
+def ssh_key_register(request):
+    if not request.user.has_perm("dashboard.manage_ssh_access"):
+        return JsonResponse(
+            {"detail": "Permission denied."},
+            status=403,
+        )
+
+    form = SSHKeyRegistrationForm(request.POST)
+
+    if not form.is_valid():
+        messages.error(
+            request,
+            "A key name and valid public key are required.",
+        )
+        return redirect("ssh_access_management")
+
+    name = form.cleaned_data["name"].strip()
+    public_key = form.cleaned_data["public_key"].strip()
+
+    try:
+        fingerprint = _ssh_public_key_fingerprint(public_key)
+    except ValueError as exc:
+        messages.error(
+            request,
+            str(exc),
+        )
+        return redirect("ssh_access_management")
+
+    if SSHKey.objects.filter(
+        fingerprint=fingerprint
+    ).exists():
+        messages.error(
+            request,
+            "This SSH public key is already registered.",
+        )
+        return redirect("ssh_access_management")
+
+    SSHKey.objects.create(
+        user=request.user,
+        name=name,
+        public_key=public_key,
+        fingerprint=fingerprint,
+    )
+
+    messages.success(
+        request,
+        f'SSH key "{name}" registered successfully.',
+    )
+
+    return redirect("ssh_access_management")
+
+
+@require_POST
+def ssh_key_revoke(request, key_id):
+    if not request.user.has_perm("dashboard.manage_ssh_access"):
+        return JsonResponse(
+            {"detail": "Permission denied."},
+            status=403,
+        )
+
+    ssh_key = get_object_or_404(
+        SSHKey,
+        id=key_id,
+    )
+
+    if not ssh_key.is_active:
+        messages.error(
+            request,
+            "This SSH key has already been revoked.",
+        )
+        return redirect("ssh_access_management")
+
+    ssh_key.is_active = False
+    ssh_key.revoked_at = timezone.now()
+
+    ssh_key.save(
+        update_fields=[
+            "is_active",
+            "revoked_at",
+        ]
+    )
+
+    messages.success(
+        request,
+        f'SSH key "{ssh_key.name}" revoked.',
+    )
+
+    return redirect("ssh_access_management")
