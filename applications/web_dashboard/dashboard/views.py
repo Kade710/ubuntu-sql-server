@@ -7,9 +7,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
-from .models import HardwareComponent, HealthCheck, MaintenanceLog, NetworkInterface, Server
-
 from .forms import MaintenanceLogForm
+from .models import (
+    HardwareComponent,
+    HealthCheck,
+    MaintenanceLog,
+    NetworkInterface,
+    Server,
+)
+
 
 def index(request):
     servers = Server.objects.all().order_by("id")
@@ -29,7 +35,7 @@ def index(request):
             if timezone.is_naive(last_check):
                 last_check = timezone.make_aware(
                     last_check,
-                    timezone.get_current_timezone()
+                    timezone.get_current_timezone(),
                 )
 
             age = timezone.now() - last_check
@@ -54,6 +60,7 @@ def index(request):
     }
 
     return render(request, "dashboard/index.html", context)
+
 
 def server_detail(request, server_id):
     server = get_object_or_404(Server, id=server_id)
@@ -82,7 +89,7 @@ def server_detail(request, server_id):
         if timezone.is_naive(last_check):
             last_check = timezone.make_aware(
                 last_check,
-                timezone.get_current_timezone()
+                timezone.get_current_timezone(),
             )
 
         age = timezone.now() - last_check
@@ -124,7 +131,10 @@ def server_detail(request, server_id):
                 created_at=timezone.now(),
             )
 
-            return redirect("server_detail", server_id=server_id)
+            return redirect(
+                "server_detail",
+                server_id=server_id,
+            )
 
     else:
         maintenance_form = MaintenanceLogForm()
@@ -141,7 +151,11 @@ def server_detail(request, server_id):
         "maintenance_logs": maintenance_logs,
     }
 
-    return render(request, "dashboard/server_detail.html", context)
+    return render(
+        request,
+        "dashboard/server_detail.html",
+        context,
+    )
 
 
 @require_GET
@@ -153,6 +167,7 @@ def api_user_list(request):
         )
 
     User = get_user_model()
+
     users = User.objects.all().order_by("username")
 
     data = [
@@ -168,6 +183,7 @@ def api_user_list(request):
     ]
 
     return JsonResponse({"users": data})
+
 
 @require_POST
 def api_user_create(request):
@@ -215,6 +231,7 @@ def api_user_create(request):
         status=201,
     )
 
+
 @require_POST
 def api_user_disable(request, user_id):
     if not request.user.has_perm("dashboard.manage_users"):
@@ -225,7 +242,10 @@ def api_user_disable(request, user_id):
 
     User = get_user_model()
 
-    user = get_object_or_404(User, id=user_id)
+    user = get_object_or_404(
+        User,
+        id=user_id,
+    )
 
     user.is_active = False
     user.save(update_fields=["is_active"])
@@ -241,6 +261,7 @@ def api_user_disable(request, user_id):
         status=200,
     )
 
+
 @require_POST
 def api_user_role(request, user_id):
     if not request.user.has_perm("dashboard.manage_users"):
@@ -251,17 +272,29 @@ def api_user_role(request, user_id):
 
     role_name = request.POST.get("role", "").strip()
 
-    if not role_name:
+    allowed_roles = {
+        "Administrator",
+        "Operator",
+        "Viewer",
+    }
+
+    if role_name not in allowed_roles:
         return JsonResponse(
-            {"detail": "Role is required."},
+            {"detail": "Invalid role."},
             status=400,
         )
 
     User = get_user_model()
 
-    user = get_object_or_404(User, id=user_id)
+    user = get_object_or_404(
+        User,
+        id=user_id,
+    )
 
-    role, _ = Group.objects.get_or_create(name=role_name)
+    role = get_object_or_404(
+        Group,
+        name=role_name,
+    )
 
     user.groups.add(role)
 
