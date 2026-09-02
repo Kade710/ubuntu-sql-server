@@ -12,6 +12,26 @@
 <body>
     <header>
         <h1>Ubuntu SQL Server Dashboard</h1>
+
+        <nav>
+            <a href="{% url 'index' %}">
+                Dashboard
+            </a>
+
+            {% if request.user.is_authenticated %}
+                {% if request.user.is_staff %}
+                    <a href="/admin/">
+                        Admin
+                    </a>
+                {% endif %}
+
+                {% if perms.dashboard.manage_users %}
+                    <a href="{% url 'user_management' %}">
+                        Users
+                    </a>
+                {% endif %}
+            {% endif %}
+        </nav>
     </header>
 
     <main>
