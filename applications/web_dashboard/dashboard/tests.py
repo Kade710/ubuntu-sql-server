@@ -473,3 +473,23 @@ class UserManagementPageTests(TestCase):
             response,
             "dashboard/users.html",
         )
+
+    def test_user_without_manage_users_permission_is_denied(self):
+        User = get_user_model()
+
+        user = User.objects.create_user(
+            username="viewer",
+            email="viewer@example.com",
+            password="TestPassword123!",
+        )
+
+        self.client.force_login(user)
+
+        response = self.client.get(
+            reverse("user_management")
+        )
+
+        self.assertEqual(
+            response.status_code,
+            403,
+        )
