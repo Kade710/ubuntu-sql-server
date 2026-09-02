@@ -21,25 +21,48 @@ class UserListAPITests(TestCase):
         )
 
     def test_unauthenticated_request_is_denied(self):
-        response = self.client.get(reverse("api_user_list"))
+        response = self.client.get(
+            reverse("api_user_list")
+        )
 
-        self.assertNotEqual(response.status_code, 200)
+        self.assertNotEqual(
+            response.status_code,
+            200,
+        )
 
     def test_admin_can_list_users(self):
         self.client.force_login(self.admin)
 
-        response = self.client.get(reverse("api_user_list"))
+        response = self.client.get(
+            reverse("api_user_list")
+        )
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
 
         data = response.json()
 
-        self.assertEqual(len(data["users"]), 2)
+        self.assertEqual(
+            len(data["users"]),
+            2,
+        )
 
-        usernames = [user["username"] for user in data["users"]]
+        usernames = [
+            user["username"]
+            for user in data["users"]
+        ]
 
-        self.assertIn("testadmin", usernames)
-        self.assertIn("testuser", usernames)
+        self.assertIn(
+            "testadmin",
+            usernames,
+        )
+
+        self.assertIn(
+            "testuser",
+            usernames,
+        )
 
     def test_user_with_manage_users_permission_can_list_users(self):
         User = get_user_model()
@@ -55,13 +78,22 @@ class UserListAPITests(TestCase):
             content_type__app_label="dashboard",
         )
 
-        permitted_user.user_permissions.add(permission)
+        permitted_user.user_permissions.add(
+            permission
+        )
 
-        self.client.force_login(permitted_user)
+        self.client.force_login(
+            permitted_user
+        )
 
-        response = self.client.get(reverse("api_user_list"))
+        response = self.client.get(
+            reverse("api_user_list")
+        )
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
 
     def test_user_without_manage_users_permission_is_denied(self):
         User = get_user_model()
@@ -73,11 +105,18 @@ class UserListAPITests(TestCase):
             is_staff=True,
         )
 
-        self.client.force_login(staff_user)
+        self.client.force_login(
+            staff_user
+        )
 
-        response = self.client.get(reverse("api_user_list"))
+        response = self.client.get(
+            reverse("api_user_list")
+        )
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(
+            response.status_code,
+            403,
+        )
 
 
 class UserCreateAPITests(TestCase):
@@ -100,10 +139,15 @@ class UserCreateAPITests(TestCase):
             },
         )
 
-        self.assertNotEqual(response.status_code, 201)
+        self.assertNotEqual(
+            response.status_code,
+            201,
+        )
 
     def test_admin_can_create_user(self):
-        self.client.force_login(self.admin)
+        self.client.force_login(
+            self.admin
+        )
 
         response = self.client.post(
             reverse("api_user_create"),
@@ -114,15 +158,31 @@ class UserCreateAPITests(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(
+            response.status_code,
+            201,
+        )
 
         User = get_user_model()
 
-        user = User.objects.get(username="newuser")
+        user = User.objects.get(
+            username="newuser"
+        )
 
-        self.assertEqual(user.email, "newuser@example.com")
-        self.assertTrue(user.check_password("SecurePassword123!"))
-        self.assertTrue(user.is_active)
+        self.assertEqual(
+            user.email,
+            "newuser@example.com",
+        )
+
+        self.assertTrue(
+            user.check_password(
+                "SecurePassword123!"
+            )
+        )
+
+        self.assertTrue(
+            user.is_active
+        )
 
 
 class UserDisableAPITests(TestCase):
@@ -143,23 +203,39 @@ class UserDisableAPITests(TestCase):
 
     def test_unauthenticated_request_is_denied(self):
         response = self.client.post(
-            reverse("api_user_disable", args=[self.user.id])
+            reverse(
+                "api_user_disable",
+                args=[self.user.id],
+            )
         )
 
-        self.assertNotEqual(response.status_code, 200)
+        self.assertNotEqual(
+            response.status_code,
+            200,
+        )
 
     def test_admin_can_disable_user(self):
-        self.client.force_login(self.admin)
-
-        response = self.client.post(
-            reverse("api_user_disable", args=[self.user.id])
+        self.client.force_login(
+            self.admin
         )
 
-        self.assertEqual(response.status_code, 200)
+        response = self.client.post(
+            reverse(
+                "api_user_disable",
+                args=[self.user.id],
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
 
         self.user.refresh_from_db()
 
-        self.assertFalse(self.user.is_active)
+        self.assertFalse(
+            self.user.is_active
+        )
 
 
 class UserRoleAPITests(TestCase):
@@ -180,115 +256,114 @@ class UserRoleAPITests(TestCase):
 
     def test_unauthenticated_request_is_denied(self):
         response = self.client.post(
-            reverse("api_user_role", args=[self.user.id]),
-            data={"role": "Operator"},
+            reverse(
+                "api_user_role",
+                args=[self.user.id],
+            ),
+            data={
+                "role": "Operator",
+            },
         )
 
-        self.assertNotEqual(response.status_code, 200)
+        self.assertNotEqual(
+            response.status_code,
+            200,
+        )
 
     def test_admin_can_assign_role(self):
-        self.client.force_login(self.admin)
-
-        response = self.client.post(
-            reverse("api_user_role", args=[self.user.id]),
-            data={"role": "Operator"},
+        self.client.force_login(
+            self.admin
         )
 
-        self.assertEqual(response.status_code, 200)
+        response = self.client.post(
+            reverse(
+                "api_user_role",
+                args=[self.user.id],
+            ),
+            data={
+                "role": "Operator",
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
 
         self.user.refresh_from_db()
 
         self.assertTrue(
-            self.user.groups.filter(name="Operator").exists()
+            self.user.groups.filter(
+                name="Operator"
+            ).exists()
         )
 
     def test_invalid_role_is_rejected(self):
-        self.client.force_login(self.admin)
-
-        response = self.client.post(
-            reverse("api_user_role", args=[self.user.id]),
-            data={"role": "InvalidRole"},
+        self.client.force_login(
+            self.admin
         )
 
-        self.assertEqual(response.status_code, 400)
+        response = self.client.post(
+            reverse(
+                "api_user_role",
+                args=[self.user.id],
+            ),
+            data={
+                "role": "InvalidRole",
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            400,
+        )
 
         self.assertFalse(
-            self.user.groups.filter(name="InvalidRole").exists()
+            self.user.groups.filter(
+                name="InvalidRole"
+            ).exists()
         )
 
     def test_assigning_role_replaces_existing_role(self):
-        self.client.force_login(self.admin)
+        self.client.force_login(
+            self.admin
+        )
 
         self.client.post(
-            reverse("api_user_role", args=[self.user.id]),
-            data={"role": "Viewer"},
+            reverse(
+                "api_user_role",
+                args=[self.user.id],
+            ),
+            data={
+                "role": "Viewer",
+            },
         )
 
         response = self.client.post(
-            reverse("api_user_role", args=[self.user.id]),
-            data={"role": "Operator"},
+            reverse(
+                "api_user_role",
+                args=[self.user.id],
+            ),
+            data={
+                "role": "Operator",
+            },
         )
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
 
         self.user.refresh_from_db()
 
         self.assertTrue(
-            self.user.groups.filter(name="Operator").exists()
+            self.user.groups.filter(
+                name="Operator"
+            ).exists()
         )
 
         self.assertFalse(
-            self.user.groups.filter(name="Viewer").exists()
+            self.user.groups.filter(
+                name="Viewer"
+            ).exists()
         )
-
-@require_POST
-def api_user_role(request, user_id):
-    if not request.user.has_perm("dashboard.manage_users"):
-        return JsonResponse(
-            {"detail": "Permission denied."},
-            status=403,
-        )
-
-    role_name = request.POST.get("role", "").strip()
-
-    allowed_roles = {
-        "Administrator",
-        "Operator",
-        "Viewer",
-    }
-
-    if role_name not in allowed_roles:
-        return JsonResponse(
-            {"detail": "Invalid role."},
-            status=400,
-        )
-
-    User = get_user_model()
-
-    user = get_object_or_404(
-        User,
-        id=user_id,
-    )
-
-    role = get_object_or_404(
-        Group,
-        name=role_name,
-    )
-
-    user.groups.add(role)
-
-    return JsonResponse(
-        {
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "roles": list(
-                    user.groups.order_by("name").values_list(
-                        "name",
-                        flat=True,
-                    )
-                ),
-            }
-        },
-        status=200,
-    )
