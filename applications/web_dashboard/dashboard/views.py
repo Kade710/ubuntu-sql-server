@@ -157,6 +157,31 @@ def server_detail(request, server_id):
         context,
     )
 
+def user_management(request):
+    if not request.user.has_perm("dashboard.manage_users"):
+        return JsonResponse(
+            {"detail": "Permission denied."},
+            status=403,
+        )
+
+    User = get_user_model()
+
+    users = User.objects.all().order_by("username")
+
+    context = {
+        "users": users,
+        "roles": [
+            "Administrator",
+            "Operator",
+            "Viewer",
+        ],
+    }
+
+    return render(
+        request,
+        "dashboard/users.html",
+        context,
+    )
 
 @require_GET
 def api_user_list(request):
