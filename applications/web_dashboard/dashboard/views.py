@@ -146,14 +146,13 @@ def server_detail(request, server_id):
 
 @require_GET
 def api_user_list(request):
-    if not request.user.is_authenticated or not request.user.is_staff:
+    if not request.user.has_perm("dashboard.manage_users"):
         return JsonResponse(
             {"detail": "Authentication required."},
             status=403,
         )
 
     User = get_user_model()
-
     users = User.objects.all().order_by("username")
 
     data = [
