@@ -215,3 +215,55 @@ class UserRoleAPITests(TestCase):
         self.assertFalse(
             self.user.groups.filter(name="InvalidRole").exists()
         )
+
+@require_POST
+def api_user_role(request, user_id):
+    if not request.user.has_perm("dashboard.manage_users"):
+        return JsonResponse(
+            {"detail": "Permission denied."},
+            status=403,
+        )
+
+    role_name = request.POST.get("role", "").strip()
+
+    allowed_roles = {
+        "Administrator",
+        "Operator",
+        "Viewer",
+    }
+
+    if role_name not in allowed_roles:
+        return JsonResponse(
+            {"detail": "Invalid role."},
+            status=400,
+        )
+
+    User = get_user_model()
+
+    user = get_object_or_404(
+        User,
+        id=user_id,
+    )
+
+    role = get_object_or_404(
+        Group,
+        name=role_name,
+    )
+
+    user.groups.add(role)
+
+    return JsonResponse(
+        {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "roles": list(
+                    user.groups.order_by("name").values_list(
+                        "name",
+                        flat=True,
+                    )
+                ),
+            }
+        },
+        status=200,
+    )
