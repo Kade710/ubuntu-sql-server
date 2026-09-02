@@ -37,6 +37,24 @@ urlpatterns = [
         name="user_management_role",
     ),
 
+    # SSH access management
+    path(
+        "ssh/",
+        views.ssh_access_management,
+        name="ssh_access_management",
+    ),
+    path(
+        "ssh/register/",
+        views.ssh_key_register,
+        name="ssh_key_register",
+    ),
+    path(
+        "ssh/<int:key_id>/revoke/",
+        views.ssh_key_revoke,
+        name="ssh_key_revoke",
+    ),
+
+
     # User management API
     path(
         "api/users/",
