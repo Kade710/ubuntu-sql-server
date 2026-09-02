@@ -296,6 +296,20 @@ def api_user_role(request, user_id):
         name=role_name,
     )
 
+    managed_roles = {
+        "Administrator",
+        "Operator",
+        "Viewer",
+    }
+
+    existing_managed_roles = Group.objects.filter(
+        name__in=managed_roles
+    )
+
+    user.groups.remove(
+        *existing_managed_roles
+    )
+
     user.groups.add(role)
 
     return JsonResponse(
