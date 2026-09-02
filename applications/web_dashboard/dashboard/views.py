@@ -148,7 +148,7 @@ def server_detail(request, server_id):
 def api_user_list(request):
     if not request.user.has_perm("dashboard.manage_users"):
         return JsonResponse(
-            {"detail": "Authentication required."},
+            {"detail": "Permission denied."},
             status=403,
         )
 
