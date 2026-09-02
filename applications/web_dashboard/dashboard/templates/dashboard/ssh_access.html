@@ -1,1 +1,92 @@
+{% extends "dashboard/base.html" %}
 
+{% block title %}SSH Access Management{% endblock %}
+
+{% block content %}
+
+<h2>SSH Access Management</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+{% endif %}
+
+<h3>Register Public Key</h3>
+
+<form method="post" action="{% url 'ssh_key_register' %}">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">
+        Register Key
+    </button>
+</form>
+
+<hr>
+
+<h3>Registered SSH Keys</h3>
+
+{% if ssh_keys %}
+
+<table>
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Name</th>
+            <th>Fingerprint</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for key in ssh_keys %}
+        <tr>
+            <td>{{ key.user.username }}</td>
+            <td>{{ key.name }}</td>
+
+            <td>
+                <code>{{ key.fingerprint }}</code>
+            </td>
+
+            <td>
+                {% if key.is_active %}
+                    Active
+                {% else %}
+                    Revoked
+                {% endif %}
+            </td>
+
+            <td>{{ key.created_at }}</td>
+
+            <td>
+                {% if key.is_active %}
+                    <form
+                        method="post"
+                        action="{% url 'ssh_key_revoke' key.id %}"
+                    >
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            Revoke
+                        </button>
+                    </form>
+                {% else %}
+                    Revoked
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+
+<p>No SSH keys registered.</p>
+
+{% endif %}
+
+{% endblock %}
