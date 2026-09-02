@@ -677,7 +677,7 @@ def ssh_key_revoke(request, key_id):
         )
         return redirect("ssh_access_management")
 
-    privious_revoked_at = ssh_key.revoked_at
+    previous_revoked_at = ssh_key.revoked_at
 
     ssh_key.is_active = False
     ssh_key.revoked_at = timezone.now()
