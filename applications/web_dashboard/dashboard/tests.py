@@ -446,3 +446,30 @@ class RBACRolePermissionTests(TestCase):
         self.assertFalse(
             user.has_perm("dashboard.manage_servers")
         )
+
+class UserManagementPageTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+
+        self.admin = User.objects.create_superuser(
+            username="testadmin",
+            email="admin@example.com",
+            password="TestPassword123!",
+        )
+
+    def test_admin_can_view_user_management_page(self):
+        self.client.force_login(self.admin)
+
+        response = self.client.get(
+            reverse("user_management")
+        )
+
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
+
+        self.assertTemplateUsed(
+            response,
+            "dashboard/users.html",
+        )
