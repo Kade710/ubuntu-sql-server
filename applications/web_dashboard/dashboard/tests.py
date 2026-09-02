@@ -40,6 +40,22 @@ class UserListAPITests(TestCase):
         self.assertIn("testadmin", usernames)
         self.assertIn("testuser", usernames)
 
+    def test_user_without_manage_users_permission_is_denied(self):
+        User = get_user_model()
+
+        staff_user = User.objects.create_user(
+            username="staffuser",
+            email="staff@example.com",
+            password="TestPassword123!",
+            is_staff=True,
+        )
+
+        self.client.force_login(staff_user)
+
+        response = self.client.get(reverse("api_user_list"))
+
+        self.assertEqual(response.status_code, 403)
+
 class UserCreateAPITests(TestCase):
     def setUp(self):
         User = get_user_model()
