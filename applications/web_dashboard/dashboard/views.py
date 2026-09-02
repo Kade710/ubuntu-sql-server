@@ -171,9 +171,9 @@ def api_user_list(request):
 
 @require_POST
 def api_user_create(request):
-    if not request.user.is_authenticated or not request.user.is_staff:
+    if not request.user.has_perm("dashboard.manage_users"):
         return JsonResponse(
-            {"detail": "Authentication required."},
+            {"detail": "Permission denied."},
             status=403,
         )
 
