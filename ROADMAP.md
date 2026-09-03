@@ -722,4 +722,4 @@
 
 ## Database & Data Maintenance
 
-- [ ] Remove stale network interface records during server refresh
+- [x] Remove stale network interface records during server refresh
