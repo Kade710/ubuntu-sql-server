@@ -99,3 +99,24 @@ class SSHKey(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.name}"
+
+class AccessAuditLog(models.Model):
+    actor = models.ForeignKey(
+        "auth.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="access_audit_actions",
+    )
+    action = models.CharField(max_length=100)
+    target_type = models.CharField(max_length=50)
+    target_identifier = models.CharField(max_length=255)
+    details = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
+    def __str__(self):
+        actor = self.actor.username if self.actor else "system"
+        return f"{actor}: {self.action} -> {self.target_identifier}"
