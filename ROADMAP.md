@@ -702,9 +702,9 @@
 
 ## SSH Access Management
 
-- [ ] Add SSH public key registration
-- [ ] Add SSH public key revocation
-- [ ] Display SSH key fingerprints
+- [x] Add SSH public key registration
+- [x] Add SSH public key revocation
+- [x] Display SSH key fingerprints
 
 ## Access Auditing & Verification
 
