@@ -17,6 +17,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from .forms import MaintenanceLogForm, SSHKeyRegistrationForm
 from .models import (
+    AccessAuditLog,
     HardwareComponent,
     HealthCheck,
     MaintenanceLog,
@@ -166,6 +167,23 @@ def server_detail(request, server_id):
         context,
     )
 
+
+def _audit_access_event(
+    request,
+    action,
+    target_type,
+    target_identifier,
+    details="",
+):
+    AccessAuditLog.objects.create(
+        actor=request.user if request.user.is_authenticated else None,
+        action=action,
+        target_type=target_type,
+        target_identifier=str(target_identifier),
+        details=details,
+    )
+
+
 def user_management(request):
     if not request.user.has_perm("dashboard.manage_users"):
         return JsonResponse(
@@ -191,6 +209,7 @@ def user_management(request):
         "dashboard/users.html",
         context,
     )
+
 
 @require_GET
 def api_user_list(request):
@@ -251,6 +270,14 @@ def api_user_create(request):
         password=password,
     )
 
+    _audit_access_event(
+        request=request,
+        action="USER_CREATED",
+        target_type="user",
+        target_identifier=user.username,
+        details=f"User {user.username} created through the API.",
+    )
+
     return JsonResponse(
         {
             "user": {
@@ -283,6 +310,14 @@ def api_user_disable(request, user_id):
 
     user.is_active = False
     user.save(update_fields=["is_active"])
+
+    _audit_access_event(
+        request=request,
+        action="USER_DISABLED",
+        target_type="user",
+        target_identifier=user.username,
+        details=f"User {user.username} disabled through the API.",
+    )
 
     return JsonResponse(
         {
@@ -330,14 +365,8 @@ def api_user_role(request, user_id):
         name=role_name,
     )
 
-    managed_roles = {
-        "Administrator",
-        "Operator",
-        "Viewer",
-    }
-
     existing_managed_roles = Group.objects.filter(
-        name__in=managed_roles
+        name__in=allowed_roles
     )
 
     user.groups.remove(
@@ -345,6 +374,14 @@ def api_user_role(request, user_id):
     )
 
     user.groups.add(role)
+
+    _audit_access_event(
+        request=request,
+        action="USER_ROLE_CHANGED",
+        target_type="user",
+        target_identifier=user.username,
+        details=f"User {user.username} assigned to {role_name} through the API.",
+    )
 
     return JsonResponse(
         {
@@ -361,6 +398,7 @@ def api_user_role(request, user_id):
         },
         status=200,
     )
+
 
 @require_POST
 def user_management_create(request):
@@ -396,6 +434,14 @@ def user_management_create(request):
         password=password,
     )
 
+    _audit_access_event(
+        request=request,
+        action="USER_CREATED",
+        target_type="user",
+        target_identifier=user.username,
+        details=f"User {user.username} created through the dashboard.",
+    )
+
     messages.success(
         request,
         f"User {user.username} created successfully.",
@@ -422,6 +468,14 @@ def user_management_disable(request, user_id):
     user.is_active = False
     user.save(
         update_fields=["is_active"]
+    )
+
+    _audit_access_event(
+        request=request,
+        action="USER_DISABLED",
+        target_type="user",
+        target_identifier=user.username,
+        details=f"User {user.username} disabled through the dashboard.",
     )
 
     messages.success(
@@ -477,12 +531,24 @@ def user_management_role(request, user_id):
 
     user.groups.add(role)
 
+    _audit_access_event(
+        request=request,
+        action="USER_ROLE_CHANGED",
+        target_type="user",
+        target_identifier=user.username,
+        details=(
+            f"User {user.username} assigned to "
+            f"{role_name} through the dashboard."
+        ),
+    )
+
     messages.success(
         request,
         f"{user.username} assigned to {role_name}.",
     )
 
     return redirect("user_management")
+
 
 def _sync_uaccess_ssh_keys():
     staging_path = "/var/lib/ubuntu-sql-server/ssh/uaccess.keys"
@@ -530,6 +596,7 @@ def _sync_uaccess_ssh_keys():
     finally:
         if temp_path and os.path.exists(temp_path):
             os.unlink(temp_path)
+
 
 def _ssh_public_key_fingerprint(public_key):
     parts = public_key.strip().split()
@@ -646,12 +713,29 @@ def ssh_key_register(request):
 
     try:
         _sync_uaccess_ssh_keys()
-    except (OSError, subprocess.SubproccessError):
+    except (OSError, subprocess.SubprocessError):
         ssh_key.delete()
 
-    messages.error(
+        messages.error(
+            request,
+            "SSH key synchronization failed. The key was not registered.",
+        )
+        return redirect("ssh_access_management")
+
+    _audit_access_event(
+        request=request,
+        action="SSH_KEY_REGISTERED",
+        target_type="ssh_key",
+        target_identifier=ssh_key.fingerprint,
+        details=(
+            f'Key "{ssh_key.name}" registered '
+            f"for {ssh_key.user.username}."
+        ),
+    )
+
+    messages.success(
         request,
-        "SSH key synchronization failed. The key was not registered.",
+        f'SSH key "{ssh_key.name}" registered.',
     )
 
     return redirect("ssh_access_management")
@@ -702,9 +786,26 @@ def ssh_key_revoke(request, key_id):
             ]
         )
 
-    messages.error(
+        messages.error(
+            request,
+            "SSH key synchronization failed. The key remains active.",
+        )
+        return redirect("ssh_access_management")
+
+    _audit_access_event(
+        request=request,
+        action="SSH_KEY_REVOKED",
+        target_type="ssh_key",
+        target_identifier=ssh_key.fingerprint,
+        details=(
+            f'Key "{ssh_key.name}" revoked '
+            f"for {ssh_key.user.username}."
+        ),
+    )
+
+    messages.success(
         request,
-        "SSH key synchronization failed. The key remains active",
+        f'SSH key "{ssh_key.name}" revoked.',
     )
 
     return redirect("ssh_access_management")
