@@ -698,7 +698,7 @@ def ssh_key_revoke(request, key_id):
         ssh_key.save(
             update_fields=[
                 "is_active",
-                "revoke_at",
+                "revoked_at",
             ]
         )
 
