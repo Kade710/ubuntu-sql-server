@@ -1,7 +1,12 @@
+import subprocess
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import group, Permission
 from django.test import TestCase
 from django.urls import reverse
+
+from .models import AccessAuditLog, SSHKey
 
 
 class UserListAPITests(TestCase):
@@ -492,4 +497,485 @@ class UserManagementPageTests(TestCase):
         self.assertEqual(
             response.status_code,
             403,
+        )
+
+class AccessAuditVerificationTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+
+        self.admin = User.objects.create_superuser(
+            username="auditadmin",
+            email="auditadmin@example.com",
+            password="AdminTestPassword123!",
+        )
+
+        self.client.force_login(self.admin)
+
+    def test_user_onboarding_and_revocation_are_audited(self):
+        User = get_user_model()
+
+        create_response = self.client.post(
+            reverse("api_user_create"),
+            {
+                "username": "lifecycleuser",
+                "email": "lifecycle@example.com",
+                "password": "LifecyclePassword123!",
+            },
+        )
+
+        self.assertEqual(
+            create_response.status_code,
+            201,
+        )
+
+        user = User.objects.get(
+            username="lifecycleuser"
+        )
+
+        role_response = self.client.post(
+            reverse(
+                "api_user_role",
+                args=[user.id],
+            ),
+            {
+                "role": "Operator",
+            },
+        )
+
+        self.assertEqual(
+            role_response.status_code,
+            200,
+        )
+
+        disable_response = self.client.post(
+            reverse(
+                "api_user_disable",
+                args=[user.id],
+            )
+        )
+
+        self.assertEqual(
+            disable_response.status_code,
+            200,
+        )
+
+        user.refresh_from_db()
+
+        self.assertFalse(user.is_active)
+
+        self.assertEqual(
+            list(
+                user.groups.values_list(
+                    "name",
+                    flat=True,
+                )
+            ),
+            ["Operator"],
+        )
+
+        logs = AccessAuditLog.objects.filter(
+            target_identifier="lifecycleuser"
+        ).order_by("created_at", "id")
+
+        self.assertEqual(
+            list(
+                logs.values_list(
+                    "action",
+                    flat=True,
+                )
+            ),
+            [
+                "USER_CREATED",
+                "USER_ROLE_CHANGED",
+                "USER_DISABLED",
+            ],
+        )
+
+        for log in logs:
+            self.assertEqual(
+                log.actor,
+                self.admin,
+            )
+
+            self.assertEqual(
+                log.target_type,
+                "user",
+            )
+
+    def test_password_is_not_stored_in_audit_log(self):
+        password = "DoNotAuditThisPassword123!"
+
+        response = self.client.post(
+            reverse("api_user_create"),
+            {
+                "username": "secretcheck",
+                "email": "secretcheck@example.com",
+                "password": password,
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            201,
+        )
+
+        log = AccessAuditLog.objects.get(
+            action="USER_CREATED",
+            target_identifier="secretcheck",
+        )
+
+        self.assertNotIn(
+            password,
+            log.details,
+        )
+
+        self.assertNotIn(
+            password,
+            log.target_identifier,
+        )
+
+    def test_browser_user_actions_are_audited(self):
+        User = get_user_model()
+
+        response = self.client.post(
+            reverse("user_management_create"),
+            {
+                "username": "browseraudit",
+                "email": "browseraudit@example.com",
+                "password": "BrowserPassword123!",
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        user = User.objects.get(
+            username="browseraudit"
+        )
+
+        response = self.client.post(
+            reverse(
+                "user_management_role",
+                args=[user.id],
+            ),
+            {
+                "role": "Viewer",
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        response = self.client.post(
+            reverse(
+                "user_management_disable",
+                args=[user.id],
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        logs = AccessAuditLog.objects.filter(
+            target_identifier="browseraudit"
+        ).order_by("created_at", "id")
+
+        self.assertEqual(
+            list(
+                logs.values_list(
+                    "action",
+                    flat=True,
+                )
+            ),
+            [
+                "USER_CREATED",
+                "USER_ROLE_CHANGED",
+                "USER_DISABLED",
+            ],
+        )
+
+
+class SSHAccessAuditTests(TestCase):
+    def setUp(self):
+        User = get_user_model()
+
+        self.operator = User.objects.create_user(
+            username="sshoperator",
+            email="sshoperator@example.com",
+            password="OperatorPassword123!",
+        )
+
+        operator_group = Group.objects.get(
+            name="Operator"
+        )
+
+        self.operator.groups.add(
+            operator_group
+        )
+
+        self.client.force_login(
+            self.operator
+        )
+
+        self.public_key = (
+            "ssh-ed25519 "
+            "AAAAC3NzaC1lZDI1NTE5AAAAIGZha2V0ZXN0a2V5ZGF0YQ== "
+            "test@example.com"
+        )
+
+    @patch(
+        "dashboard.views._sync_uaccess_ssh_keys"
+    )
+    def test_ssh_registration_is_audited(
+        self,
+        mock_sync,
+    ):
+        response = self.client.post(
+            reverse("ssh_key_register"),
+            {
+                "name": "Audit Test Key",
+                "public_key": self.public_key,
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        mock_sync.assert_called_once()
+
+        ssh_key = SSHKey.objects.get(
+            name="Audit Test Key"
+        )
+
+        self.assertTrue(
+            ssh_key.is_active
+        )
+
+        log = AccessAuditLog.objects.get(
+            action="SSH_KEY_REGISTERED",
+            target_identifier=ssh_key.fingerprint,
+        )
+
+        self.assertEqual(
+            log.actor,
+            self.operator,
+        )
+
+        self.assertEqual(
+            log.target_type,
+            "ssh_key",
+        )
+
+        self.assertNotIn(
+            self.public_key,
+            log.details,
+        )
+
+    @patch(
+        "dashboard.views._sync_uaccess_ssh_keys"
+    )
+    def test_ssh_revocation_is_audited(
+        self,
+        mock_sync,
+    ):
+        from dashboard.views import _ssh_public_key_fingerprint
+
+        fingerprint = _ssh_public_key_fingerprint(
+            self.public_key
+        )
+
+        ssh_key = SSHKey.objects.create(
+            user=self.operator,
+            name="Revoke Test Key",
+            public_key=self.public_key,
+            fingerprint=fingerprint,
+        )
+
+        response = self.client.post(
+            reverse(
+                "ssh_key_revoke",
+                args=[ssh_key.id],
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        mock_sync.assert_called_once()
+
+        ssh_key.refresh_from_db()
+
+        self.assertFalse(
+            ssh_key.is_active
+        )
+
+        self.assertIsNotNone(
+            ssh_key.revoked_at
+        )
+
+        log = AccessAuditLog.objects.get(
+            action="SSH_KEY_REVOKED",
+            target_identifier=ssh_key.fingerprint,
+        )
+
+        self.assertEqual(
+            log.actor,
+            self.operator,
+        )
+
+        self.assertEqual(
+            log.target_type,
+            "ssh_key",
+        )
+
+    @patch(
+        "dashboard.views._sync_uaccess_ssh_keys"
+    )
+    def test_failed_ssh_registration_rolls_back_without_audit(
+        self,
+        mock_sync,
+    ):
+        mock_sync.side_effect = subprocess.SubprocessError(
+            "simulated synchronization failure"
+        )
+
+        response = self.client.post(
+            reverse("ssh_key_register"),
+            {
+                "name": "Failed Registration",
+                "public_key": self.public_key,
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        self.assertFalse(
+            SSHKey.objects.filter(
+                name="Failed Registration"
+            ).exists()
+        )
+
+        self.assertFalse(
+            AccessAuditLog.objects.filter(
+                action="SSH_KEY_REGISTERED"
+            ).exists()
+        )
+
+    @patch(
+        "dashboard.views._sync_uaccess_ssh_keys"
+    )
+    def test_failed_ssh_revocation_rolls_back_without_audit(
+        self,
+        mock_sync,
+    ):
+        from dashboard.views import _ssh_public_key_fingerprint
+
+        fingerprint = _ssh_public_key_fingerprint(
+            self.public_key
+        )
+
+        ssh_key = SSHKey.objects.create(
+            user=self.operator,
+            name="Failed Revocation",
+            public_key=self.public_key,
+            fingerprint=fingerprint,
+        )
+
+        mock_sync.side_effect = subprocess.SubprocessError(
+            "simulated synchronization failure"
+        )
+
+        response = self.client.post(
+            reverse(
+                "ssh_key_revoke",
+                args=[ssh_key.id],
+            )
+        )
+
+        self.assertEqual(
+            response.status_code,
+            302,
+        )
+
+        ssh_key.refresh_from_db()
+
+        self.assertTrue(
+            ssh_key.is_active
+        )
+
+        self.assertIsNone(
+            ssh_key.revoked_at
+        )
+
+        self.assertFalse(
+            AccessAuditLog.objects.filter(
+                action="SSH_KEY_REVOKED",
+                target_identifier=ssh_key.fingerprint,
+            ).exists()
+        )
+
+    @patch(
+        "dashboard.views._sync_uaccess_ssh_keys"
+    )
+    def test_user_without_permission_cannot_register_ssh_key(
+        self,
+        mock_sync,
+    ):
+        User = get_user_model()
+
+        viewer = User.objects.create_user(
+            username="sshviewer",
+            password="ViewerPassword123!",
+        )
+
+        viewer_group = Group.objects.get(
+            name="Viewer"
+        )
+
+        viewer.groups.add(
+            viewer_group
+        )
+
+        self.client.force_login(
+            viewer
+        )
+
+        response = self.client.post(
+            reverse("ssh_key_register"),
+            {
+                "name": "Unauthorized Key",
+                "public_key": self.public_key,
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            403,
+        )
+
+        mock_sync.assert_not_called()
+
+        self.assertFalse(
+            SSHKey.objects.filter(
+                name="Unauthorized Key"
+            ).exists()
+        )
+
+        self.assertFalse(
+            AccessAuditLog.objects.filter(
+                action="SSH_KEY_REGISTERED"
+            ).exists()
         )
