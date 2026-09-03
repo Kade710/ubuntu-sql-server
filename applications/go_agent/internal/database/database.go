@@ -252,13 +252,20 @@ func DeleteServer(db *sql.DB, serverID int) error {
 	return nil
 }
 
-// UpsertNetworkInterfaces inserts or updates network interface records.
+// UpsertNetworkInterfaces inserts or updates current network interface records
+// and removes stale interface records for the server.
 func UpsertNetworkInterfaces(
 	db *sql.DB,
 	serverID int,
 	interfaces []agentnetwork.Interface,
 ) error {
-	const query = `
+	if len(interfaces) == 0 {
+		return fmt.Errorf(
+			"refusing to synchronize network interfaces: collector returned no interfaces",
+		)
+	}
+
+	const upsertQuery = `
 		INSERT INTO server_management.network_interfaces (
 			server_id,
 			interface_name,
@@ -285,10 +292,12 @@ func UpsertNetworkInterfaces(
 	}
 	defer tx.Rollback()
 
+	currentNames := make(map[string]struct{}, len(interfaces))
+
 	for _, iface := range interfaces {
 		_, err := tx.ExecContext(
 			ctx,
-			query,
+			upsertQuery,
 			serverID,
 			iface.Name,
 			iface.MACAddress,
@@ -300,6 +309,68 @@ func UpsertNetworkInterfaces(
 			return fmt.Errorf(
 				"save network interface %s: %w",
 				iface.Name,
+				err,
+			)
+		}
+
+		currentNames[iface.Name] = struct{}{}
+	}
+
+	const existingQuery = `
+		SELECT interface_name
+		FROM server_management.network_interfaces
+		WHERE server_id = $1
+	`
+
+	rows, err := tx.QueryContext(
+		ctx,
+		existingQuery,
+		serverID,
+	)
+	if err != nil {
+		return fmt.Errorf("query existing network interfaces: %w", err)
+	}
+
+	var staleNames []string
+
+	for rows.Next() {
+		var interfaceName string
+
+		if err := rows.Scan(&interfaceName); err != nil {
+			rows.Close()
+			return fmt.Errorf("scan existing network interface: %w", err)
+		}
+
+		if _, exists := currentNames[interfaceName]; !exists {
+			staleNames = append(staleNames, interfaceName)
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		rows.Close()
+		return fmt.Errorf("read existing network interfaces: %w", err)
+	}
+
+	if err := rows.Close(); err != nil {
+		return fmt.Errorf("close network interface rows: %w", err)
+	}
+
+	const deleteQuery = `
+		DELETE FROM server_management.network_interfaces
+		WHERE server_id = $1
+		  AND interface_name = $2
+	`
+
+	for _, interfaceName := range staleNames {
+		if _, err := tx.ExecContext(
+			ctx,
+			deleteQuery,
+			serverID,
+			interfaceName,
+		); err != nil {
+			return fmt.Errorf(
+				"delete stale network interface %s: %w",
+				interfaceName,
 				err,
 			)
 		}
