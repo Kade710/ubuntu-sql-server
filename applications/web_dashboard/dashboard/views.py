@@ -543,7 +543,7 @@ def _ssh_public_key_fingerprint(public_key):
     allowed_types = {
         "ssh-ed25519",
         "ssh-rsa",
-        "ecdsa-sha2-nistp265",
+        "ecdsa-sha2-nistp256",
         "ecdsa-sha2-nistp384",
         "ecdsa-sha2-nistp521",
     }
