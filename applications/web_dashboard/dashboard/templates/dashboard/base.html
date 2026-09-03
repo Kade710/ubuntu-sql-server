@@ -19,6 +19,7 @@
             </a>
 
             {% if request.user.is_authenticated %}
+
                 {% if request.user.is_staff %}
                     <a href="/admin/">
                         Admin
@@ -30,6 +31,21 @@
                         Users
                     </a>
                 {% endif %}
+
+                {% if perms.dashboard.manage_ssh_access %}
+                    <a href="{% url 'ssh_access_management' %}">
+                        SSH Access
+                    </a>
+                {% endif %}
+
+                <a
+                    href="http://192.168.1.100:3000"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Grafana
+                </a>
+
             {% endif %}
         </nav>
     </header>
