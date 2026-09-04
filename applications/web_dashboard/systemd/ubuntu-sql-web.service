@@ -7,6 +7,8 @@ Type=simple
 User=jonathon
 Group=jonathon
 
+EnvironmentFile=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.env
+
 WorkingDirectory=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard
 
 ExecStart=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.venv/bin/gunicorn \
