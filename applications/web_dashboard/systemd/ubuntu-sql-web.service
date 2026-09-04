@@ -9,8 +9,6 @@ Group=jonathon
 
 WorkingDirectory=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard
 
-EnvironmentFile=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.env
-
 ExecStart=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.venv/bin/gunicorn \
     --workers 2 \
     --bind 127.0.0.1:8000 \
