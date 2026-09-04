@@ -6,131 +6,406 @@
 
 {% block content %}
 
-<div class="card">
-    <a href="#overview">Overview</a> |
-    <a href="#hardware">Hardware</a> |
-    <a href="#network">Network</a> |
-    <a href="#health">Health</a> |
-    <a href="#monitoring">Monitoring</a> |
-    <a href="#maintenance">Maintenance</a>
+<div class="card server-section-nav">
+    <a href="{% url 'index' %}" class="nav-link">
+        ← Back to Servers
+    </a>
+
+    <a href="#overview" class="nav-link">
+        Overview
+    </a>
+
+    <a href="#hardware" class="nav-link">
+        Hardware
+    </a>
+
+    <a href="#network" class="nav-link">
+        Network
+    </a>
+
+    <a href="#health" class="nav-link">
+        Health
+    </a>
+
+    <a href="#monitoring" class="nav-link">
+        Monitoring
+    </a>
+
+    <a href="#maintenance" class="nav-link">
+        Maintenance
+    </a>
 </div>
 
-<div class="card" id="overview">
-    <h2>{{ server.hostname }}</h2>
 
-    <p>Server ID: {{ server.id }}</p>
-    <p>IP Address: {{ server.ip_address }}</p>
-    <p>Operating System: {{ server.operating_system }}</p>
-    <p>CPU: {{ server.cpu }}</p>
-    <p>RAM: {{ server.ram_gb }} GB</p>
-    <p>Storage: {{ server.storage_gb }} GB</p>
-    <p>GPU: {{ server.gpu }}</p>
-    <p>Motherboard: {{ server.motherboard }}</p>
-</div>
+<details class="card dropdown-card" id="overview" open>
+    <summary>
+        Overview
+    </summary>
 
-<p>
-    <a href="/">Back to Servers</a>
-</p>
+    <div class="dropdown-content">
+        <h2>{{ server.hostname }}</h2>
 
-<hr>
+        <p>Server ID: {{ server.id }}</p>
+        <p>IP Address: {{ server.ip_address }}</p>
+        <p>Operating System: {{ server.operating_system }}</p>
+        <p>CPU: {{ server.cpu }}</p>
+        <p>RAM: {{ server.ram_gb }} GB</p>
+        <p>Storage: {{ server.storage_gb }} GB</p>
+        <p>GPU: {{ server.gpu }}</p>
+        <p>Motherboard: {{ server.motherboard }}</p>
+    </div>
+</details>
 
-<div class="card" id="hardware">
-    <h2>Hardware Components</h2>
 
-    {% if hardware %}
-        {% for component in hardware %}
-            <h3>{{ component.component_type }}</h3>
+<details class="card dropdown-card" id="hardware">
+    <summary>
+        Hardware Components
+    </summary>
 
-            <p>Manufacturer: {{ component.manufacturer }}</p>
-            <p>Model: {{ component.model }}</p>
-            <p>Specification: {{ component.specification }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No hardware components found.</p>
-    {% endif %}
-</div>
+    <div class="dropdown-content">
+        {% if hardware %}
+            {% for component in hardware %}
+                <div class="sub-card">
+                    <h3>
+                        {{ component.component_type }}
+                    </h3>
 
-<hr>
+                    <p>
+                        Manufacturer:
+                        {{ component.manufacturer }}
+                    </p>
 
-<div class="card" id="network">
-    <h2>Network Interfaces</h2>
+                    <p>
+                        Model:
+                        {{ component.model }}
+                    </p>
 
-    {% if network %}
-        {% for interface in network %}
-            <h3>{{ interface.interface_name }}</h3>
+                    <p>
+                        Specification:
+                        {{ component.specification }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No hardware components found.</p>
+        {% endif %}
+    </div>
+</details>
 
-            <p>MAC Address: {{ interface.mac_address }}</p>
-            <p>IP Address: {{ interface.ip_address }}</p>
-            <p>Network Type: {{ interface.network_type }}</p>
-            <p>Speed: {{ interface.speed_mbps }} Mbps</p>
-        {% endfor %}
-    {% else %}
-        <p>No network interfaces found.</p>
-    {% endif %}
-</div>
 
-<hr>
+<details class="card dropdown-card" id="network">
+    <summary>
+        Network Interfaces
+    </summary>
 
-<div class="card" id="health">
-    <h2>Health History</h2>
+    <div class="dropdown-content">
+        {% if network %}
+            {% for interface in network %}
+                <div class="sub-card">
+                    <h3>
+                        {{ interface.interface_name }}
+                    </h3>
 
-{% if latest_health %}
-    <div class="current-health">
-        <h3>Current Health</h3>
+                    <p>
+                        MAC Address:
+                        {{ interface.mac_address }}
+                    </p>
 
-        <p><strong>Status:</strong>
-            {% if latest_health.overall_status == "HEALTHY" %}
-                <span class="status-healthy">{{ latest_health.overall_status }}</span>
-            {% elif latest_health.overall_status == "WARNING" %}
-                <span class="status-warning">{{ latest_health.overall_status }}</span>
-            {% elif latest_health.overall_status == "CRITICAL" %}
-                <span class="status-critical">{{ latest_health.overall_status }}</span>
-            {% else %}
-                <span class="status-unknown">{{ latest_health.overall_status }}</span>
-                {% endif %}
+                    <p>
+                        IP Address:
+                        {{ interface.ip_address }}
+                    </p>
+
+                    <p>
+                        Network Type:
+                        {{ interface.network_type }}
+                    </p>
+
+                    <p>
+                        Speed:
+                        {{ interface.speed_mbps }} Mbps
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No network interfaces found.</p>
+        {% endif %}
+    </div>
+</details>
+
+
+<details class="card dropdown-card" id="health">
+    <summary>
+        Health History
+    </summary>
+
+    <div class="dropdown-content">
+
+        {% if latest_health %}
+            <div class="current-health">
+                <h3>Current Health</h3>
+
+                <p>
+                    <strong>Status:</strong>
+
+                    {% if latest_health.overall_status == "HEALTHY" %}
+                        <span class="status-healthy">
+                            {{ latest_health.overall_status }}
+                        </span>
+
+                    {% elif latest_health.overall_status == "WARNING" %}
+                        <span class="status-warning">
+                            {{ latest_health.overall_status }}
+                        </span>
+
+                    {% elif latest_health.overall_status == "CRITICAL" %}
+                        <span class="status-critical">
+                            {{ latest_health.overall_status }}
+                        </span>
+
+                    {% else %}
+                        <span class="status-unknown">
+                            {{ latest_health.overall_status }}
+                        </span>
+                    {% endif %}
+                </p>
+
+                <p>
+                    <strong>Agent Status:</strong>
+
+                    {% if agent_status == "ONLINE" %}
+                        <span class="status-healthy">
+                            {{ agent_status }}
+                        </span>
+
+                    {% elif agent_status == "STALE" %}
+                        <span class="status-warning">
+                            {{ agent_status }}
+                        </span>
+
+                    {% elif agent_status == "OFFLINE" %}
+                        <span class="status-critical">
+                            {{ agent_status }}
+                        </span>
+
+                    {% else %}
+                        <span class="status-unknown">
+                            {{ agent_status }}
+                        </span>
+                    {% endif %}
+                </p>
+
+                <p>
+                    <strong>Load Average:</strong>
+                    {{ latest_health.load_average }}
+                </p>
+
+                <p>
+                    <strong>Memory:</strong>
+                    {{ latest_health.memory_percent }}%
+                </p>
+
+                <p>
+                    <strong>Disk:</strong>
+                    {{ latest_health.disk_percent }}%
+                </p>
+
+                <p>
+                    <strong>Uptime:</strong>
+                    {{ latest_health.uptime_hours }} hours
+                </p>
+
+                <p>
+                    <strong>Last Refresh:</strong>
+                    {{ latest_health.created_at }}
+                </p>
+            </div>
+        {% endif %}
+
+
+        <div class="health-chart">
+            <canvas id="healthChart"></canvas>
+        </div>
+
+
+        {% if health_checks %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Check ID</th>
+                            <th>Load Average</th>
+                            <th>Memory</th>
+                            <th>Disk</th>
+                            <th>Uptime</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for check in health_checks %}
+                            <tr>
+                                <td>{{ check.id }}</td>
+                                <td>{{ check.load_average }}</td>
+                                <td>{{ check.memory_percent }}%</td>
+                                <td>{{ check.disk_percent }}%</td>
+                                <td>{{ check.uptime_hours }} hours</td>
+
+                                <td>
+                                    {% if check.overall_status == "HEALTHY" %}
+                                        <span class="status-healthy">
+                                            {{ check.overall_status }}
+                                        </span>
+
+                                    {% elif check.overall_status == "WARNING" %}
+                                        <span class="status-warning">
+                                            {{ check.overall_status }}
+                                        </span>
+
+                                    {% elif check.overall_status == "CRITICAL" %}
+                                        <span class="status-critical">
+                                            {{ check.overall_status }}
+                                        </span>
+
+                                    {% else %}
+                                        <span class="status-unknown">
+                                            {{ check.overall_status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ check.created_at }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+            <p>No health history found.</p>
+        {% endif %}
+    </div>
+</details>
+
+
+<details class="card dropdown-card" id="monitoring">
+    <summary>
+        Monitoring
+    </summary>
+
+    <div class="dropdown-content">
+        <p>
+            Live Grafana monitoring for
+            {{ server.hostname }}.
         </p>
 
-        <p><strong>Agent Status:</strong>
-            {% if agent_status == "ONLINE" %}
-                <span class="status-healthy">{{ agent_status }}</span>
-            {% elif agent_status == "STALE" %}
-                <span class="status-warning">{{ agent_status }}</span>
-            {% elif agent_status == "OFFLINE" %}
-                <span class="status-critical">{{ agent_status }}</span>
-            {% else %}
-                <span class="status-unknown">{{ agent_status }}</span>
-                {% endif %}
-        </p>
-
-        <p><strong>Load Average:</strong> {{ latest_health.load_average }}</p>
-        <p><strong>Memory:</strong> {{ latest_health.memory_percent }}%</p>
-        <p><strong>Disk:</strong> {{ latest_health.disk_percent }}%</p>
-        <p><strong>Uptime:</strong> {{ latest_health.uptime_hours }} hours</p>
-        <p><strong>Last Refresh</strong> {{ latest_health.created_at }}</p>
+        <div class="monitoring-frame">
+            <iframe
+                src="http://192.168.1.100:3000/d/ad9pgp4/u-server-monitoring?from=now-6h&to=now&timezone=browser&kiosk"
+                width="100%"
+                height="900"
+                frameborder="0"
+                loading="lazy"
+                title="U-Server Grafana Monitoring"
+            ></iframe>
+        </div>
     </div>
-{% endif %}
-    
-    <div class="health-chart">
-        <canvas id="healthChart"></canvas>
+</details>
+
+
+<details class="card dropdown-card" id="maintenance">
+    <summary>
+        Maintenance Logs
+    </summary>
+
+    <div class="dropdown-content">
+        <h3>Add Maintenance Log</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {{ maintenance_form.as_p }}
+
+            <button
+                type="submit"
+                class="action-button"
+            >
+                Add Maintenance Log
+            </button>
+        </form>
+
+        <hr>
+
+        {% if maintenance_logs %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Description</th>
+                            <th>Performed By</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for log in maintenance_logs %}
+                            <tr>
+                                <td>{{ log.action }}</td>
+                                <td>{{ log.description }}</td>
+                                <td>{{ log.performed_by }}</td>
+                                <td>{{ log.created_at }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+            <p>No maintenance logs found.</p>
+        {% endif %}
     </div>
+</details>
 
-    {{ health_chart|json_script:"health-chart-data" }}
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ health_chart|json_script:"health-chart-data" }}
 
-    <script>
-        const healthData = JSON.parse(
-            document.getElementById("health-chart-data").textContent
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const healthData = JSON.parse(
+        document.getElementById(
+            "health-chart-data"
+        ).textContent
+    );
+
+    const labels = healthData.map(
+        item => item.created_at
+    );
+
+    const loadData = healthData.map(
+        item => item.load_average
+    );
+
+    const memoryData = healthData.map(
+        item => item.memory_percent
+    );
+
+    const diskData = healthData.map(
+        item => item.disk_percent
+    );
+
+    const healthChart =
+        document.getElementById(
+            "healthChart"
         );
 
-        const labels = healthData.map(item => item.created_at);
-        const loadData = healthData.map(item => item.load_average);
-        const memoryData = healthData.map(item => item.memory_percent);
-        const diskData = healthData.map(item => item.disk_percent);
-
-        const healthChart = document.getElementById("healthChart");
-
-        new Chart(healthChart, {
+    new Chart(
+        healthChart,
+        {
             type: "line",
 
             data: {
@@ -142,11 +417,13 @@
                         data: loadData,
                         tension: 0.2
                     },
+
                     {
                         label: "Memory %",
                         data: memoryData,
                         tension: 0.2
                     },
+
                     {
                         label: "Disk %",
                         data: diskData,
@@ -159,130 +436,33 @@
                 responsive: true,
                 maintainAspectRatio: false
             }
-        });
-    </script>
+        }
+    );
 
-    {% if health_checks %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Check ID</th>
-                    <th>Load Average</th>
-                    <th>Memory</th>
-                    <th>Disk</th>
-                    <th>Uptime</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                </tr>
-            </thead>
 
-            <tbody>
-                {% for check in health_checks %}
-                    <tr>
-                        <td>{{ check.id }}</td>
-                        <td>{{ check.load_average }}</td>
-                        <td>{{ check.memory_percent }}%</td>
-                        <td>{{ check.disk_percent }}%</td>
-                        <td>{{ check.uptime_hours }} hours</td>
+    document.querySelectorAll(
+        ".server-section-nav a[href^='#']"
+    ).forEach(link => {
 
-                        <td>
-                            {% if check.overall_status == "HEALTHY" %}
-                                <span class="status-healthy">
-                                    {{ check.overall_status }}
-                                </span>
+        link.addEventListener(
+            "click",
+            function () {
 
-                            {% elif check.overall_status == "WARNING" %}
-                                <span class="status-warning">
-                                    {{ check.overall_status }}
-                                </span>
+                const target =
+                    document.querySelector(
+                        this.getAttribute("href")
+                    );
 
-                            {% elif check.overall_status == "CRITICAL" %}
-                                <span class="status-critical">
-                                    {{ check.overall_status }}
-                                </span>
+                if (
+                    target &&
+                    target.tagName === "DETAILS"
+                ) {
+                    target.open = true;
+                }
+            }
+        );
 
-                            {% else %}
-                                <span class="status-unknown">
-                                    {{ check.overall_status }}
-                                </span>
-                            {% endif %}
-                        </td>
-
-                        <td>{{ check.created_at }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-    {% else %}
-        <p>No health history found.</p>
-    {% endif %}
-</div>
-
-<hr>
-
-<div class="card" id="monitoring">
-    <h2>Monitoring</h2>
-
-    <p>
-        Live Grafana monitoring for U-Server.
-    </p>
-
-    <iframe
-        src="http://192.168.1.100:3000/d/ad9pgp4/u-server-monitoring?from=now-6h&to=now&timezone=browser&kiosk"
-        width="100%"
-        height="900"
-        frameborder="0"
-        loading="lazy"
-        title="U-Server Grafana Monitoring"
-    ></iframe>
-</div>
-
-<hr>
-
-<div class="card" id="maintenance">
-    <h2>Maintenance Logs</h2>
-
-    <h3>Add Maintenance Log</h3>
-
-    <form method="POST">
-        {% csrf_token %}
-
-        {{ maintenance_form.as_p }}
-
-        <button type="submit">
-            Add Maintenance Log
-        </button>
-    </form>
-
-    <hr>
-
-    {% if maintenance_logs %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Action</th>
-                    <th>Description</th>
-                    <th>Performed By</th>
-                    <th>Created</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for log in maintenance_logs %}
-                    <tr>
-                        <td>{{ log.action }}</td>
-                        <td>{{ log.description }}</td>
-                        <td>{{ log.performed_by }}</td>
-                        <td>{{ log.created_at }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-    {% else %}
-        <p>No maintenance logs found.</p>
-    {% endif %}
-</div>
+    });
+</script>
 
 {% endblock %}
