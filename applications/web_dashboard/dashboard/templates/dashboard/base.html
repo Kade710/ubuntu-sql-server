@@ -4,53 +4,126 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Ubuntu SQL Server Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{% static 'dashboard/style.css' %}">
+    <title>
+        {% block title %}
+        Ubuntu SQL Server Dashboard
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'dashboard/style.css' %}"
+    >
 </head>
 
 <body>
-    <header>
-        <h1>Ubuntu SQL Server Dashboard</h1>
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="brand">
+                <a href="{% url 'index' %}" class="brand-link">
+                    Ubuntu SQL Server Dashboard
+                </a>
+            </div>
 
-        <nav>
-            <a href="{% url 'index' %}">
-                Dashboard
-            </a>
-
-            {% if request.user.is_authenticated %}
-
-                {% if request.user.is_staff %}
-                    <a href="/admin/">
-                        Admin
-                    </a>
-                {% endif %}
-
-                {% if perms.dashboard.manage_users %}
-                    <a href="{% url 'user_management' %}">
-                        Users
-                    </a>
-                {% endif %}
-
-                {% if perms.dashboard.manage_ssh_access %}
-                    <a href="{% url 'ssh_access_management' %}">
-                        SSH Access
-                    </a>
-                {% endif %}
-
+            <nav class="main-nav">
                 <a
-                    href="http://192.168.1.100:3000"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="{% url 'index' %}"
+                    class="nav-link"
                 >
-                    Grafana
+                    Dashboard
                 </a>
 
-            {% endif %}
-        </nav>
+                {% if request.user.is_authenticated %}
+
+                    {% if request.user.is_staff %}
+                        <a
+                            href="/admin/"
+                            class="nav-link"
+                        >
+                            Admin
+                        </a>
+                    {% endif %}
+
+                    {% if perms.dashboard.manage_users %}
+                        <a
+                            href="{% url 'user_management' %}"
+                            class="nav-link"
+                        >
+                            Users
+                        </a>
+                    {% endif %}
+
+                    {% if perms.dashboard.manage_ssh_access %}
+                        <a
+                            href="{% url 'ssh_access_management' %}"
+                            class="nav-link"
+                        >
+                            SSH Access
+                        </a>
+                    {% endif %}
+
+                    <a
+                        href="http://192.168.1.100:3000"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="nav-link"
+                    >
+                        Grafana
+                    </a>
+
+                {% endif %}
+            </nav>
+
+            <div class="account-area">
+                {% if request.user.is_authenticated %}
+                    <span class="account-name">
+                        {{ request.user.username }}
+                    </span>
+
+                    <form
+                        method="post"
+                        action="{% url 'logout' %}"
+                        class="logout-form"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="logout-button"
+                        >
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a
+                        href="{% url 'login' %}"
+                        class="login-link"
+                    >
+                        Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
     </header>
 
-    <main>
+    <main class="page-container">
+        {% if messages %}
+            <div class="message-container">
+                {% for message in messages %}
+                    <div
+                        class="message
+                        {% if message.tags %}
+                            message-{{ message.tags }}
+                        {% endif %}"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </main>
