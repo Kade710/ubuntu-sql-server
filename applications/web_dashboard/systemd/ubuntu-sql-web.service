@@ -1,1 +1,23 @@
+[Unit]
+Description=Ubuntu SQL Server Web Dashboard
+After=network.target postgresql.service
 
+[Service]
+Type=simple
+User=jonathon
+Group=jonathon
+
+WorkingDirectory=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard
+
+EnvironmentFile=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.env
+
+ExecStart=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.venv/bin/gunicorn \
+    --workers 2 \
+    --bind 127.0.0.1:8000 \
+    web_dashboard.wsgi:application
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
