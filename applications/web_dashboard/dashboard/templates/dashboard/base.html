@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,8 +21,12 @@
 <body>
     <header class="site-header">
         <div class="header-inner">
+
             <div class="brand">
-                <a href="{% url 'index' %}" class="brand-link">
+                <a
+                    href="{% url 'index' %}"
+                    class="brand-link"
+                >
                     Ubuntu SQL Server Dashboard
                 </a>
             </div>
@@ -77,6 +81,16 @@
             </nav>
 
             <div class="account-area">
+
+                <button
+                    type="button"
+                    id="theme-toggle"
+                    class="theme-toggle"
+                    aria-label="Toggle light and dark mode"
+                >
+                    ☀️
+                </button>
+
                 {% if request.user.is_authenticated %}
                     <span class="account-name">
                         {{ request.user.username }}
@@ -104,11 +118,13 @@
                         Login
                     </a>
                 {% endif %}
+
             </div>
         </div>
     </header>
 
     <main class="page-container">
+
         {% if messages %}
             <div class="message-container">
                 {% for message in messages %}
@@ -126,6 +142,51 @@
 
         {% block content %}
         {% endblock %}
+
     </main>
+
+    <script>
+        const root = document.documentElement;
+        const themeToggle = document.getElementById("theme-toggle");
+
+        const savedTheme = localStorage.getItem("dashboard-theme");
+
+        if (savedTheme) {
+            root.setAttribute("data-theme", savedTheme);
+        }
+
+        function updateThemeButton() {
+            const currentTheme = root.getAttribute("data-theme");
+
+            if (currentTheme === "dark") {
+                themeToggle.textContent = "☀️";
+            } else {
+                themeToggle.textContent = "🌙";
+            }
+        }
+
+        themeToggle.addEventListener("click", function () {
+            const currentTheme = root.getAttribute("data-theme");
+
+            const newTheme =
+                currentTheme === "dark"
+                    ? "light"
+                    : "dark";
+
+            root.setAttribute(
+                "data-theme",
+                newTheme
+            );
+
+            localStorage.setItem(
+                "dashboard-theme",
+                newTheme
+            );
+
+            updateThemeButton();
+        });
+
+        updateThemeButton();
+    </script>
 </body>
 </html>
