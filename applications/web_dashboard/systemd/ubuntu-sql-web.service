@@ -10,6 +10,7 @@ Group=jonathon
 EnvironmentFile=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.env
 
 WorkingDirectory=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard
+EnvironmentFile=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.env
 
 ExecStart=/home/jonathon/Projects/ubuntu-sql-server/applications/web_dashboard/.venv/bin/gunicorn \
     --workers 2 \
